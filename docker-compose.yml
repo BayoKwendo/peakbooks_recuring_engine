@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  web:
+    restart: always
+    build: .
+    container_name: API
+    ports:
+      - "8090:8090"
