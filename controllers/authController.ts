@@ -44,7 +44,7 @@ export default {
         return;
       }
       else if (!compareSync(values.password, isAvailable.password)) {
-        ctx.response.status = 404;
+        ctx.response.status = 400;
         ctx.response.body = {
           status: false,
           status_code: 400,
@@ -54,28 +54,44 @@ export default {
       }
 
       else {
-        const oneHour = 300
-        const payload: Payload =
-        {
-          iss: isAvailable.username,
-          exp: setExpiration(Date.now() / 1000 + oneHour),
-        };
-        const data = {
-          first_name: isAvailable.first_name,
-          last_name: isAvailable.last_name,
-          msisdn: isAvailable.msisdn,
-          email: isAvailable.email,
-          industry: isAvailable.industry,
-          role_id: isAvailable.role_id
+        const checkActive = await userService.checkActive(
+          { email: values.email },
+        );
+        if (!checkActive) {
+          ctx.response.status = 400;
+          ctx.response.body = {
+            status: false,
+            status_code: 400,
+            message: "Your Account is not activated!! Contact Administrators",
+          };
+          return;
+        } else {
+
+          const oneHour = 1200
+          const payload: Payload =
+          {
+            iss: isAvailable.username,
+            exp: setExpiration(Date.now() / 1000 + oneHour),
+          };
+          const data = {
+            first_name: isAvailable.first_name,
+            last_name: isAvailable.last_name,
+            msisdn: isAvailable.msisdn,
+            email: isAvailable.email,
+            industry: isAvailable.industry,
+            role_id: isAvailable.role_id,
+            user_id: isAvailable.id
+
+          }
+          const jwt = makeJwt({ header, payload, key })
+          ctx.cookies.set('jwt', jwt);
+          ctx.response.body = {
+            status: true,
+            status_code: 200,
+            token: jwt,
+            user: data
+          };
         }
-        const jwt = makeJwt({ header, payload, key })
-        ctx.cookies.set('jwt', jwt);
-        ctx.response.body = {
-          status: true,
-          status_code: 200,
-          token: jwt,
-          user: data
-        };
       }
     } catch (error) {
       ctx.response.status = 400;

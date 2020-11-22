@@ -25,6 +25,15 @@ export default {
         return result;
     },
 
+
+    checkActive: async ({ email }: User) => {
+        const [result] = await client.query(
+            `SELECT * FROM Users WHERE email = ? AND status = 1`,
+            [email],
+        );
+        return result;
+    },
+
     userExist: async ({ email, msisdn }: User) => {
         const [result] = await client.query(
             `SELECT * FROM Users WHERE msisdn = ?`,

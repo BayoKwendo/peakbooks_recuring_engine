@@ -1,7 +1,7 @@
 import client from "../db/client.ts";
 import { TABLE } from "../db/config.ts";
 import Income from "../interfaces/Income.ts";
-import Employee from "../interfaces/Employee.ts";
+import Customers from "../interfaces/Customers.ts";
 
 export default {
     doesExistById: async ({ id }: Income) => {
@@ -62,7 +62,7 @@ export default {
         GROUP BY DATE(TIME) ORDER BY DATE(TIME) DESC LIMIT 0, 10000`);
     },
 
-    getMTNDepositRates: async ({ offset }: Employee)=> {
+    getMTNDepositRates: async ({ offset }: Customers)=> {
         return await client.query(`SELECT IF(grouping(DATE(date_created)), "Total", DATE(date_created)) DATE, IF(grouping(STATUS), "total", IFNULL(STATUS, "Unconfirmed")) STATUS, COUNT(id) COUNT, SUM(amount) Amount 
         FROM MtnDepositRequest m
         WHERE DATE(date_created) = CURDATE()
@@ -77,7 +77,7 @@ export default {
         return result;
     },
 
-    getMTNDepositRatesFilter:  async ({ filter_value }: Employee) => {
+    getMTNDepositRatesFilter:  async ({ filter_value }: Customers) => {
         return await client.query(`SELECT IF(grouping(DATE(date_created)), "Total", DATE(date_created)) DATE, IF(grouping(STATUS), "total", IFNULL(STATUS, "Unconfirmed")) STATUS, COUNT(id) COUNT, SUM(amount) Amount 
         FROM MtnDepositRequest m
         WHERE DATE(date_created) LIKE ?
@@ -91,12 +91,12 @@ export default {
         DATE(date_created) DESC LIMIT 0, 10000`);
     },
     
-    getCustomerWidrawals: async ({ offset }: Employee) => {
+    getCustomerWidrawals: async ({ offset }: Customers) => {
         return await client.query(`SELECT *,  count(*) over () total_page
         FROM WithdrawalArchive ORDER BY id DESC LIMIT ?, 10`,  [offset]);
     },
 
-    getCustomerFilter: async ({ offset, filter_value }: Employee) => {
+    getCustomerFilter: async ({ offset, filter_value }: Customers) => {
         return await client.query(`SELECT *,  count(*) over () total_page
         FROM WithdrawalArchive WHERE msisdn = ? OR transactionId = ? OR status = ? 
         or DATE_FORMAT(time, '%Y-%m-%d') LIKE ?  ORDER BY id DESC Limit ?, 10`, [filter_value, 
@@ -105,12 +105,12 @@ export default {
 
 
 
-    getCustomerTransaction: async ({ offset }: Employee) => {
+    getCustomerTransaction: async ({ offset }: Customers) => {
         return await client.query(`SELECT *,  count(*) over () total_page
         FROM Transaction ORDER BY id DESC LIMIT ?, 10`,  [offset]);
     },
 
-    getTransactionFilter: async ({ offset, filter_value }: Employee) => {
+    getTransactionFilter: async ({ offset, filter_value }: Customers) => {
         return await client.query(`SELECT *,  count(*) over () total_page
         FROM Transaction WHERE msisdn = ? OR reference = ? OR status = ? 
         or DATE_FORMAT(date_created, '%Y-%m-%d') LIKE ?  ORDER BY id DESC Limit ?, 10`, [filter_value, 
