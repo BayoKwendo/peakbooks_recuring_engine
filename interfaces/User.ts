@@ -5,5 +5,10 @@ export default interface User {
   role_id?: number,
   industry?: string,
   email?: string,
-  password?: string
+  page_number?:number,
+  offset?:number,
+  mobile?:any,
+  filter_value?:any,
+  password?: string,
+  id?:string
 }

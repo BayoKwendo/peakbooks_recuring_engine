@@ -144,7 +144,7 @@ export default {
       else {
         const hashedPassword = hashSync(values.password);
         const hashedPassword1 = hashSync(values.repeat_password);
-        await userService.createUser(
+        const addUserData = await userService.createUser(
           {
             first_name: values.first_name,
             last_name: values.last_name,
@@ -155,20 +155,26 @@ export default {
             password: hashedPassword,
           },
         );
-        response.body = {
-          status: true,
-          status_code: 200,
-          message: "Created Successfully! email has been send",
-        };
 
-        await clientemail.send({
-          from: "admin@insightpeak.com",
-          to: values.email,
-          subject: "Confirmation",
-          content: "Mail Content，maybe HTML",
-        });
-        await clientemail.close();
+        if (addUserData) {
+        
+          // if (clientemail) {
 
+            // cookies.set('email_address', values.email);
+
+            response.body = {
+              status: true,
+              status_code: 200,
+              message: "Created Successfully! email has been send",
+            };
+          // } else {
+          //   response.body = {
+          //     status: true,
+          //     status_code: 200,
+          //     message: "Created Successfully! email not send contact the admin",
+          //   };
+          // }
+        }
       }
     } catch (error) {
       response.status = 400;
@@ -179,6 +185,109 @@ export default {
     }
   },
 
+  activateAccount: async (
+    { params, response }: { params: { id: string }; response: any },) => {
+    try {
+      const isAvailable = await userService.activateAccount(
+        { id: params.id },
+      );
+      if (!isAvailable) {
+        response.status = 404;
+        response.body = {
+          status: false,
+          message: "User Not found!!",
+        };
+      } else {
+        const data = await userService.activateAccount(
+          { id: params.id },
+        );
+        response.status = 200;
+        response.body = {
+          status: true,
+          status_code: 200,
+          message: "Client Account has been activated"
+        };
+      }
+    }
+    catch (error) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+  deactiveAccount: async (
+    { params, response }: { params: { id: string }; response: any },) => {
+    try {
+      const isAvailable = await userService.deactiveAccount(
+        { id: params.id },
+      );
+      if (!isAvailable) {
+        response.status = 404;
+        response.body = {
+          status: false,
+          message: "User Not found!!",
+        };
+      } else {
+        const data = await userService.deactiveAccount(
+          { id: params.id },
+        );
+        response.status = 200;
+        response.body = {
+          status: true,
+          status_code: 200,
+          message: "Client Account has been deactivated",
+        };
+      }
+    }
+    catch (error) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: `${error}`,
+      };
+    }
+  },
+  
+
+  updateUserPssword: async ({ request, response }: { request: any; response: any },) => {
+    const body = await request.body();
+    if (!request.hasBody) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      const hashedPassword = hashSync(values.password);;
+
+      await userService.updatePassword(
+        {
+          email: values.email,
+          password: hashedPassword,
+          // activation_key: values.activation_key
+        },
+      );
+      response.body = {
+        status: true,
+        status_code: 200,
+        message: "User Password Updated Successfully",
+      };
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+  
   updateUser: async ({ request, response }: { request: any; response: any },) => {
     const body = await request.body();
     if (!request.hasBody) {
@@ -213,4 +322,69 @@ export default {
       };
     }
   },
+
+  /**
+  * @description Get all Clients List
+  */
+  getClients: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      // console.log("bayo", kw)
+      let { page_number, filter_value } = getQuery(ctx, { mergeParams: true });
+      const total = await userService.getPageSizeCLient();
+      if (filter_value == null || filter_value == "") {
+        console.log(page_number, '||| params');
+
+        if (page_number == null) {
+          page_number = "1"
+
+          const offset = (Number(page_number) - 1) * 10;
+          const data = await userService.getClients({
+            offset: Number(offset)
+          });
+          ctx.response.body = {
+            status: true,
+            status_code: 200,
+            total: total,
+            data: data
+          };
+        } else {
+          const offset = (Number(page_number) - 1) * 10;
+          const data = await userService.getClients({
+            offset: Number(offset)
+          });
+
+          ctx.response.body = {
+            status: true,
+            status_code: 200,
+            total: total,
+            data: data
+          };
+        }
+      } else {
+        console.log(filter_value, '||| params');
+
+        const data = await userService.getClientFilter({
+          filter_value: filter_value
+        });
+
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          total: total,
+          data: data
+        };
+
+      }
+
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
 };

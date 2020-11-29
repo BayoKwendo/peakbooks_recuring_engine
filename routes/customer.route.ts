@@ -9,7 +9,13 @@ router2
   .post("/customer",authorize, customerController.createCustomer)
 
   .get("/customer",authorize, customerController.getAllCustomers)
+  .put("/customer",authorize, customerController.updateUserCustomer)
+  
+  .put("/customermore",authorize, customerController.updateUserCustomerMore)
 
   .post("/customermore",authorize, customerController.createBilling)
+
+  .get("/customermore",authorize, customerController.getAllCustomersInfo)
+
   
 export default router2;

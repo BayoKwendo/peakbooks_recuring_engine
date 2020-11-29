@@ -13,6 +13,7 @@ export default interface  Customers {
   page_number?:number,
   offset?:number,
   mobile?:any,
+  tax_info?:any,
   filter_value?:any,
   street?:string,
   customer_id?:string,
