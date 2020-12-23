@@ -1,9 +1,9 @@
 {
-  "$schema": "https://deno.land/x/denon/schema.json",
-  "scripts": {
-    "start": {
-      "cmd": "deno run server.ts",
-      "desc": "run my server.ts file"
+    "$schema": "https://deno.land/x/denon/schema.json",
+    "scripts": {
+        "start": {
+            "cmd": "deno run server.ts",
+            "desc": "run my server.ts file"
+        }
     }
-  }
 }

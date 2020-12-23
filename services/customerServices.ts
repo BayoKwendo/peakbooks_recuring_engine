@@ -122,7 +122,7 @@ export default {
 
     getCustomerFilter: async ({ filter_value }: Customers) => {
         const result = await client.query(
-            `SELECT * FROM  ${TABLE.CUSTOMER} WHERE email LIKE ? or msisdn LIKE ?`, [filter_value, filter_value]);
+            `SELECT * FROM  ${TABLE.CUSTOMER} WHERE email LIKE ? or msisdn or customer_display_name LIKE ?`, [filter_value, filter_value]);
         return result;
     },
     getPageSizeCustomer: async ({ client_id }: Customers) => {

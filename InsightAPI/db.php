@@ -1,6 +1,6 @@
 
 <?php
-$con = mysqli_connect("178.32.191.152:10320","root","alatpres@2020","Insight");
+$con = mysqli_connect("157.230.229.119:10330","root","peakinsight","Insight");
 
 if (!$con) {
   die('Could not connect: ' . mysqli_error());

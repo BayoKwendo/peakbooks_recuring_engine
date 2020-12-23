@@ -3,15 +3,17 @@ import { TABLE } from "../db/config.ts";
 import User from "../interfaces/User.ts";
 
 export default {
-    createUser: async ({ first_name, last_name, msisdn, industry, role_id, email, password }: User,) => {
+    createUser: async ({ first_name, last_name, msisdn, industry, role_id, email, password, company_name, postal_address }: User,) => {
         const result = await client.query(`INSERT INTO ${TABLE.USERS} SET
              first_name =?,
-             last_name =?, msisdn=?, email =?, industry=?, role_id=?, password=?`, [
+             last_name =?, msisdn=?, email =?, industry=?, company_name=?, postal_address =?, role_id=?, password=?`, [
             first_name,
             last_name,
             msisdn,
             email,
             industry,
+            company_name,
+            postal_address,
             role_id,
             password
         ]);
@@ -45,28 +47,28 @@ export default {
     getClients: async ({ offset }: User) => {
         const result = await client.query(
             `SELECT * FROM  ${TABLE.USERS} WHERE role_id = 2 ORDER BY id DESC LIMIT ?,10 `, [offset]);
-            return result;
+        return result;
     },
 
-    getPageSizeCLient: async ( ) => {
+    getPageSizeCLient: async () => {
         const [result] = await client.query(
             `SELECT COUNT(id) count FROM  ${TABLE.USERS} WHERE role_id = 2`);
-            return result.count;
+        return result.count;
     },
 
     getClientFilter: async ({ filter_value }: User) => {
         const result = await client.query(
             `SELECT * FROM  ${TABLE.USERS} WHERE email LIKE ? or msisdn LIKE ?`, [filter_value, filter_value]);
-            return result;
+        return result;
     },
 
-    updatePassword: async ({ password,email }: User,) => {
-        const query = await client.query(`UPDATE ${TABLE.USERS} SET 
-        account_status = 1,
-        password = ? 
-        WHERE email = ? `, [password, email]);
-        return query;
-    },
+        updatePassword: async ({ password, email }: User,) => {
+            const query = await client.query(`UPDATE ${TABLE.USERS} SET 
+            account_status = 1,
+            password = ? 
+            WHERE email = ? `, [password, email]);
+            return query;
+        },
 
 
     activateAccount: async ({ id }: User,) => {

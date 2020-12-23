@@ -11,43 +11,31 @@ $data = json_decode(file_get_contents("php://input"), true);
 // get jwt
 // $jwt=isset($data->jwt) ? $data->jwt : "";
 require("db.php"); 
-
-
         //set alert values
 foreach($data as $d){
-
   $insertstatement = mysqli_query (
-    
-    $con,"INSERT INTO Invoice_Items 
-    (invoice_no, item_id, name, description, price, tax_percentage,discount_percentage,quantity)  
-    VALUES (
-    '".$d['invoice_no']."', 
-    '".$d['id']."', 
-    '".$d['name']."', 
-    '".$d['description']."',
-    '".$d['price']."',
-    '".$d['tax_percentage']."',
-    '".$d['discount_percentage']."',
-    '".$d['quantity']."')");
-
+    $con, "UPDATE Invoices 
+    set 
+    status = 1,
+    payment_received_id = '".$d['payment_id']."' 
+    WHERE invoice_no= '".$d['invoice_no']."' "  
+  );
   if($insertstatement){
    http_response_code(200);
    echo json_encode(
-    array(
-      "status" => true,
-      "message" =>"Invoice has been created successfully")
-  );
-                # code...
+     array(
+       "status" => true,
+       "message" =>"Invoice has been updated successfully")
+     );              # code...
  }else{
    echo json_encode(
-    array(
-      "status" => false,
-      "message" => "Error description: " . mysqli_error($con),
-    )
-  );
+     array(
+       "status" => false,
+       "message" => "Error description: " . mysqli_error($con),
+     )
+   );
  }
-
 }
-// Query. Note the trim to remove the last ,
+
 
 ?>

@@ -67,7 +67,7 @@ export default {
           return;
         } else {
 
-          const oneHour = 1200
+          const oneHour = 3600
           const payload: Payload =
           {
             iss: isAvailable.username,
@@ -80,7 +80,9 @@ export default {
             email: isAvailable.email,
             industry: isAvailable.industry,
             role_id: isAvailable.role_id,
-            user_id: isAvailable.id
+            user_id: isAvailable.id,
+            company_name: isAvailable.company_name,
+            postal_address: isAvailable.postal_address
 
           }
           const jwt = makeJwt({ header, payload, key })
@@ -153,6 +155,8 @@ export default {
             email: values.email,
             industry: values.industry,
             password: hashedPassword,
+            company_name: values.company_name,
+            postal_address: values.postal_address
           },
         );
 

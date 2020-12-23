@@ -5,6 +5,13 @@ export const TABLE = {
   USERS: "Users",
   INVOICES: "Invoices",
   ESTIMATES: "Estimates",
-   INCOME: "Uscers"
+  INVOICE_ITEMS: "Invoice_Items",
+  ESTIMATE_ITEMS: "estimate_items",
+  ITEMS: "items",
+  INCOME: "Uscers",
+  PAYMENT_RECEIVED: "payment_method",
+  DEPOSIT_TO: "deposit_to",
+  PAYMENT_RECEIVED_PAY: "payment_received"
+
 
 };
