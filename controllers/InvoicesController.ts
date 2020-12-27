@@ -268,13 +268,45 @@ export default {
         filter_value: filter_value,
         created_by: Number(created_by),
       });
-       
+
       console.log(filter_value, '||| params');
 
       const data = await invoiceService.getInvoiceFilterUnpaid({
         filter_value: filter_value,
         created_by: Number(created_by)
 
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        total: total,
+        data: data
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+  /**
+  * @description Get all Invoices List
+  */
+  getInvoicesPaidReceipt: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      // console.log("bayo", kw)
+      let { filter_value } = getQuery(ctx, { mergeParams: true });
+      const total = await invoiceService.getPageSizeInvoicePaidReceipt({
+        filter_value: filter_value
+      });
+
+      console.log(filter_value, '||| params');
+
+      const data = await invoiceService.getInvoiceFilterPaidReceipt({
+        filter_value: filter_value
       });
       ctx.response.body = {
         status: true,

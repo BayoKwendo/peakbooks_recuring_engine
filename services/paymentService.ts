@@ -98,7 +98,7 @@ export default {
 
     getPaymentReceivedUnpaid: async ({ offset, created_by }: Payment) => {
         const result = await client.query(
-            `SELECT i.created, i.reference, c.customer_display_name, i.invoice_no,i.payment_mode,i.amount_inexcess,i.amount_received FROM 
+            `SELECT i.created, i.reference, i.id, c.customer_display_name, i.invoice_no,i.payment_mode,i.amount_inexcess,i.amount_received FROM 
         ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
          c.client_id = ? AND i.status = 1 order by i.id DESC LIMIT ?,10`, [created_by, offset]);
         return result;

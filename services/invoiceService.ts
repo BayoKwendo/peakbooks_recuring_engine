@@ -6,7 +6,7 @@ export default {
     createInvoice: async ({ customer_id, invoice_no, terms, due_date, invoice_date, message_invoice, sub_total, statement_invoice, amount,
         due_amount, tax_amount, discount_amount, created_by }: Invoices) => {
         const result = await client.query(`INSERT INTO ${TABLE.INVOICES}  SET
-        customer_id=?, invoice_no=?, terms=?, due_date =?, invoice_date =?, message_invoice=?,sub_total=?, 
+        customer_id=?,terms=?, due_date =?, invoice_date =?, message_invoice=?,sub_total=?, 
         statement_invoice=?, 
         amount=?, 
         due_amount=?,
@@ -14,7 +14,6 @@ export default {
         discount_amount=?,
         created_by=?`, [
             customer_id,
-            invoice_no,
             terms,
             due_date,
             invoice_date,
@@ -75,6 +74,23 @@ export default {
            ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
             i.customer_id = ? AND i.status=0 AND i.created_by  = ?`, [filter_value, created_by]);
         return result;
+    },
+
+
+    getInvoiceFilterPaidReceipt: async ({ filter_value }: Invoices) => {
+        const result = await client.query(
+            `SELECT * FROM 
+             ${TABLE.INVOICES} WHERE
+           payment_received_id = ?`, [filter_value]);
+        return result;
+    },
+
+    getPageSizeInvoicePaidReceipt: async ({ filter_value }: Invoices) => {
+        const [result] = await client.query(
+            `SELECT COUNT(id) count FROM 
+            ${TABLE.INVOICES} WHERE
+          payment_received_id = ?`, [filter_value]);
+        return result.count;
     },
     getPageSizeInvoiceUnpaid: async ({ filter_value, created_by }: Invoices) => {
         const [result] = await client.query(
@@ -171,5 +187,5 @@ export default {
         return result;
     },
 
- 
+
 };

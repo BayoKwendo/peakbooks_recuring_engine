@@ -14,6 +14,7 @@ router
   .get("/invoiceitem",authorize, InvoicesController.getInvoiceItem)
   .get("/estimateitem",authorize, InvoicesController.getEstimateItem)
   .get("/invoiceunpaid",authorize, InvoicesController.getInvoicesUnpaid)
+  .get("/invoicepaid",authorize, InvoicesController.getInvoicesPaidReceipt)
 
   
 export default router;
