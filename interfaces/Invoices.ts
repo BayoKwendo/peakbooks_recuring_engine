@@ -28,6 +28,4 @@ export default interface Bet {
   frequecy?: string,
   recurring?: string,
   frequency_type?: string
-
-
 }
