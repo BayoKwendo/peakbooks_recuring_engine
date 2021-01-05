@@ -20,8 +20,8 @@ export default {
     }
     try {
       const values = await body.value;
-
-      await invoiceService.createInvoice(
+// 
+      const body222 = await invoiceService.createInvoice(
         {
           customer_id: values.customer_id,
           invoice_no: values.invoice_no,
@@ -31,18 +31,46 @@ export default {
           message_invoice: values.message_invoice,
           statement_invoice: values.statement_invoice,
           amount: values.amount,
+          estimate: values.estimate,
           due_amount: values.due_amount,
           discount_amount: values.discount_amount,
           sub_total: values.sub_total,
           tax_amount: values.tax_amount,
-          created_by: values.created_by
+          created_by: values.created_by,
+          recurring: values.recurring
         }
       );
-      response.body = {
-        status: true,
-        status_code: 200,
-        message: "Invoices added successfully",
-      };
+
+      if (body222) {
+
+        if (values.frequecy == null) {
+          response.body = {
+            status: true,
+            status_code: 200,
+            message: "Invoices added successfully",
+          };
+        } else {
+
+          const recurring_invoices = await invoiceService.createRecurringInvoice(
+            {
+              invoice_no: values.invoice_no,
+              start_time: values.start_time,
+              end_time: values.end_time,
+              frequecy: values.frequecy,
+              frequency_type: values.frequency_type
+
+            })
+            
+          if (recurring_invoices) {
+            response.body = {
+              status: true,
+              status_code: 200,
+              message: "Recurring Invoices added successfully",
+            };
+          }
+        }
+      }
+
     } catch (error) {
       response.status = 400;
       response.body = {
@@ -186,6 +214,40 @@ export default {
     }
   },
 
+
+
+  convertEstimate: async ({ request, response }: { request: any; response: any },) => {
+    const body = await request.body();
+    if (!request.hasBody) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      await invoiceService.convertEstimate(
+        {
+          invoice_no: values.invoice_no,
+        },
+      );
+      response.body = {
+        status: true,
+        status_code: 200,
+        message: ` Success! Estimate#${values.invoice_no} has been converted to invoice`,
+      };
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+
   /**
   * @description Get all Invoices List
   */
@@ -193,9 +255,10 @@ export default {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
-      let { page_number, filter_value, created_by } = getQuery(ctx, { mergeParams: true });
+      let { page_number, filter_value, estimate, created_by } = getQuery(ctx, { mergeParams: true });
       const total = await invoiceService.getPageSizeInvoice({
         created_by: Number(created_by),
+        estimate: estimate
       });
       if (filter_value == null || filter_value == "") {
         console.log(page_number, '||| params');
@@ -206,6 +269,7 @@ export default {
           const offset = (Number(page_number) - 1) * 10;
           const data = await invoiceService.getInvoices({
             offset: Number(offset),
+            estimate: estimate,
             created_by: Number(created_by)
           });
           ctx.response.body = {
@@ -218,9 +282,9 @@ export default {
           const offset = (Number(page_number) - 1) * 10;
           const data = await invoiceService.getInvoices({
             offset: Number(offset),
+            estimate: estimate,
             created_by: Number(created_by)
           });
-
           ctx.response.body = {
             status: true,
             status_code: 200,

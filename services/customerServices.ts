@@ -20,15 +20,13 @@ export default {
         ]);
         return result;
     },
-    
+
     createAddress: async ({
-        customer_id, street, city_town, state_province, country,
-        street1, city_town1, state_province1, country1,tax_info,
+        customer_id, street, city_town, state_province, country, tax_info,
         notes, payment_method, delivery_method, terms, out_of_balance }: Customers) => {
         const result = await client.query(`INSERT INTO ${TABLE.CUSTOMER_MORE}
           SET
-          customer_id=?, street=?, city_town=?, state_province=?, country=?,
-          street1=?, city_town1=?, state_province1=?, country1=?,tax_info=?, 
+          customer_id=?, street=?, city_town=?, state_province=?, country=?, tax_info=?, 
           notes=?, payment_method=?, delivery_method=?, terms=?, out_of_balance=?`,
             [
                 customer_id,
@@ -36,10 +34,6 @@ export default {
                 city_town,
                 state_province,
                 country,
-                street1,
-                city_town1,
-                state_province1,
-                country1,
                 tax_info,
                 notes,
                 payment_method,
@@ -81,21 +75,16 @@ export default {
 
     updateCustomerMore: async ({
         customer_id, street, city_town, state_province, country,
-        street1, city_town1, state_province1, country1, tax_info,
-        notes, payment_method, delivery_method, terms, out_of_balance
+        street1, tax_info,
+        notes, delivery_method, terms, out_of_balance
     }: Customers) => {
         const query = await client.query(`UPDATE ${TABLE.CUSTOMER_MORE} SET 
           street=?, 
           city_town=?,
           state_province=?, 
           country=?,
-          street1=?, 
-          city_town1=?,
-          state_province1=?,
-          country1=?,
           tax_info=?,
           notes=?,
-          payment_method=?,
           delivery_method=?, 
           terms=?, 
           out_of_balance=?
@@ -105,13 +94,8 @@ export default {
                 city_town,
                 state_province,
                 country,
-                street1,
-                city_town1,
-                state_province1,
-                country1,
                 tax_info,
                 notes,
-                payment_method,
                 delivery_method,
                 terms,
                 out_of_balance,
@@ -122,7 +106,7 @@ export default {
 
     getCustomerFilter: async ({ filter_value }: Customers) => {
         const result = await client.query(
-            `SELECT * FROM  ${TABLE.CUSTOMER} WHERE email LIKE ? or msisdn or customer_display_name LIKE ?`, [filter_value, filter_value]);
+            `SELECT * FROM  ${TABLE.CUSTOMER} WHERE email LIKE ? or msisdn LIKE ? or customer_display_name LIKE ?`, [filter_value, filter_value, filter_value]);
         return result;
     },
     getPageSizeCustomer: async ({ client_id }: Customers) => {

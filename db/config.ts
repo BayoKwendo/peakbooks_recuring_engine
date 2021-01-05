@@ -11,7 +11,9 @@ export const TABLE = {
   INCOME: "Uscers",
   PAYMENT_RECEIVED: "payment_method",
   DEPOSIT_TO: "deposit_to",
-  PAYMENT_RECEIVED_PAY: "payment_received"
+  PAYMENT_RECEIVED_PAY: "payment_received",
+  RECURRING_INVOICE: "recurring_invoices"
+
 
 
 };

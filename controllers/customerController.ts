@@ -158,7 +158,7 @@ export default {
           };
         }
       } else {
-        console.log(filter_value, '||| params');
+        // console.log(filter_value, '||| params');
 
         const data = await customerServices.getCustomerFilter({
           filter_value: filter_value

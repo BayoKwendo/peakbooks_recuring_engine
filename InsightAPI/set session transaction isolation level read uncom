@@ -1,0 +1,51 @@
+set session transaction isolation level read uncommitted;
+
+ 
+
+select "2020 is almost over!\n\nWIN our last N200,000 of the DAY!\n\nTo deposit, SMS LB50 to 3337 \n\nPlay Now!\n\nCall: 08065237045 / 017005530" into @message;
+
+ 
+
+insert into dbQueue_Bulk (Originator, Destination, Message, SMSCID, command)
+
+select 'Luckybox', msisdn,,"2020 is almost over!\n\nWIN our last N200,000 of the DAY!\n\nTo deposit, SMS LB50 to 3337 \n\nPlay Now!\n\nCall: 08065237045 / 017005530", 'Infobip', 'blast'
+
+from (
+
+
+select msisdn from CustomerAccount c inner join rfm r on c.id = r.customer_id
+
+where length(msisdn) = 13 and segment in ('First Grade', 'Loyal')
+
+ 
+
+) as c left join Blacklist b on c.msisdn = b.mobile
+
+where b.mobile is null;
+
+ 
+select msisdn from CustomerAccount c inner join rfm r on c.id = r.customer_id
+
+where length(msisdn) = 13 and monetary_score > = 1 AND monrtary_score < = 5; 
+ 
+ 
+
+select msisdn from CustomerAccount
+
+where length(msisdn) = 13 and date(convert_tz(timeCreated, '+00:00','-02:00'))>=date_sub(curdate(), interval 5 day)
+
+ 
+
+union
+
+
+Any plans for the NEW YEAR? LUCKY BOX got you covered
+
+PLAY & WIN N450,000 CASH
+
+To deposit, SMS LB50 to 3337 
+
+PLAY NOW!
+
+Call: 08065237045 / 017005530
+

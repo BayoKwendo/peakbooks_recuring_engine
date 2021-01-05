@@ -1,18 +1,19 @@
 export default interface Bet {
   id?: number,
-  page_number?:number,
-  offset?:number,
+  page_number?: number,
+  offset?: number,
   customer_id?: string,
   statement_invoice?: string,
   invoice_no?: string,
   terms?: string,
   due_date?: string,
-  created_by?:number,
+  created_by?: number,
   message_invoice?: string,
   invoice_date?: string,
   estimate_date?: string,
   expiry_date?: string,
   estimate_message?: string,
+  estimate?: string,
   amount?: string,
   due_amount?: string,
   tax_amount?: string,
@@ -21,5 +22,12 @@ export default interface Bet {
   estimate_no?: string,
   pdf?: string,
   statement_message?: string,
-  filter_value?:any
+  filter_value?: any,
+  start_time?: string,
+  end_time?: string,
+  frequecy?: string,
+  recurring?: string,
+  frequency_type?: string
+
+
 }

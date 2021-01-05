@@ -6,12 +6,9 @@ const router = new Router();
 
 router
   .post("/payment_method", authorize, paymentController.createPaymentMethod)
-
   .get("/payment_method", authorize, paymentController.getPayments)
-
   .post("/deposit_to", authorize, paymentController.createDeposit_to)
   .get("/deposit_to", authorize, paymentController.getDeposit_to)
-
   .post("/payment_received", authorize, paymentController.createPaymentReceivedPay)
   .get("/payment_status", authorize, paymentController.getPaymentUnpaidrecord)
   .put("/payment_status", authorize, paymentController.updatePaymentUnpaidrecord)

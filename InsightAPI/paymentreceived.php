@@ -30,11 +30,9 @@ $mail->Host = "smtp.gmail.com";
         
         $to = $data['email'];
         $mail->addAddress($to);
-        $mail->Subject = 'Updated: Invoice '.$data['invoice_no'].'';
+        $mail->Subject = 'Payment Confirmation';
         $mail->addStringAttachment(base64_decode($data['filesend']),  ''.$data['invoice_no'].'.pdf');
-        $message = '
-
-        <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        $message = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
         <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 
         <head>
@@ -43,7 +41,7 @@ $mail->Host = "smtp.gmail.com";
         <meta name="viewport" content="width=device-width">
         <!--[if !mso]><!-->
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <!--<![endif]-->  
+        <!--<![endif]-->
         <title></title>
         <!--[if !mso]><!-->
         <!--<![endif]-->
@@ -60,7 +58,7 @@ $mail->Host = "smtp.gmail.com";
           border-collapse: collapse;
         }
 
-    * {
+        * {
         line-height: inherit;
       }
 
@@ -245,7 +243,7 @@ $mail->Host = "smtp.gmail.com";
       <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px; font-family: Tahoma, Verdana, sans-serif"><![endif]-->
       <div style="color:#393d47;font-family:Lato, Tahoma, Verdana, Segoe, sans-serif;line-height:1.2;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;">
       <div style="line-height: 1.2; font-size: 12px; color: #393d47; font-family: Lato, Tahoma, Verdana, Segoe, sans-serif; mso-line-height-alt: 14px;">
-      <p style="font-size: 14px; line-height: 1.2; word-break: break-word; mso-line-height-alt: 17px; margin: 0;">Below is the details of your updated invoice which can be be downloaded as PDF from the link below. Thank you for doing business with us.&nbsp;</p>
+      <p style="font-size: 14px; line-height: 1.2; word-break: break-word; mso-line-height-alt: 17px; margin: 0;">We have received your payment. Thank you.&nbsp;</p>
       </div>
       </div>
       <!--[if mso]></td></tr></table><![endif]-->
@@ -315,8 +313,8 @@ $mail->Host = "smtp.gmail.com";
       <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px; font-family: Tahoma, Verdana, sans-serif"><![endif]-->
       <div style="color:#ffffff;font-family:Lato, Tahoma, Verdana, Segoe, sans-serif;line-height:1.5;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;">
       <div style="font-size: 14px; line-height: 1.5; color: #ffffff; font-family: Lato, Tahoma, Verdana, Segoe, sans-serif; mso-line-height-alt: 21px;">
-      <p style="font-size: 14px; line-height: 1.5; word-break: break-word; text-align: center; mso-line-height-alt: 21px; margin: 0;">Invoice Date:</p>
-      <p style="font-size: 14px; line-height: 1.5; word-break: break-word; text-align: center; mso-line-height-alt: 21px; margin: 0;"><strong>'.$data['invoice_date'].'</strong></p>
+      <p style="font-size: 14px; line-height: 1.5; word-break: break-word; text-align: center; mso-line-height-alt: 21px; margin: 0;">Invoice Paid Date:</p>
+      <p style="font-size: 14px; line-height: 1.5; word-break: break-word; text-align: center; mso-line-height-alt: 21px; margin: 0;"><strong>'.$data['payment_date'].'</strong></p>
       </div>
       </div>
       <!--[if mso]></td></tr></table><![endif]-->
@@ -339,7 +337,7 @@ $mail->Host = "smtp.gmail.com";
       <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px; font-family: Tahoma, Verdana, sans-serif"><![endif]-->
       <div style="color:#ffffff;font-family:Lato, Tahoma, Verdana, Segoe, sans-serif;line-height:1.5;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;">
       <div style="font-size: 14px; line-height: 1.5; color: #ffffff; font-family: Lato, Tahoma, Verdana, Segoe, sans-serif; mso-line-height-alt: 21px;">
-      <p style="font-size: 14px; line-height: 1.5; word-break: break-word; text-align: center; mso-line-height-alt: 21px; margin: 0;">Amount Due:</p>
+      <p style="font-size: 14px; line-height: 1.5; word-break: break-word; text-align: center; mso-line-height-alt: 21px; margin: 0;">Amount Paid:</p>
       <p style="font-size: 14px; line-height: 1.5; word-break: break-word; text-align: center; mso-line-height-alt: 21px; margin: 0;"><strong>Ksh. '.$data['amount'].'</strong></p>
       </div>
       </div>
@@ -394,22 +392,6 @@ $mail->Host = "smtp.gmail.com";
       <div style="border-collapse: collapse;display: table;width: 100%;background-color:#5c98c7;">
       <!--[if (mso)|(IE)]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:transparent;"><tr><td align="center"><table cellpadding="0" cellspacing="0" border="0" style="width:700px"><tr class="layout-full-width" style="background-color:#5c98c7"><![endif]-->
       <!--[if (mso)|(IE)]><td align="center" width="700" style="background-color:#5c98c7;width:700px; border-top: 0px solid transparent; border-left: 0px solid transparent; border-bottom: 0px solid transparent; border-right: 0px solid transparent;" valign="top"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 0px; padding-left: 0px; padding-top:5px; padding-bottom:45px;"><![endif]-->
-      <div class="col num12" style="min-width: 320px; max-width: 700px; display: table-cell; vertical-align: top; width: 700px;">
-      <div class="col_cont" style="width:100% !important;">
-      <!--[if (!mso)&(!IE)]><!-->
-      <div style="border-top:0px solid transparent; border-left:0px solid transparent; border-bottom:0px solid transparent; border-right:0px solid transparent; padding-top:5px; padding-bottom:45px; padding-right: 0px; padding-left: 0px;">
-      <!--<![endif]-->
-      <div class="button-container" align="center" style="padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;">
-      <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-spacing: 0; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;"><tr><td style="padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px" align="center"><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="https://www.peak-insights.com/" style="height:42pt; width:204.75pt; v-text-anchor:middle;" arcsize="0%" stroke="false" fillcolor="#e0a729"><w:anchorlock/><v:textbox inset="0,0,0,0"><center style="color:#000000; font-family:Tahoma, Verdana, sans-serif; font-size:18px"><![endif]--><a href="https://www.peak-insights.com/" target="_blank" style="-webkit-text-size-adjust: none; text-decoration: none; display: inline-block; color: #000000; background-color: #e0a729; border-radius: 0px; -webkit-border-radius: 0px; -moz-border-radius: 0px; width: auto; width: auto; border-top: 1px solid #e0a729; border-right: 1px solid #e0a729; border-bottom: 1px solid #e0a729; border-left: 1px solid #e0a729; padding-top: 10px; padding-bottom: 10px; font-family: Lato, Tahoma, Verdana, Segoe, sans-serif; text-align: center; mso-border-alt: none; word-break: keep-all;"><span style="padding-left:60px;padding-right:60px;font-size:18px;display:inline-block;"><span style="font-size: 16px; line-height: 2; word-break: break-word; mso-line-height-alt: 32px;"><span style="font-size: 18px; line-height: 36px;" data-mce-style="font-size: 18px; line-height: 36px;"><strong>PAY</strong></span></span></span></a>
-      <!--[if mso]></center></v:textbox></v:roundrect></td></tr></table><![endif]-->
-      </div>
-      <!--[if (!mso)&(!IE)]><!-->
-      </div>
-      <!--<![endif]-->
-      </div>
-      </div>
-      <!--[if (mso)|(IE)]></td></tr></table><![endif]-->
-      <!--[if (mso)|(IE)]></td></tr></table></td></tr></table><![endif]-->
       </div>
       </div>
       </div>
