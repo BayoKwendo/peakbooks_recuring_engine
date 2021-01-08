@@ -3,14 +3,12 @@ import { getQuery } from 'https://deno.land/x/oak/helpers.ts'
 import * as log from "https://deno.land/std/log/mod.ts";
 import userService from '../services/userService.ts';
 import { hashSync, compareSync } from "https://deno.land/x/bcrypt@v0.2.1/mod.ts";
-import { makeJwt, setExpiration, Jose, Payload } from "https://deno.land/x/djwt@v0.9.0/create.ts";
+import { create, getNumericDate } from "https://deno.land/x/djwt@v2.0/mod.ts"
+// import { makeJwt, setExpiration, Jose, Payload } from "https://deno.land/x/djwt@v0.9.0/create.ts";
 import clientemail from "../db/clientemail.ts";
 
 
-const header: Jose = {
-  alg: 'HS256',
-  typ: 'JWT'
-};
+// const header: Jose = ;
 
 const key = "dkdjdddhdhhdhwheruncdfhfhfhdd"
 export default {
@@ -67,12 +65,6 @@ export default {
           return;
         } else {
 
-          const oneHour = 3600
-          const payload: Payload =
-          {
-            iss: isAvailable.username,
-            exp: setExpiration(Date.now() / 1000 + oneHour),
-          };
           const data = {
             first_name: isAvailable.first_name,
             last_name: isAvailable.last_name,
@@ -85,8 +77,11 @@ export default {
             postal_address: isAvailable.postal_address
 
           }
-          const jwt = makeJwt({ header, payload, key })
-          ctx.cookies.set('jwt', jwt);
+          const oneHour = 3600
+
+          const jwt = await create({ alg: 'HS512', typ: 'JWT' },  { iss: isAvailable.email, exp: getNumericDate( oneHour)}, key)
+
+          ctx.cookies.set('jwt', new Date());
           ctx.response.body = {
             status: true,
             status_code: 200,
@@ -161,16 +156,16 @@ export default {
         );
 
         if (addUserData) {
-        
+
           // if (clientemail) {
 
-            // cookies.set('email_address', values.email);
+          // cookies.set('email_address', values.email);
 
-            response.body = {
-              status: true,
-              status_code: 200,
-              message: "Created Successfully! email has been send",
-            };
+          response.body = {
+            status: true,
+            status_code: 200,
+            message: "Created Successfully! email has been send",
+          };
           // } else {
           //   response.body = {
           //     status: true,
@@ -254,7 +249,7 @@ export default {
       };
     }
   },
-  
+
 
   updateUserPssword: async ({ request, response }: { request: any; response: any },) => {
     const body = await request.body();
@@ -291,7 +286,7 @@ export default {
     }
   },
 
-  
+
   updateUser: async ({ request, response }: { request: any; response: any },) => {
     const body = await request.body();
     if (!request.hasBody) {

@@ -1,0 +1,11 @@
+// .vscode/settings.json
+{
+    "deno.enable": true,
+    "terminal.integrated.shell.osx": "/bin/zsh",
+    "terminal.integrated.fontSize": 16
+    // "deno.import_map": "./path/to/import_map.json",
+    // "deno.unstable": false,
+    // "deno.import_idntellisense_origins": {
+    //   "https://deno.land": true
+    // }
+  }

@@ -16,5 +16,11 @@ router
   .get("/estimateitem", authorize, InvoicesController.getEstimateItem)
   .get("/invoiceunpaid", authorize, InvoicesController.getInvoicesUnpaid)
   .get("/invoicepaid", authorize, InvoicesController.getInvoicesPaidReceipt)
+  .get("/invoiceEmail", InvoicesController.getOneInvoices)
+  .get("/invoicerecurring", authorize, InvoicesController.getFrequencyInvoices)
+  .put("/recurringinvoice", authorize, InvoicesController.updatefrequencystatus)
+  .put("/recurringinvoice2", authorize, InvoicesController.updatefrequencystatus2)
+
+  
 
 export default router;

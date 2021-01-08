@@ -33,25 +33,29 @@ export default {
         return result;
     },
 
-    createRecurringInvoice: async ({ invoice_no, start_time, end_time, frequecy, frequency_type }: Invoices) => {
+    createRecurringInvoice: async ({ invoice_no, due_amount, start_time, end_time, customer_id, frequecy, created_by, frequency_type }: Invoices) => {
         const result = await client.query(`INSERT INTO ${TABLE.RECURRING_INVOICE}  SET
         invoice_no=?,
+        due_amount=?,
         start_time=?, 
         end_time =?, 
+        customer_id =?,
         frequecy =?,
         frequency_type=?,
+        created_by=?,
         last_updated = '1',
         status ='1'`, [
             invoice_no,
+            due_amount,
             start_time,
             end_time,
+            customer_id,
             frequecy,
-            frequency_type
+            frequency_type,
+            created_by
         ]);
         return result;
     },
-
-
     updateInvoice: async ({ customer_id, invoice_no, terms, due_date, invoice_date, message_invoice, sub_total, statement_invoice, amount,
         due_amount, tax_amount, discount_amount, created_by }: Invoices,) => {
         const query = await client.query(`UPDATE ${TABLE.INVOICES} 
@@ -91,7 +95,7 @@ export default {
 
     getInvoices: async ({ offset, created_by, estimate }: Invoices) => {
         const result = await client.query(
-            `SELECT i.invoice_no, i.terms, i.due_date, i.status, i.invoice_date, i.discount_amount, i.sub_total, i.tax_amount, i.message_invoice,i.statement_invoice,
+            `SELECT i.invoice_no, i.terms, i.due_date, i.status, i.invoice_date, i.date_modified, i.discount_amount, i.sub_total, i.tax_amount, i.message_invoice,i.statement_invoice,
              i.due_amount, i.amount, c.customer_display_name,c.email, c.company_name  FROM 
             ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
             WHERE i.created_by = ? AND i.estimate = ? order by i.date_modified DESC LIMIT ?,10`, [created_by, estimate, offset]);
@@ -99,12 +103,70 @@ export default {
     },
 
 
+    getFrequencyInvoices: async ({ offset, created_by, estimate }: Invoices) => {
+        const result = await client.query(
+            `SELECT i.invoice_no, i.start_time, i.end_time,i.due_amount, i.modified, i.status, i.frequecy, i.frequency_type, c.customer_display_name,c.email, c.company_name  FROM 
+            ${TABLE.RECURRING_INVOICE} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
+            WHERE i.created_by = ? order by i.modified DESC LIMIT ?,10`, [created_by, offset]);
+        return result;
+    },
+
+    getPageSizeFrequencyInvoice: async ({ created_by }: Invoices) => {
+        const [result] = await client.query(
+            `SELECT COUNT(i.id) count FROM ${TABLE.RECURRING_INVOICE} i inner join ${TABLE.CUSTOMER}
+             c on c.id = i.customer_id WHERE created_by = ?`, [created_by]);
+        return result.count;
+    },
+    getFrequencyInvoicesFilter: async ({ filter_value }: Invoices) => {
+        const result = await client.query(
+            `SELECT * FROM 
+           ${TABLE.RECURRING_INVOICE} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE i.invoice_no = ?`, [filter_value]);
+        return result;
+    },
+
+    updatefrequency: async ({ frequecy, invoice_no }: Invoices) => {
+        const result = await client.query(
+            `UPDATE ${TABLE.RECURRING_INVOICE} SET 
+            frequecy = ?, 
+            start_time = DATE_FORMAT(now(), "%Y-%m-%d %h:%i:%s")
+
+            WHERE invoice_no = ? `,
+            [frequecy, invoice_no]);
+        return result;
+    },
+
+    updatefrequencystatus: async ({ invoice_no }: Invoices) => {
+        const result = await client.query(
+            `UPDATE ${TABLE.RECURRING_INVOICE} SET 
+            status = 0
+            WHERE invoice_no = ?`,
+            [invoice_no]);
+        return result;
+    },
 
 
+    updatefrequencystatus2: async ({ invoice_no }: Invoices) => {
+        const result = await client.query(
+            `UPDATE ${TABLE.RECURRING_INVOICE} SET 
+            status = 1
+            WHERE invoice_no = ?`,
+            [invoice_no]);
+        return result;
+    },
 
     getfrequency: async () => {
+        const [result] = await client.query(
+            `SELECT * FROM  ${TABLE.RECURRING_INVOICE} WHERE frequecy < UNIX_TIMESTAMP(NOW()) AND status = 1 order by id ASC limit 1`);
+        return result;
+    },
+
+
+    getOneInvoices: async ({ offset, created_by, estimate }: Invoices) => {
         const result = await client.query(
-            `SELECT DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')`);
+            `SELECT i.invoice_no, i.terms, i.due_date, i.status, i.invoice_date, i.discount_amount, i.sub_total, i.tax_amount, i.message_invoice,i.statement_invoice,
+             i.due_amount, i.amount, c.customer_display_name,c.email, c.company_name  FROM 
+            ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
+            WHERE i.created_by = ? AND i.estimate = ?  AND i.email_sent = 0 order by i.date_modified LIMIT 1`, [created_by, estimate, offset]);
         return result;
     },
 

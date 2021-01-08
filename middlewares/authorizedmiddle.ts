@@ -1,14 +1,12 @@
 import { Status } from "https://deno.land/x/oak/mod.ts";
 
-import { validateJwt } from "https://deno.land/x/djwt@v1.7/validate.ts";
+// import { validateJwt } from "https://deno.land/x/djwt@v1.7/validate.ts";
+import { verify, decode } from "https://deno.land/x/djwt@v2.0/mod.ts"
 
 export default async (ctx: any, next: any) => {
 
     const jwt = ctx.request.headers
         .get("Authorization");
-    // console.log(jwt, '||| params');
-
-    let validatedJwt;
     if (!jwt) {
         ctx.response.body = {
             status: false,
@@ -16,23 +14,18 @@ export default async (ctx: any, next: any) => {
             message: "Access Token Missing!",
         };
     } else {
-        const key = "dkdjdddhdhhdhwheruncdfhfhfhdd"
-        const jwt = ctx.request.headers
-            .get("Authorization");
-        validatedJwt = await validateJwt({
-            jwt,
-            key,
-            algorithm: "HS256"
-        });
-
-        if (validatedJwt.isValid) {
-            await next();
-        } else {
+        try {
+            const key = "dkdjdddhdhhdhwheruncdfhfhfhdd"
+            const data: any = await verify(jwt, key, "HS512");
             ctx.cookies.delete('jwt');
+            ctx.response.body = data
+            await next();
+        } catch (error) {
+            // ctx.response.status = 400;
             ctx.response.body = {
-                status: false,
                 status_code: 401,
-                message: "InValid Token!",
+                status: false,
+                message: `${error}`,
             };
         }
     }

@@ -20,7 +20,7 @@ export default {
     }
     try {
       const values = await body.value;
-// 
+      // 
       const body222 = await invoiceService.createInvoice(
         {
           customer_id: values.customer_id,
@@ -55,12 +55,15 @@ export default {
             {
               invoice_no: values.invoice_no,
               start_time: values.start_time,
+              due_amount: values.due_amount,
               end_time: values.end_time,
               frequecy: values.frequecy,
-              frequency_type: values.frequency_type
+              frequency_type: values.frequency_type,
+              customer_id: values.customer_id,
+              created_by: values.created_by
 
             })
-            
+
           if (recurring_invoices) {
             response.body = {
               status: true,
@@ -94,7 +97,6 @@ export default {
     }
     try {
       const values = await body.value;
-
       await invoiceService.createEstimate(
         {
           customer_id: values.customer_id,
@@ -125,6 +127,67 @@ export default {
     }
   },
 
+
+
+  updatefrequencystatus: async ({ request, response }: { request: any; response: any },) => {
+    const body = await request.body();
+    if (!request.hasBody) {
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      await invoiceService.updatefrequencystatus(
+        {
+          invoice_no: values.invoice_no,
+        },
+      );
+      response.body = {
+        status: true,
+        status_code: 200,
+        message: "Updated Successfully",
+      };
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+  updatefrequencystatus2: async ({ request, response }: { request: any; response: any },) => {
+    const body = await request.body();
+    if (!request.hasBody) {
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      await invoiceService.updatefrequencystatus2(
+        {
+          invoice_no: values.invoice_no,
+        },
+      );
+      response.body = {
+        status: true,
+        status_code: 200,
+        message: "Updated Successfully",
+      };
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: `${error}`,
+      };
+    }
+  },
 
   updateInvoicePDF: async ({ request, response }: { request: any; response: any },) => {
     const body = await request.body();
@@ -215,7 +278,6 @@ export default {
   },
 
 
-
   convertEstimate: async ({ request, response }: { request: any; response: any },) => {
     const body = await request.body();
     if (!request.hasBody) {
@@ -248,6 +310,112 @@ export default {
   },
 
 
+
+  /**
+   * @description Get all rECURRING Invoices List
+   */
+  getFrequencyInvoices: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      // console.log("bayo", kw)
+      let { page_number, filter_value, estimate, created_by } = getQuery(ctx, { mergeParams: true });
+      const total = await invoiceService.getPageSizeFrequencyInvoice({
+        created_by: Number(created_by),
+        estimate: estimate
+      });
+      if (filter_value == null || filter_value == "") {
+        console.log(page_number, '||| params');
+
+        if (page_number == null) {
+          page_number = "1"
+
+          const offset = (Number(page_number) - 1) * 10;
+          const data = await invoiceService.getFrequencyInvoices({
+            offset: Number(offset),
+            estimate: estimate,
+            created_by: Number(created_by)
+          });
+          ctx.response.body = {
+            status: true,
+            status_code: 200,
+            total: total,
+            data: data
+          };
+        } else {
+          const offset = (Number(page_number) - 1) * 10;
+          const data = await invoiceService.getFrequencyInvoices({
+            offset: Number(offset),
+            estimate: estimate,
+            created_by: Number(created_by)
+          });
+          ctx.response.body = {
+            status: true,
+            status_code: 200,
+            total: total,
+            data: data
+          };
+        }
+      }
+
+      else {
+        console.log(filter_value, '||| params');
+
+        const data = await invoiceService.getFrequencyInvoicesFilter({
+          filter_value: filter_value,
+
+        });
+
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          total: total,
+          data: data
+        };
+
+      }
+
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
+  /**
+ * @description Get all Invoices List
+ */
+  getOneInvoices: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      // console.log("bayo", kw)
+      let { page_number, filter_value, estimate, created_by } = getQuery(ctx, { mergeParams: true });
+
+      page_number = "1"
+
+      const offset = (Number(page_number) - 1) * 10;
+      const data = await invoiceService.getOneInvoices({
+        offset: Number(offset),
+        estimate: estimate,
+        created_by: Number(created_by)
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data
+      };
+
+
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
   /**
   * @description Get all Invoices List
   */
