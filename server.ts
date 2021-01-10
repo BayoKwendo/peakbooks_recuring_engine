@@ -1,26 +1,22 @@
 import { Application, Context, Router } from "https://deno.land/x/oak/mod.ts";
 import { green, yellow } from "https://deno.land/std@0.53.0/fmt/colors.ts";
 import { oakCors } from "https://deno.land/x/cors/mod.ts";
-
 import customerRoutes from "./routes/customer.route.ts";
+import vendorRouter from "./routes/vendor_route.ts";
 import incomeRouter from "./routes/income.route.ts";
 import depositRouter from "./routes/deposit.route.ts";
 import invoiceRouter from "./routes/invoice.route.ts";
 import reportRouter from "./routes/report.route.ts";
 import creditRouter from "./routes/credit.route.ts";
-
 import testRouter from "./routes/connect.route.ts";
 import userRouter from "./routes/user.route.ts";
 import itemRouter from "./routes/item.route.ts";
 import paymentRouter from "./routes/payment_route.ts";
 import itemService from "./services/itemService.ts ";
-
 import invoiceService from "./services/invoiceService.ts ";
-
 import logger from './middlewares/logger.ts';
 import notFound from './middlewares/notFound.ts';
 import { cron, start, stop, everyMinute, daily, weekly } from 'https://deno.land/x/deno_cron/cron.ts';
-
 
 
 const app = new Application();
@@ -46,7 +42,9 @@ app.use(logger.responseTime);
 let task = cron('*/.5 * * * * *', async () => {
   stop()
   const invoice_no = await invoiceService.getfrequency();
+
   if (invoice_no) {
+
     const data = await invoiceService.getInvoiceFilter({
       filter_value: invoice_no.invoice_no
     });
@@ -74,6 +72,7 @@ let task = cron('*/.5 * * * * *', async () => {
         }
       );
       if (body222) {
+
         let page_number = "1"
         const offset = (Number(page_number) - 1) * 2;
         const dataInvoice = await invoiceService.getInvoices({
@@ -97,6 +96,7 @@ let task = cron('*/.5 * * * * *', async () => {
           },
           body: JSON.stringify(data3),
         })
+
         if (postRequest) {
 
           if (invoice_no.frequency_type === "Daily") {
@@ -116,7 +116,6 @@ let task = cron('*/.5 * * * * *', async () => {
             });
             if (updateData) {
               start();
-              console.log('Done')
             }
           }
           else if (invoice_no.frequency_type === "After 2 Weeks") {
@@ -126,7 +125,6 @@ let task = cron('*/.5 * * * * *', async () => {
             });
             if (updateData) {
               start();
-              console.log('Done')
             }
           }
           else if (invoice_no.frequency_type === "Monthly") {
@@ -136,7 +134,7 @@ let task = cron('*/.5 * * * * *', async () => {
             });
             if (updateData) {
               start();
-              console.log('Done')
+              console.log(invoice_no)
             }
           }
           else if (invoice_no.frequency_type === "After 2 Months") {
@@ -208,6 +206,9 @@ app.use(itemRouter.routes());
 app.use(itemRouter.allowedMethods());
 app.use(customerRoutes.routes());
 app.use(customerRoutes.allowedMethods());
+app.use(vendorRouter.routes());
+app.use(vendorRouter.allowedMethods());
+
 app.use(testRouter.routes());
 app.use(testRouter.allowedMethods());
 app.use(reportRouter.routes());

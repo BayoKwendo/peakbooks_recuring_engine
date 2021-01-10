@@ -14,7 +14,9 @@ export const TABLE = {
   PAYMENT_RECEIVED_PAY: "payment_received",
   RECURRING_INVOICE: "recurring_invoices",
   CREDIT_NOTE: "credit_note",
-  CREDIT_ITEMS: "credit_items"
+  CREDIT_ITEMS: "credit_items",
+  VENDORS: "vendors"
+
 
 
 
