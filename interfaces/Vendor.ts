@@ -20,7 +20,6 @@ export default interface Vendor {
   city_town?: string,
   state_province?: string,
   country?: string,
-  notes?: string,
   street1?: string,
   state_province1?: string,
   country1?: string,
@@ -29,6 +28,23 @@ export default interface Vendor {
   delivery_method?: string,
   terms?: string,
   opening_balance?: string,
-  remarks?: string
+  expense_account?: string,
+  reference?: string,
+  expense_ref?: string,
+  frequency_type?: string,
+  frequecy?: string,
+  end_time?: string,
+  start_time?: string,
+  remarks?: string,
+  date?: string,
+  amount?: string,
+  paid_through?: string,
+  notes?: string,
+  vendor_id?: string,
+  billable?: string,
+  created_by?: string,
 
-}
+  product_name?: string
+
+  
+}  

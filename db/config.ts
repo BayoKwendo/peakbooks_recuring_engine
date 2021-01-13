@@ -15,8 +15,9 @@ export const TABLE = {
   RECURRING_INVOICE: "recurring_invoices",
   CREDIT_NOTE: "credit_note",
   CREDIT_ITEMS: "credit_items",
-  VENDORS: "vendors"
-
+  VENDORS: "vendors",
+  EXPENSES: "expenses",
+  RECURRING_EXPENSE: "recurring_expenses"
 
 
 

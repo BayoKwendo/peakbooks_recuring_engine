@@ -188,6 +188,271 @@ export default {
     }
   },
 
+  /**
+   * @description Add a new vendor
+   */
+  createExpense: async ({ request, response }: { request: any; response: any },) => {
+    const body = await request.body();
+    if (!request.hasBody) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      const body222 = await vendorService.createExpense(
+        {
+          client_id: values.client_id,
+          date: values.start_time,
+          expense_account: values.expense_account,
+          amount: values.amount,
+          paid_through: values.paid_through,
+          vendor_id: values.vendor_id,
+          notes: values.notes,
+          billable: values.billable,
+          product_name: values.product_name,
+          start_time: values.start_time,
+          end_time: values.end_time,
+          frequecy: values.frequecy,
+          frequency_type: values.frequency_type,
+          customer_id: values.customer_id,
+          created_by: values.client_id
+        }
+      )
+      if (body222) {
+
+        if (values.frequecy == null) {
+          response.body = {
+            status: true,
+            status_code: 200,
+            message: "Expense added successfully",
+          };
+        } else {
+
+          const recurring_invoices = await vendorService.createRecurringExpense(
+            {
+              start_time: values.start_time,
+              end_time: values.end_time,
+              vendor_id: values.vendor_id,
+              frequecy: values.frequecy,
+              frequency_type: values.frequency_type,
+              customer_id: values.customer_id,
+              created_by: values.client_id
+
+            })
+
+          if (recurring_invoices) {
+            response.body = {
+              status: true,
+              status_code: 200,
+              message: "Recurring Expenses added successfully",
+            };
+          }
+        }
+      }
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        status: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+  updatefrequencyexpensestatus: async ({ request, response }: { request: any; response: any },) => {
+    const body = await request.body();
+    if (!request.hasBody) {
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      await vendorService.updatefrequencyexpensestatus(
+        {
+          expense_ref: values.expense_ref,
+        },
+      );
+      response.body = {
+        status: true,
+        status_code: 200,
+        message: "Updated Successfully",
+      };
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+
+
+  updatefrequencyexpensestatus2: async ({ request, response }: { request: any; response: any },) => {
+    const body = await request.body();
+    if (!request.hasBody) {
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      await vendorService.updatefrequencyexpensestatus2(
+        {
+          expense_ref: values.expense_ref,
+        },
+      );
+      response.body = {
+        status: true,
+        status_code: 200,
+        message: "Updated Successfully",
+      };
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+  /**
+* @description Get all Expenses List
+*/
+  getAllExpenses: async (ctx: any) => {
+    try {
+
+      let { page_number, filter_value, client_id } = getQuery(ctx, { mergeParams: true });
+      const total = await vendorService.getPageSizeExpense({
+        client_id: client_id
+      });
+      if (filter_value == null || filter_value == "") {
+        if (page_number == null) {
+          page_number = "1"
+          const offset = (Number(page_number) - 1) * 10;
+          const data = await vendorService.getExpenses({
+            client_id: client_id,
+            offset: Number(offset)
+          });
+          ctx.response.body = {
+            status: true,
+            status_code: 200,
+            total: total,
+            data: data
+          };
+        } else {
+          const offset = (Number(page_number) - 1) * 10;
+
+          const data = await vendorService.getExpenses({
+            client_id: client_id,
+            offset: Number(offset)
+          });
+
+          ctx.response.body = {
+            status: true,
+            status_code: 200,
+            total: total,
+            data: data
+          };
+        }
+      } else {
+        // console.log(filter_value, '||| params');
+
+        const data = await vendorService.getExpenseFilter({
+          filter_value: filter_value
+        });
+
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          total: total,
+          data: data
+        };
+
+      }
+
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
+
+  /**
+* @description Get all Expenses List
+*/
+getAllExpensesRecuring: async (ctx: any) => {
+  try {
+
+    let { page_number, filter_value, client_id } = getQuery(ctx, { mergeParams: true });
+    const total = await vendorService.getPageSizeExpenseRe({
+      client_id: client_id
+    });
+    if (filter_value == null || filter_value == "") {
+      if (page_number == null) {
+        page_number = "1"
+        const offset = (Number(page_number) - 1) * 10;
+        const data = await vendorService.getRecurringExpenses({
+          client_id: client_id,
+          offset: Number(offset)
+        });
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          total: total,
+          data: data
+        };
+      } else {
+        const offset = (Number(page_number) - 1) * 10;
+
+        const data = await vendorService.getRecurringExpenses({
+          client_id: client_id,
+          offset: Number(offset)
+        });
+
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          total: total,
+          data: data
+        };
+      }
+    } else {
+      // console.log(filter_value, '||| params');
+
+      const data = await vendorService.getRecurringExpenses({
+        filter_value: filter_value
+      });
+
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        total: total,
+        data: data
+      };
+
+    }
+
+  } catch (error) {
+    ctx.response.status = 400;
+    ctx.response.body = {
+      success: false,
+      message: `Error: ${error}`,
+    };
+  }
+},
   //   /**
   //    * @description Get One Customers List
   //    */

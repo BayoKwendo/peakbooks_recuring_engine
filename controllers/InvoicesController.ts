@@ -467,6 +467,7 @@ export default {
 
         const data = await invoiceService.getInvoiceFilter({
           filter_value: filter_value,
+          created_by:  Number(created_by)
 
         });
 

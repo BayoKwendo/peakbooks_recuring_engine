@@ -14,6 +14,9 @@ import itemRouter from "./routes/item.route.ts";
 import paymentRouter from "./routes/payment_route.ts";
 import itemService from "./services/itemService.ts ";
 import invoiceService from "./services/invoiceService.ts ";
+
+import expenseService from "./services/vendorService.ts";
+
 import logger from './middlewares/logger.ts';
 import notFound from './middlewares/notFound.ts';
 import { cron, start, stop, everyMinute, daily, weekly } from 'https://deno.land/x/deno_cron/cron.ts';
@@ -39,12 +42,13 @@ app.use(logger.responseTime);
 // everyMinute(() => {
 //   // console.log('This method will run on 60 seconds')
 // })
+
 let task = cron('*/.5 * * * * *', async () => {
   stop()
   const invoice_no = await invoiceService.getfrequency();
+  // console.log("bayo")
 
   if (invoice_no) {
-
     const data = await invoiceService.getInvoiceFilter({
       filter_value: invoice_no.invoice_no
     });
@@ -190,8 +194,125 @@ let task = cron('*/.5 * * * * *', async () => {
       console.log(error)
     }
   } else {
-    start()
-    // console.log(new Date())
+   
+    const recur_expense = await expenseService.getfrequencyExpense();
+    if (recur_expense) {
+      const data = await expenseService.getRecurringExpeFilter({
+        filter_value: recur_expense.expense_ref
+      });
+      // console.log(data)
+      try {
+        const submitedexpense = await expenseService.createExpense(
+          {
+            client_id: data[0].client_id,
+            date: data[0].date,
+            expense_account: data[0].expense_account,
+            amount: data[0].amount,
+            paid_through: data[0].paid_through,
+            vendor_id: data[0].vendor_id,
+            notes: data[0].notes,
+            billable: data[0].billable,
+            product_name: data[0].product_name,
+            customer_id: data[0].customer_id,
+
+          }
+        );
+        if (submitedexpense) {
+          // console.log(data3)
+          if (recur_expense.frequency_type === "Daily") {
+            const updateData = await expenseService.updatefrequencyExpenses({
+              reference: recur_expense.expense_ref,
+              frequecy: ((Date.now() / 1000) + (1 * 24 * 60 * 60)).toString(),
+            });
+            if (updateData) {
+              start();
+              console.log('Done')
+            }
+          }
+          else if (recur_expense.frequency_type === "Weekly") {
+            const updateData = await expenseService.updatefrequencyExpenses({
+              reference: recur_expense.expense_ref,
+              frequecy: ((Date.now() / 1000) + (1 * 24 * 60 * 60)).toString(),
+            });
+            if (updateData) {
+              start();
+            }
+          }
+          else if (recur_expense.frequency_type === "After 2 Weeks") {
+            const updateData = await expenseService.updatefrequencyExpenses({
+              reference: recur_expense.expense_ref,
+              frequecy: ((Date.now() / 1000) + (1 * 24 * 60 * 60)).toString(),
+            });
+            if (updateData) {
+              start();
+              console.log('hoorei!!!')
+
+            }
+          }
+          else if (recur_expense.frequency_type === "Monthly") {
+            const updateData = await expenseService.updatefrequencyExpenses({
+              reference: recur_expense.expense_ref,
+              frequecy: ((Date.now() / 1000) + (1 * 24 * 60 * 60)).toString(),
+            });
+            if (updateData) {
+              start();
+            }
+          }
+          else if (recur_expense.frequency_type === "After 2 Months") {
+            const updateData = await expenseService.updatefrequencyExpenses({
+              reference: recur_expense.expense_ref,
+              frequecy: ((Date.now() / 1000) + (1 * 24 * 60 * 60)).toString(),
+            });
+            if (updateData) {
+              start();
+            }
+          }
+          else if (recur_expense.frequency_type === "After 3 Months") {
+            const updateData = await expenseService.updatefrequencyExpenses({
+              reference: recur_expense.expense_ref,
+              frequecy: ((Date.now() / 1000) + (1 * 24 * 60 * 60)).toString(),
+            });
+            if (updateData) {
+              start();
+            }
+          }
+          else if (recur_expense.frequency_type === "After 6 Months") {
+            const updateData = await expenseService.updatefrequencyExpenses({
+              reference: recur_expense.expense_ref,
+              frequecy: ((Date.now() / 1000) + (1 * 24 * 60 * 60)).toString(),
+            });
+            if (updateData) {
+              start();
+            }
+          }
+          else if (recur_expense.frequency_type === "Yearly") {
+            const updateData = await expenseService.updatefrequencyExpenses({
+              reference: recur_expense.expense_ref,
+              frequecy: ((Date.now() / 1000) + (1 * 24 * 60 * 60)).toString(),
+            });
+            if (updateData) {
+              start();
+            }
+          }
+          else if (recur_expense.frequency_type === "After 2 Years") {
+            const updateData = await expenseService.updatefrequencyExpenses({
+              reference: recur_expense.expense_ref,
+              frequecy: ((Date.now() / 1000) + (1 * 24 * 60 * 60)).toString(),
+            });
+            if (updateData) {
+              start();
+            }
+          }
+          // start()
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    } else {
+      start()
+      console.log("QUEUE IS EMPTY")
+    }
+
   }
 });
 

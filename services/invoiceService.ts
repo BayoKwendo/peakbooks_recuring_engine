@@ -170,10 +170,10 @@ export default {
         return result;
     },
 
-    getInvoiceFilter: async ({ filter_value }: Invoices) => {
+    getInvoiceFilter: async ({ created_by, filter_value }: Invoices) => {
         const result = await client.query(
             `SELECT * FROM 
-           ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE i.invoice_no = ?`, [filter_value]);
+           ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE i.created_by = ? AND i.invoice_no = ?`, [created_by, filter_value]);
         return result;
     },
 
