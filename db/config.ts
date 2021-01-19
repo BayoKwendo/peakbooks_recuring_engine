@@ -12,12 +12,18 @@ export const TABLE = {
   PAYMENT_RECEIVED: "payment_method",
   DEPOSIT_TO: "deposit_to",
   PAYMENT_RECEIVED_PAY: "payment_received",
+  PAYMENT_RECEIVED_PAY_BILL: "payment_received_bills",
   RECURRING_INVOICE: "recurring_invoices",
   CREDIT_NOTE: "credit_note",
+  CREDIT_NOTE_VENDOR: "credit_note_vendor",
+  CREDIT_NOTE_ITEMS: "credit_items_vendor",
+
   CREDIT_ITEMS: "credit_items",
   VENDORS: "vendors",
   EXPENSES: "expenses",
-  RECURRING_EXPENSE: "recurring_expenses"
+  RECURRING_EXPENSE: "recurring_expenses",
+  BILLS: "billings",
+  RECURRING_BILLS: 'recurring_bills'
 
 
 

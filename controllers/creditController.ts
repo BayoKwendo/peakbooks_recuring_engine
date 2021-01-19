@@ -54,6 +54,56 @@ export default {
     }
   },
 
+
+
+  /**
+* @description Add a new Credit note vendor
+*/
+  createCreditNoteVendor: async ({ request, response }: { request: any; response: any },) => {
+    const body = await request.body();
+    if (!request.hasBody) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      // 
+      const body222 = await creditService.createCrediNoteVendor(
+        {
+          vendor_id: values.vendor_id,
+          credit_no: values.credit_no,
+          credit_date: values.credit_date,
+          notes: values.notes,
+          amount: values.amount,
+          due_amount: values.due_amount,
+          discount_amount: values.discount_amount,
+          sub_total: values.sub_total,
+          tax_amount: values.tax_amount,
+          created_by: values.created_by,
+        }
+      );
+
+      if (body222) {
+        response.body = {
+          status: true,
+          status_code: 200,
+          message: "Credit Note  Vendor added successfully",
+        };
+      }
+
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        status: false,
+        message: `${error}`,
+      };
+    }
+  },
+
   updateCreditNote: async ({ request, response }: { request: any; response: any },) => {
     const body = await request.body();
     if (!request.hasBody) {
@@ -188,6 +238,99 @@ export default {
         };
 
       }
+
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
+
+  getCreditNoteVendor: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      // console.log("bayo", kw)
+      let { page_number, filter_value, created_by } = getQuery(ctx, { mergeParams: true });
+      const total = await creditService.getPageSizeVendorCredit({
+        created_by: Number(created_by)
+      });
+      if (filter_value == null || filter_value == "") {
+        console.log(page_number, '||| params');
+
+        if (page_number == null) {
+          page_number = "1"
+
+          const offset = (Number(page_number) - 1) * 10;
+          const data = await creditService.getCreditVendorNote({
+            offset: Number(offset),
+            created_by: Number(created_by)
+          });
+          ctx.response.body = {
+            status: true,
+            status_code: 200,
+            total: total,
+            data: data
+          };
+        } else {
+          const offset = (Number(page_number) - 1) * 10;
+          const data = await creditService.getCreditVendorNote({
+            offset: Number(offset),
+            created_by: Number(created_by)
+          });
+          ctx.response.body = {
+            status: true,
+            status_code: 200,
+            total: total,
+            data: data
+          };
+        }
+      }
+
+      else {
+        console.log(filter_value, '||| params');
+        const data = await creditService.getCreditVendorFilter({
+          filter_value: filter_value,
+        });
+
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          total: total,
+          data: data
+        };
+
+      }
+
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+  
+
+  //   /**
+  // * @description Get all credit item list
+  // */
+  getCreditVendorItems: async (ctx: any) => {
+    try {
+      let { filter_value } = getQuery(ctx, { mergeParams: true });
+      const data = await creditService.getCreditVendorItems({
+        filter_value: filter_value,
+
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data
+      };
 
     } catch (error) {
       ctx.response.status = 400;

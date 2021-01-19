@@ -6,11 +6,14 @@ const router = new Router();
 
 router
   .post("/credit", authorize, CreditController.createCreditNote)
-  // .post("/estimate", authorize, InvoicesController.createEstimates)
-  // .put("/invoice", authorize, InvoicesController.updateInvoicePDF)
+  .post("/creditvendor", authorize, CreditController.createCreditNoteVendor)
+  .get("/creditvendor", authorize, CreditController.getCreditNoteVendor)
   .put("/credit", authorize, CreditController.updateCreditNote)
   .get("/credit", authorize, CreditController.getCreditNote)
   .get("/creditItem", authorize, CreditController.getCreditItem)
+  .get("/creditvendorItem", authorize, CreditController.getCreditVendorItems)
+
+
 // .put("/convertestimate", authorize, InvoicesController.convertEstimate)
 // .get("/invoiceitem", authorize, InvoicesController.getInvoiceItem)
 // .get("/estimateitem", authorize, InvoicesController.getEstimateItem)

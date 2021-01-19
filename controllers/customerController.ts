@@ -144,7 +144,7 @@ export default {
           };
         } else {
           const offset = (Number(page_number) - 1) * 10;
-
+                
           const data = await customerServices.getAll({
             client_id: client_id,
             offset: Number(offset)

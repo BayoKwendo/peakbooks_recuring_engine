@@ -70,6 +70,31 @@ export default {
     },
 
 
+    createCrediNoteVendor: async ({ vendor_id, credit_date, sub_total, notes, amount, due_amount, tax_amount, discount_amount, created_by }: Credit) => {
+        const result = await client.query(`INSERT INTO ${TABLE.CREDIT_NOTE_VENDOR}  SET
+        vendor_id=?, 
+        credit_date =?, 
+        sub_total=?, 
+        notes=?, 
+        amount=?, 
+        due_amount=?,
+        tax_amount=?, 
+        discount_amount=?,
+        created_by=?,
+        status=1`, [
+            vendor_id,
+            credit_date,
+            sub_total,
+            notes,
+            amount,
+            due_amount,
+            tax_amount,
+            discount_amount,
+            created_by
+        ]);
+        return result;
+    },
+
     // getOneInvoices: async ({ offset, created_by, estimate }: Invoices) => {
     //     const result = await client.query(
     //         `SELECT i.invoice_no, i.terms, i.due_date, i.status, i.invoice_date, i.discount_amount, i.sub_total, i.tax_amount, i.message_invoice,i.statement_invoice,
@@ -101,5 +126,47 @@ export default {
         return result;
     },
 
+
+
+
+
+
+
+    getCreditVendorNote: async ({ offset, created_by }: Credit) => {
+        const result = await client.query(
+            `SELECT i.credit_no, i.credit_date,  i.status, i.notes,i.date_modified, i.reference, i.sub_total, i.tax_amount,
+             i.due_amount, i.amount, c.vendor_display_name, c.email, c.company_name  FROM 
+            ${TABLE.CREDIT_NOTE_VENDOR} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id 
+            WHERE i.created_by = ? order by i.date_modified DESC LIMIT ?,10`, [created_by, offset]);
+        return result;
+    },
+
+
+
+    getCreditVendorFilter: async ({ filter_value }: Credit) => {
+        const result = await client.query(
+            `SELECT * FROM 
+           ${TABLE.CREDIT_NOTE_VENDOR} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id WHERE i.credit_no = ?`, [filter_value]);
+        return result;
+    },
+
+
+
+    getPageSizeVendorCredit: async ({ created_by }: Credit) => {
+        const [result] = await client.query(
+            `SELECT COUNT(i.id) count FROM ${TABLE.CREDIT_NOTE_VENDOR} i inner join ${TABLE.VENDORS}
+             c on c.id = i.vendor_id WHERE created_by = ? `, [created_by]);
+        return result.count;
+    },
+
+    getCreditVendorItems: async ({ filter_value }: Credit) => {
+        const result = await client.query(
+            `SELECT * FROM  ${TABLE.CREDIT_NOTE_ITEMS} WHERE credit_no = ?`, [filter_value]);
+        return result;
+    },
+
+
+
+    
 
 };

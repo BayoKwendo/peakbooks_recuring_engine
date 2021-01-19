@@ -12,6 +12,8 @@ export default interface Credit {
   discount_amount?: string,
   sub_total?: string,
   terms_condition?: string,
+  notes?: string,
+  vendor_id?: string,
   customer_note?: string,
   filter_value?: any,
  

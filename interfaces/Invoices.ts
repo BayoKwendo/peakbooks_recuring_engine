@@ -27,5 +27,10 @@ export default interface Bet {
   end_time?: string,
   frequecy?: string,
   recurring?: string,
-  frequency_type?: string
+  frequency_type?: string,
+  bill_no?: string,
+  bill_date?: string,
+  notes?: string,
+  vendor_id?: string,
+  tax_inclusive?: string
 }

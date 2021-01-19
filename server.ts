@@ -46,15 +46,18 @@ app.use(logger.responseTime);
 let task = cron('*/.5 * * * * *', async () => {
   stop()
   const invoice_no = await invoiceService.getfrequency();
-  // console.log("bayo")
 
   if (invoice_no) {
     const data = await invoiceService.getInvoiceFilter({
-      filter_value: invoice_no.invoice_no
+      filter_value: invoice_no.invoice_no,
+      created_by: invoice_no.created_by
     });
     const itemData = await invoiceService.getInvoiceItems({
       filter_value: invoice_no.invoice_no,
+
     });
+    console.log(data)
+
     try {
       const body222 = await invoiceService.createInvoice(
         {
