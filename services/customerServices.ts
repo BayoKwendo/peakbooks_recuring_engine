@@ -109,6 +109,17 @@ export default {
             `SELECT * FROM  ${TABLE.CUSTOMER} WHERE email LIKE ? or msisdn LIKE ? or customer_display_name LIKE ?`, [filter_value, filter_value, filter_value]);
         return result;
     },
+
+
+    getCustomerBalance: async ({ client_id, startDate,endDate }: Customers) => {
+        const result = await client.query(
+            `SELECT out_of_balance FROM  ${TABLE.CUSTOMER} b LEFT JOIN ${TABLE.CUSTOMER_MORE} c ON b.id = c.customer_id WHERE
+             b.client_id = ${client_id} AND 
+             b.created_at BETWEEN ${startDate} AND ${endDate}`);
+        return result;
+    },
+
+
     getPageSizeCustomer: async ({ client_id }: Customers) => {
         const [result] = await client.query(
             `SELECT COUNT(id) count FROM  ${TABLE.CUSTOMER} WHERE client_id = ?`, [client_id]);

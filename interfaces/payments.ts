@@ -17,8 +17,9 @@ export default interface Payment {
   order_no?: string,
 
   notes?: string,
-  created_by?:number,
-
+  created_by?: number,
+  startDate?: any,
+  endDate?: any,
   amount_inexcess?: string,
   deposit_to?: string
 

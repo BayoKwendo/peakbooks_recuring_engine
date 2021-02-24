@@ -25,6 +25,8 @@ export default interface  Customers {
   state_province1?:string,
   country1?:string,
   city_town1?:string,
+  startDate?:any,
+  endDate?: any,
   payment_method?:string,
   delivery_method?:string,
   terms?:string,

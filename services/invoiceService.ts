@@ -103,6 +103,18 @@ export default {
     },
 
 
+    getInvoicesAmount: async ({ created_by, startDate, endDate }: Invoices) => {
+
+        const result = await client.query(
+            `SELECT amount  FROM 
+            ${TABLE.INVOICES}  
+            WHERE created_by = ${created_by} AND created_at BETWEEN ${startDate} AND ${endDate} `);
+        console.log(endDate)
+
+        return result;
+    },
+
+
     getFrequencyInvoices: async ({ offset, created_by, estimate }: Invoices) => {
         const result = await client.query(
             `SELECT i.invoice_no, i.start_time, i.end_time,i.due_amount, i.modified, i.status, i.frequecy, i.frequency_type, c.customer_display_name,c.email, c.company_name  FROM 

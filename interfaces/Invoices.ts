@@ -32,5 +32,7 @@ export default interface Bet {
   bill_date?: string,
   notes?: string,
   vendor_id?: string,
+  startDate?: any,
+  endDate?: any,
   tax_inclusive?: string
 }

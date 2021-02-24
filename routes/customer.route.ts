@@ -15,6 +15,8 @@ router2
 
   .post("/customermore",authorize, customerController.createBilling)
 
+  .get("/custom_balance", authorize, customerController.getAllCustomerBalance)
+
   .get("/customermore",authorize, customerController.getAllCustomersInfo)
 
   

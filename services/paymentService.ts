@@ -242,6 +242,23 @@ export default {
             i.vendor_id = ? AND i.status=0 AND i.created_by  = ?`, [filter_value, created_by]);
         return result;
     },
+    getBillingsAmount: async ({ created_by, startDate, endDate }: Invoices) => {
+        const result = await client.query(
+            `SELECT amount FROM  ${TABLE.BILLS} WHERE
+             created_by = ${created_by} AND 
+             created_at BETWEEN ${startDate} AND ${endDate}`);
+        return result;
+    },
+
+    getPaymentReceivable: async ({ startDate, endDate, created_by }: Payment) => {
+        const result = await client.query(
+            `SELECT i.amount_received FROM 
+        ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
+         c.client_id = ${created_by} AND i.created BETWEEN ${startDate} AND ${endDate}`);
+        return result;
+    },
+
+
 
 
     getBillFilterPaidReceipt: async ({ filter_value }: Invoices) => {

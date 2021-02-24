@@ -15,7 +15,12 @@ router
 
   .put("/recurringexpense", authorize, vendorController.updatefrequencyexpensestatus)
   .put("/recurringexpense2", authorize, vendorController.updatefrequencyexpensestatus2)
+  .get("/expensesamount", authorize, vendorController.getExpenseReport)
+
+  .get("/operationexpense", authorize, vendorController.getExpenseReportExpenseCost)
+  .get("/vendorbalance", authorize, vendorController.getVendorBalance)
   
+
   // .put("/customer",authorize, customerController.updateUserCustomer)
   // .put("/customermore",authorize, customerController.updateUserCustomerMore)
   // .post("/customermore",authorize, customerController.createBilling)

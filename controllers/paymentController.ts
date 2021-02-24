@@ -777,6 +777,60 @@ export default {
       };
     }
   },
+
+  /**
+    * @description Get all unpaid bill List
+    */
+  getBillingsAmount: async (ctx: any) => {
+    try {
+
+      let { created_by, startDate, endDate } = getQuery(ctx, { mergeParams: true });
+
+      const data = await paymentService.getBillingsAmount({
+        startDate: startDate,
+        endDate: endDate,
+        created_by: Number(created_by)
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+  getPaymentReceivable: async (ctx: any) => {
+    try {
+
+      let { created_by, startDate, endDate } = getQuery(ctx, { mergeParams: true });
+
+      const data = await paymentService.getPaymentReceivable({
+        startDate: startDate,
+        endDate: endDate,
+        created_by: Number(created_by)
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
+  
   /**
      * @description Add a new payment received
      */

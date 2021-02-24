@@ -292,7 +292,72 @@ export default {
     }
   },
 
+  getExpenseReport: async (ctx: any) => {
+    try {
+      let { client_id, startDate, endDate } = getQuery(ctx, { mergeParams: true });
+      const data = await vendorService.getExpenseReport({
+        startDate: startDate,
+        endDate: endDate,
+        client_id: client_id
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+  
 
+  getVendorBalance: async (ctx: any) => {
+    try {
+      let { client_id, startDate, endDate } = getQuery(ctx, { mergeParams: true });
+      const data = await vendorService.getVendorBalance({
+        startDate: startDate,
+        endDate: endDate,
+        client_id: client_id
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+  getExpenseReportExpenseCost: async (ctx: any) => {
+    try {
+      let { client_id, startDate, endDate } = getQuery(ctx, { mergeParams: true });
+      const data = await vendorService.getExpenseReportExpenseCost({
+        startDate: startDate,
+        endDate: endDate,
+        client_id: client_id
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
 
   updatefrequencyexpensestatus2: async ({ request, response }: { request: any; response: any },) => {
     const body = await request.body();
@@ -393,66 +458,66 @@ export default {
   /**
 * @description Get all Expenses List
 */
-getAllExpensesRecuring: async (ctx: any) => {
-  try {
+  getAllExpensesRecuring: async (ctx: any) => {
+    try {
 
-    let { page_number, filter_value, client_id } = getQuery(ctx, { mergeParams: true });
-    const total = await vendorService.getPageSizeExpenseRe({
-      client_id: client_id
-    });
-    if (filter_value == null || filter_value == "") {
-      if (page_number == null) {
-        page_number = "1"
-        const offset = (Number(page_number) - 1) * 10;
-        const data = await vendorService.getRecurringExpenses({
-          client_id: client_id,
-          offset: Number(offset)
-        });
-        ctx.response.body = {
-          status: true,
-          status_code: 200,
-          total: total,
-          data: data
-        };
-      } else {
-        const offset = (Number(page_number) - 1) * 10;
-
-        const data = await vendorService.getRecurringExpenses({
-          client_id: client_id,
-          offset: Number(offset)
-        });
-
-        ctx.response.body = {
-          status: true,
-          status_code: 200,
-          total: total,
-          data: data
-        };
-      }
-    } else {
-      // console.log(filter_value, '||| params');
-
-      const data = await vendorService.getRecurringExpenses({
-        filter_value: filter_value
+      let { page_number, filter_value, client_id } = getQuery(ctx, { mergeParams: true });
+      const total = await vendorService.getPageSizeExpenseRe({
+        client_id: client_id
       });
+      if (filter_value == null || filter_value == "") {
+        if (page_number == null) {
+          page_number = "1"
+          const offset = (Number(page_number) - 1) * 10;
+          const data = await vendorService.getRecurringExpenses({
+            client_id: client_id,
+            offset: Number(offset)
+          });
+          ctx.response.body = {
+            status: true,
+            status_code: 200,
+            total: total,
+            data: data
+          };
+        } else {
+          const offset = (Number(page_number) - 1) * 10;
 
+          const data = await vendorService.getRecurringExpenses({
+            client_id: client_id,
+            offset: Number(offset)
+          });
+
+          ctx.response.body = {
+            status: true,
+            status_code: 200,
+            total: total,
+            data: data
+          };
+        }
+      } else {
+        // console.log(filter_value, '||| params');
+
+        const data = await vendorService.getRecurringExpenses({
+          filter_value: filter_value
+        });
+
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          total: total,
+          data: data
+        };
+
+      }
+
+    } catch (error) {
+      ctx.response.status = 400;
       ctx.response.body = {
-        status: true,
-        status_code: 200,
-        total: total,
-        data: data
+        success: false,
+        message: `Error: ${error}`,
       };
-
     }
-
-  } catch (error) {
-    ctx.response.status = 400;
-    ctx.response.body = {
-      success: false,
-      message: `Error: ${error}`,
-    };
-  }
-},
+  },
   //   /**
   //    * @description Get One Customers List
   //    */

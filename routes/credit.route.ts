@@ -1,18 +1,17 @@
-import { Router } from "https://deno.land/x/oak/mod.ts";
-import CreditController from "../controllers/creditController.ts";
-import authorize from '../middlewares/authorizedmiddle.ts';
+import { Router } from 'https://deno.land/x/oak/mod.ts'
+import CreditController from '../controllers/creditController.ts'
+import authorize from '../middlewares/authorizedmiddle.ts'
 
-const router = new Router();
+const router = new Router()
 
 router
-  .post("/credit", authorize, CreditController.createCreditNote)
-  .post("/creditvendor", authorize, CreditController.createCreditNoteVendor)
-  .get("/creditvendor", authorize, CreditController.getCreditNoteVendor)
-  .put("/credit", authorize, CreditController.updateCreditNote)
-  .get("/credit", authorize, CreditController.getCreditNote)
-  .get("/creditItem", authorize, CreditController.getCreditItem)
-  .get("/creditvendorItem", authorize, CreditController.getCreditVendorItems)
-
+  .post('/credit', authorize, CreditController.createCreditNote)
+  .post('/creditvendor', authorize, CreditController.createCreditNoteVendor)
+  .get('/creditvendor', authorize, CreditController.getCreditNoteVendor)
+  .put('/credit', authorize, CreditController.updateCreditNote)
+  .get('/credit', authorize, CreditController.getCreditNote)
+  .get('/creditItem', authorize, CreditController.getCreditItem)
+  .get('/creditvendorItem', authorize, CreditController.getCreditVendorItems)
 
 // .put("/convertestimate", authorize, InvoicesController.convertEstimate)
 // .get("/invoiceitem", authorize, InvoicesController.getInvoiceItem)
@@ -23,6 +22,4 @@ router
 // .get("/invoicerecurring", authorize, InvoicesController.getFrequencyInvoices)
 // .put("/recurringinvoice", authorize, InvoicesController.updatefrequencystatus)
 
-
-
-export default router;
+export default router

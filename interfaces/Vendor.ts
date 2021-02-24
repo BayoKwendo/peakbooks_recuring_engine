@@ -43,7 +43,8 @@ export default interface Vendor {
   vendor_id?: string,
   billable?: string,
   created_by?: string,
-
+  startDate?: any,
+  endDate?: any,
   product_name?: string
 
   

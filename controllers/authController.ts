@@ -2,10 +2,10 @@ import { Status } from 'https://deno.land/x/oak/mod.ts';
 import { getQuery } from 'https://deno.land/x/oak/helpers.ts'
 import * as log from "https://deno.land/std/log/mod.ts";
 import userService from '../services/userService.ts';
-import { hashSync, compareSync } from "https://deno.land/x/bcrypt@v0.2.1/mod.ts";
 import { create, getNumericDate } from "https://deno.land/x/djwt@v2.0/mod.ts"
 // import { makeJwt, setExpiration, Jose, Payload } from "https://deno.land/x/djwt@v0.9.0/create.ts";
 import clientemail from "../db/clientemail.ts";
+import * as bcrypt from "https://deno.land/x/bcrypt@v0.2.4/mod.ts";
 
 
 // const header: Jose = ;
@@ -27,7 +27,7 @@ export default {
     }
     try {
       const values = await body.value;
-      const hashedPassword = hashSync(values.password);
+      const hashedPassword = await bcrypt.hash(values.password);
 
       const isAvailable = await userService.loginUser(
         { email: values.email },
@@ -41,53 +41,51 @@ export default {
         };
         return;
       }
-      else if (!compareSync(values.password, isAvailable.password)) {
-        ctx.response.status = 400;
-        ctx.response.body = {
-          status: false,
-          status_code: 400,
-          message: "Password Incorrect",
-        };
-        return;
-      }
 
       else {
-        const checkActive = await userService.checkActive(
-          { email: values.email },
-        );
-        if (!checkActive) {
+        const result = await bcrypt.compare(values.password, isAvailable.password);
+        if (result) {
+          const checkActive = await userService.checkActive(
+            { email: values.email },
+          );
+          if (!checkActive) {
+            ctx.response.status = 400;
+            ctx.response.body = {
+              status: false,
+              status_code: 400,
+              message: "Your Account is not activated!! Contact Administrators",
+            };
+            return;
+          } else {
+            const data = {
+              first_name: isAvailable.first_name,
+              last_name: isAvailable.last_name,
+              msisdn: isAvailable.msisdn,
+              email: isAvailable.email,
+              industry: isAvailable.industry,
+              role_id: isAvailable.role_id,
+              user_id: isAvailable.id,
+              company_name: isAvailable.company_name,
+              postal_address: isAvailable.postal_address
+            }
+            const oneHour = 3600
+            const jwt = await create({ alg: 'HS512', typ: 'JWT' }, { iss: isAvailable.email, exp: getNumericDate(oneHour) }, key)
+            ctx.cookies.set('jwt', new Date());
+            ctx.response.body = {
+              status: true,
+              status_code: 200,
+              token: jwt,
+              user: data
+            };
+          }
+        } else {
           ctx.response.status = 400;
           ctx.response.body = {
             status: false,
             status_code: 400,
-            message: "Your Account is not activated!! Contact Administrators",
+            message: "Password Incorrect",
           };
           return;
-        } else {
-
-          const data = {
-            first_name: isAvailable.first_name,
-            last_name: isAvailable.last_name,
-            msisdn: isAvailable.msisdn,
-            email: isAvailable.email,
-            industry: isAvailable.industry,
-            role_id: isAvailable.role_id,
-            user_id: isAvailable.id,
-            company_name: isAvailable.company_name,
-            postal_address: isAvailable.postal_address
-
-          }
-          const oneHour = 3600
-
-          const jwt = await create({ alg: 'HS512', typ: 'JWT' },  { iss: isAvailable.email, exp: getNumericDate( oneHour)}, key)
-
-          ctx.cookies.set('jwt', new Date());
-          ctx.response.body = {
-            status: true,
-            status_code: 200,
-            token: jwt,
-            user: data
-          };
         }
       }
     } catch (error) {
@@ -139,8 +137,8 @@ export default {
         return;
       }
       else {
-        const hashedPassword = hashSync(values.password);
-        const hashedPassword1 = hashSync(values.repeat_password);
+        const hashedPassword = await bcrypt.hash(values.password);
+        const hashedPassword1 = await bcrypt.hash(values.repeat_password);
         const addUserData = await userService.createUser(
           {
             first_name: values.first_name,
@@ -263,7 +261,7 @@ export default {
     }
     try {
       const values = await body.value;
-      const hashedPassword = hashSync(values.password);;
+      const hashedPassword = await bcrypt.hash(values.password);
 
       await userService.updatePassword(
         {
@@ -299,7 +297,7 @@ export default {
     }
     try {
       const values = await body.value;
-      const hashedPassword = values.password;
+      const hashedPassword = await bcrypt.hash(values.password);
 
       await userService.updateUser(
         {

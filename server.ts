@@ -20,8 +20,6 @@ import expenseService from "./services/vendorService.ts";
 import logger from './middlewares/logger.ts';
 import notFound from './middlewares/notFound.ts';
 import { cron, start, stop, everyMinute, daily, weekly } from 'https://deno.land/x/deno_cron/cron.ts';
-
-
 const app = new Application();
 const router = new Router()
 const port: number = 8090;
@@ -56,7 +54,7 @@ let task = cron('*/.5 * * * * *', async () => {
       filter_value: invoice_no.invoice_no,
 
     });
-    console.log(data)
+    // console.log(data)
 
     try {
       const body222 = await invoiceService.createInvoice(
@@ -141,7 +139,7 @@ let task = cron('*/.5 * * * * *', async () => {
             });
             if (updateData) {
               start();
-              console.log(invoice_no)
+              // console.log(invoice_no)
             }
           }
           else if (invoice_no.frequency_type === "After 2 Months") {
@@ -197,7 +195,7 @@ let task = cron('*/.5 * * * * *', async () => {
       console.log(error)
     }
   } else {
-   
+
     const recur_expense = await expenseService.getfrequencyExpense();
     if (recur_expense) {
       const data = await expenseService.getRecurringExpeFilter({
@@ -249,7 +247,6 @@ let task = cron('*/.5 * * * * *', async () => {
             if (updateData) {
               start();
               console.log('hoorei!!!')
-
             }
           }
           else if (recur_expense.frequency_type === "Monthly") {
@@ -318,8 +315,6 @@ let task = cron('*/.5 * * * * *', async () => {
 
   }
 });
-
-
 app.use(creditRouter.routes());
 app.use(creditRouter.allowedMethods());
 app.use(router.routes());
@@ -332,7 +327,6 @@ app.use(customerRoutes.routes());
 app.use(customerRoutes.allowedMethods());
 app.use(vendorRouter.routes());
 app.use(vendorRouter.allowedMethods());
-
 app.use(testRouter.routes());
 app.use(testRouter.allowedMethods());
 app.use(reportRouter.routes());

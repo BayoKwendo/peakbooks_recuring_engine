@@ -181,6 +181,38 @@ export default {
       };
     }
   },
+  
+
+
+   /**
+   * @description Get One Customer balance
+   */
+  getAllCustomerBalance: async (ctx: any) => {
+    try {
+
+      let { client_id, startDate, endDate } = getQuery(ctx, { mergeParams: true });
+      console.log(client_id, '||| params');
+
+      const data = await customerServices.getCustomerBalance({
+        client_id: client_id,
+        startDate: startDate,
+        endDate: endDate
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data
+      };
+
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
 
   /**
    * @description Get One Customers List

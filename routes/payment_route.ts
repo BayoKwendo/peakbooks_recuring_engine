@@ -23,8 +23,11 @@ router
   .get("/billunpaid", authorize, paymentController.getBillUnpaid)
   .post("/payment_received_bill", authorize, paymentController.createPaymentReceivedBillPay)
   .get("/payment_received_bill", authorize, paymentController.getPaymentReceivedPaidbILLS)
+  .get("/getbillamount", authorize, paymentController.getBillingsAmount)
+  .get("/getamountreceived", authorize, paymentController.getPaymentReceivable)
 
   
+
 // .put("/estimate",authorize, InvoicesController.updateEstimatePDF)
 // .get("/estimate",authorize, InvoicesController.getEstimates)
 

@@ -104,6 +104,37 @@ export default {
         return query;
     },
 
+    getExpenseReport: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+        expense_account = "Cost of Goods Sold" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+        return query;
+    },
+
+    getExpenseReportExpenseCost: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+       (expense_account = "Advertising And Marketing" or
+        expense_account = "Bank Fees and Charges" or
+        expense_account = "Bad Debt" or
+        expense_account = "Consultant Expense" or
+        expense_account = "Automatic Expense" or
+        expense_account = "Credit Card Charges" or
+        expense_account = "Depreciation Expense" or
+        expense_account = "IT and Internet Expenses" or
+        expense_account = "Janitorial Expense" or
+        expense_account = "Lodging" or
+        expense_account = "Meals and Entertainment" or
+        expense_account = "Office Supplies" or
+        expense_account = "Other Expenses" or
+        expense_account = "Postage" or
+        expense_account = "Printing and Stationary" or
+        expense_account = "Rent Expense" or
+        expense_account = "Repairs and Maintenance" or
+        expense_account = "Salaries and Employee Wages" or
+        expense_account = "Travel Expenses" or
+        expense_account = "Telephone Expense")
+        AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+        return query;
+    },
 
 
     getExpenses: async ({ offset, client_id }: Vendor) => {
@@ -119,6 +150,15 @@ export default {
             `SELECT COUNT(id) count FROM  ${TABLE.EXPENSES} WHERE client_id = ?`, [client_id]);
         return result.count;
     },
+
+    getVendorBalance: async ({ client_id, startDate, endDate }: Vendor) => {
+        const result = await client.query(
+            `SELECT opening_balance FROM  ${TABLE.VENDORS}  WHERE
+             client_id = ${client_id} AND 
+             created_at BETWEEN ${startDate} AND ${endDate}`);
+        return result;
+    },
+
 
     getExpenseFilter: async ({ offset, client_id }: Vendor) => {
         const query = await client.query(`SELECT i.date, i.expense_account,  c.customer_display_name, v.vendor_display_name, i.paid_through,i.reference, i.billable,i.product,i.notes, i.amount
