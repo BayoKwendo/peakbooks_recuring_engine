@@ -43,4 +43,12 @@ export default {
         return query;
     },
 
+    itemExist: async ({ item_name }: Item) => {
+        const [result] = await client.query(
+            `SELECT * FROM  ${TABLE.ITEMS} WHERE item_name = ?`,
+            [item_name],
+        );
+        return result;
+    },
+
 };

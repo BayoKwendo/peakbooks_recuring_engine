@@ -18,8 +18,22 @@ export default {
       };
       return;
     }
-    try {
+    try{
       const values = await body.value;
+      const isAvailable = await itemService.itemExist(
+      { item_name: values.item_name },
+    );
+    if (isAvailable) {
+      response.status = 404;
+      response.body = {
+        Status: false,
+        status_code: 400,
+        message: `Item ${values.item_name} already exists.`,
+      };
+      return;
+    }
+    else {
+      // const values = await body.value;
       await itemService.createITEM(
         {
           item_name: values.item_name,
@@ -32,7 +46,9 @@ export default {
         status_code: 200,
         message: `${values.item_name} added successfully to the List`,
       };
-    } catch (error) {
+    }
+   }
+    catch (error) {
       response.status = 400;
       response.body = {
         status: false,
