@@ -8,7 +8,7 @@ export const TABLE = {
   INVOICE_ITEMS: "invoice_items",
   ESTIMATE_ITEMS: "estimate_items",
   ITEMS: "items",
-  // INCOME: "Uscers",
+  INCOME: "Uscers",
   PAYMENT_RECEIVED: "payment_method",
   DEPOSIT_TO: "deposit_to",
   PAYMENT_RECEIVED_PAY: "payment_received",

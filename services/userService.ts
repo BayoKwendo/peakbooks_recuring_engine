@@ -21,7 +21,7 @@ export default {
     },
     loginUser: async ({ email }: User) => {
         const [result] = await client.query(
-            `SELECT * FROM Users WHERE email = ?`,
+            `SELECT * FROM users WHERE email = ?`,
             [email],
         );
         return result;
