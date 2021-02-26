@@ -313,12 +313,145 @@ export default {
       };
     }
   },
-  
+
 
   getVendorBalance: async (ctx: any) => {
     try {
       let { client_id, startDate, endDate } = getQuery(ctx, { mergeParams: true });
       const data = await vendorService.getVendorBalance({
+        startDate: startDate,
+        endDate: endDate,
+        client_id: client_id
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+  getTaxpayable: async (ctx: any) => {
+    try {
+      let { client_id, startDate, endDate } = getQuery(ctx, { mergeParams: true });
+      const data = await vendorService.getTaxpayable({
+        startDate: startDate,
+        endDate: endDate,
+        client_id: client_id
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+  getReimbursements: async (ctx: any) => {
+    try {
+      let { client_id, startDate, endDate } = getQuery(ctx, { mergeParams: true });
+      const data = await vendorService.getReimbursements({
+        startDate: startDate,
+        endDate: endDate,
+        client_id: client_id
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
+  getTaxpayablePaid: async (ctx: any) => {
+    try {
+      let { client_id, startDate, endDate } = getQuery(ctx, { mergeParams: true });
+      const data = await vendorService.getTaxpayablePaid({
+        startDate: startDate,
+        endDate: endDate,
+        client_id: client_id
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+  getPrepaidExpense: async (ctx: any) => {
+    try {
+      let { client_id, startDate, endDate } = getQuery(ctx, { mergeParams: true });
+      const data = await vendorService.getPrepaidExpenses({
+        startDate: startDate,
+        endDate: endDate,
+        client_id: client_id
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+  getEmployeeAdvance: async (ctx: any) => {
+    try {
+      let { client_id, startDate, endDate } = getQuery(ctx, { mergeParams: true });
+      const data = await vendorService.getEmployeeAdvance({
+        startDate: startDate,
+        endDate: endDate,
+        client_id: client_id
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
+  getAdvanceTax: async (ctx: any) => {
+    try {
+      let { client_id, startDate, endDate } = getQuery(ctx, { mergeParams: true });
+      const data = await vendorService.getAdvanceTax({
         startDate: startDate,
         endDate: endDate,
         client_id: client_id

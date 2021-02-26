@@ -110,6 +110,43 @@ export default {
         return query;
     },
 
+    getEmployeeAdvance: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+        paid_through = "Employee Advance" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+        return query;
+    },
+
+    getPrepaidExpenses: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+        paid_through = "Prepaid Expenses" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+        return query;
+    },
+
+    getReimbursements: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+        expense_account = "Employee Reimbursements" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+        return query;
+    },
+    getAdvanceTax: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+        expense_account = "Advance Tax" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+        return query;
+    },
+
+    getTaxpayable: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+        expense_account = "Tax Payable" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+        return query;
+    },
+
+
+    getTaxpayablePaid: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+        paid_through = "Tax Payable" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+        return query;
+    },
+
+
     getExpenseReportExpenseCost: async ({ client_id, startDate, endDate }: Vendor) => {
         const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
        (expense_account = "Advertising And Marketing" or

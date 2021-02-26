@@ -19,7 +19,14 @@ router
 
   .get("/operationexpense", authorize, vendorController.getExpenseReportExpenseCost)
   .get("/vendorbalance", authorize, vendorController.getVendorBalance)
-  
+  .get("/advancetax", authorize, vendorController.getAdvanceTax)
+  .get("/taxpayable", authorize, vendorController.getTaxpayable)
+  .get("/employeeadvance", authorize, vendorController.getEmployeeAdvance)
+  .get("/rembursement", authorize, vendorController.getReimbursements)
+  .get("/prepaid", authorize, vendorController.getPrepaidExpense)
+  .get("/payablepaid", authorize, vendorController.getTaxpayablePaid)
+
+
 
   // .put("/customer",authorize, customerController.updateUserCustomer)
   // .put("/customermore",authorize, customerController.updateUserCustomerMore)
