@@ -45,6 +45,7 @@ export default interface Vendor {
   created_by?: string,
   startDate?: any,
   endDate?: any,
+  tax_amount?: any,
   product_name?: string
 
   

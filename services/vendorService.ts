@@ -40,13 +40,13 @@ export default {
     },
 
 
-    createExpense: async ({ client_id, date, expense_account, amount, paid_through, customer_id, vendor_id, billable, product_name, notes }: Vendor) => {
+    createExpense: async ({ client_id, date, expense_account, amount, paid_through, customer_id, vendor_id, billable, product_name, notes, tax_amount }: Vendor) => {
         const result = await client.query(`INSERT INTO ${TABLE.EXPENSES}  SET
               client_id=?, date =?,
               expense_account=?, amount =?, paid_through=?,
               customer_id=?, vendor_id=?, 
-              notes=?,billable=?,product=?`, [
-            client_id, date, expense_account, amount, paid_through, customer_id, vendor_id, notes, billable, product_name
+              notes=?,billable=?,product=?, tax_amount= ?`, [
+            client_id, date, expense_account, amount, paid_through, customer_id, vendor_id, notes, billable, product_name, tax_amount
         ]);
         return result;
     },
@@ -189,6 +189,12 @@ export default {
     getPrepaidExpensesDebit: async ({ client_id, startDate, endDate }: Vendor) => {
         const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
         expense_account = "Prepaid Expenses" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+        return query;
+    },
+
+    getTaxAmountTaxExpense: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT tax_amount FROM ${TABLE.EXPENSES} WHERE 
+        client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
         return query;
     },
 

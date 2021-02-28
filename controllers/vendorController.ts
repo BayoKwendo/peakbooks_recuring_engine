@@ -210,6 +210,7 @@ export default {
           expense_account: values.expense_account,
           amount: values.amount,
           paid_through: values.paid_through,
+          tax_amount: values.tax_amount,
           vendor_id: values.vendor_id,
           notes: values.notes,
           billable: values.billable,
@@ -426,7 +427,28 @@ export default {
     }
   },
 
-  
+  getTaxAmountTaxExpense: async (ctx: any) => {
+    try {
+      let { client_id, startDate, endDate } = getQuery(ctx, { mergeParams: true });
+      const data = await vendorService.getTaxAmountTaxExpense({
+        startDate: startDate,
+        endDate: endDate,
+        client_id: client_id
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
 
   getEmployeeAdvanceExpense: async (ctx: any) => {
     try {

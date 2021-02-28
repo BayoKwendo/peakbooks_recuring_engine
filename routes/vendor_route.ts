@@ -6,12 +6,12 @@ import authorize from '../middlewares/authorizedmiddle.ts';
 const router = new Router();
 
 router
-  .post("/vendor",authorize, vendorController.createVendor)
-  .post("/expense",authorize, vendorController.createExpense)
-  .get("/expense",authorize, vendorController.getAllExpenses)
+  .post("/vendor", authorize, vendorController.createVendor)
+  .post("/expense", authorize, vendorController.createExpense)
+  .get("/expense", authorize, vendorController.getAllExpenses)
 
-  .get("/vendor",authorize, vendorController.getAllVendors)
-  .get("/expense_recurring",authorize, vendorController.getAllExpensesRecuring)
+  .get("/vendor", authorize, vendorController.getAllVendors)
+  .get("/expense_recurring", authorize, vendorController.getAllExpensesRecuring)
 
   .put("/recurringexpense", authorize, vendorController.updatefrequencyexpensestatus)
   .put("/recurringexpense2", authorize, vendorController.updatefrequencyexpensestatus2)
@@ -32,15 +32,15 @@ router
   .get("/employee_expense2", authorize, vendorController.getEmployeeAdvanceExpense)
   .get("/furniture2", authorize, vendorController.getFurnitureandEquipmentCredit)
   .get("/prepaid2", authorize, vendorController.getPrepaidExpensesDebit)
-
-  .get("/rembursementcredit", authorize, vendorController.getReimbursementsCredit)
-
-
-
-
-  // .put("/customer",authorize, customerController.updateUserCustomer)
-  // .put("/customermore",authorize, customerController.updateUserCustomerMore)
-  // .post("/customermore",authorize, customerController.createBilling)
-  // .get("/customermore",authorize, customerController.getAllCustomersInfo)
   
+  .get("/rembursementcredit", authorize, vendorController.getReimbursementsCredit)
+  .get("/taxamountexpense", authorize, vendorController.getTaxAmountTaxExpense)
+
+
+
+// .put("/customer",authorize, customerController.updateUserCustomer)
+// .put("/customermore",authorize, customerController.updateUserCustomerMore)
+// .post("/customermore",authorize, customerController.createBilling)
+// .get("/customermore",authorize, customerController.getAllCustomersInfo)
+
 export default router;
