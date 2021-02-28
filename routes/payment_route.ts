@@ -25,8 +25,11 @@ router
   .get("/payment_received_bill", authorize, paymentController.getPaymentReceivedPaidbILLS)
   .get("/getbillamount", authorize, paymentController.getBillingsAmount)
   .get("/getamountreceived", authorize, paymentController.getPaymentReceivable)
+  .get("/pettycashdebit", authorize, paymentController.getPaymentPettyCash)
 
-  
+  .get("/undepositeddebit", authorize, paymentController.getPaymentUndeposited)
+
+
 
 // .put("/estimate",authorize, InvoicesController.updateEstimatePDF)
 // .get("/estimate",authorize, InvoicesController.getEstimates)

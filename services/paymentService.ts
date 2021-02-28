@@ -227,14 +227,6 @@ export default {
         return result;
     },
 
-
-
-
-
-
-
-
-
     getFilterBillsUnpaid: async ({ filter_value, created_by }: Invoices) => {
         const result = await client.query(
             `SELECT * FROM 
@@ -258,8 +250,21 @@ export default {
         return result;
     },
 
+    getPaymentPettyCash: async ({ startDate, endDate, created_by }: Payment) => {
+        const result = await client.query(
+            `SELECT i.amount_received FROM 
+        ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
+         c.client_id = ${created_by} AND i.deposit_to = "Petty Cash" AND i.created BETWEEN ${startDate} AND ${endDate}`);
+        return result;
+    },
 
-
+    getPaymentUndeposited: async ({ startDate, endDate, created_by }: Payment) => {
+        const result = await client.query(
+            `SELECT i.amount_received FROM 
+        ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
+         c.client_id = ${created_by} AND i.deposit_to = "Undeposited Funds" AND i.created BETWEEN ${startDate} AND ${endDate}`);
+        return result;
+    },
 
     getBillFilterPaidReceipt: async ({ filter_value }: Invoices) => {
         const result = await client.query(

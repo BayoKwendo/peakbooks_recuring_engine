@@ -829,6 +829,56 @@ export default {
     }
   },
 
+  getPaymentPettyCash: async (ctx: any) => {
+    try {
+
+      let { created_by, startDate, endDate } = getQuery(ctx, { mergeParams: true });
+
+      const data = await paymentService.getPaymentPettyCash({
+        startDate: startDate,
+        endDate: endDate,
+        created_by: Number(created_by)
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
+
+  getPaymentUndeposited: async (ctx: any) => {
+    try {
+
+      let { created_by, startDate, endDate } = getQuery(ctx, { mergeParams: true });
+
+      const data = await paymentService.getPaymentUndeposited({
+        startDate: startDate,
+        endDate: endDate,
+        created_by: Number(created_by)
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
 
   
   /**

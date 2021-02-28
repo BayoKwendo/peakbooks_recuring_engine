@@ -25,6 +25,16 @@ router
   .get("/rembursement", authorize, vendorController.getReimbursements)
   .get("/prepaid", authorize, vendorController.getPrepaidExpense)
   .get("/payablepaid", authorize, vendorController.getTaxpayablePaid)
+  .get("/furtinure", authorize, vendorController.getFurnitureandEquipment)
+  .get("/pettycashcredit", authorize, vendorController.getPettyCash)
+  .get("/undepositedcredit", authorize, vendorController.getUndepositedFunds)
+  .get("/advancetaxpaid", authorize, vendorController.getAdvanceTaxPaid)
+  .get("/employee_expense2", authorize, vendorController.getEmployeeAdvanceExpense)
+  .get("/furniture2", authorize, vendorController.getFurnitureandEquipmentCredit)
+  .get("/prepaid2", authorize, vendorController.getPrepaidExpensesDebit)
+
+  .get("/rembursementcredit", authorize, vendorController.getReimbursementsCredit)
+
 
 
 
