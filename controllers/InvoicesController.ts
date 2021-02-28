@@ -18,6 +18,7 @@ export default {
       };
       return;
     }
+    
     try {
       const values = await body.value;
       // 
@@ -47,7 +48,7 @@ export default {
           response.body = {
             status: true,
             status_code: 200,
-            message: "Invoices added successfully",
+            message: values.estimate == 0 ? "Invoice added successfully" : "Estimate added successfully",
           };
         } else {
 
