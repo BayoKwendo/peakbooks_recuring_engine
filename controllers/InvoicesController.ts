@@ -25,7 +25,7 @@ export default {
       const body222 = await invoiceService.createInvoice(
         {
           customer_id: values.customer_id,
-          invoice_no: values.invoice_no,
+          invoice_no: "djf",
           terms: values.terms,
           due_date: values.due_date,
           invoice_date: values.invoice_date,

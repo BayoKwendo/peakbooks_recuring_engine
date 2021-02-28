@@ -116,9 +116,31 @@ export default {
         return query;
     },
 
+    getEmployeeAdvanceExpense: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+        expense_account = "Employee Advance" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+        return query;
+    },
+
+
     getPrepaidExpenses: async ({ client_id, startDate, endDate }: Vendor) => {
         const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
         paid_through = "Prepaid Expenses" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+        return query;
+    },
+
+
+    getPettyCash: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+        paid_through = "Petty Cash" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+        return query;
+    },
+
+
+
+    getUndepositedFunds: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+        paid_through = "Undeposited Funds" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
         return query;
     },
 
@@ -127,9 +149,21 @@ export default {
         expense_account = "Employee Reimbursements" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
         return query;
     },
+
+    getReimbursementsCredit: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+        paid_through = "Employee Reimbursements" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+        return query;
+    },
     getAdvanceTax: async ({ client_id, startDate, endDate }: Vendor) => {
         const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
         expense_account = "Advance Tax" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+        return query;
+    },
+
+    getAdvanceTaxPaid: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+        paid_through = "Advance Tax" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
         return query;
     },
 
@@ -139,6 +173,24 @@ export default {
         return query;
     },
 
+
+    getFurnitureandEquipment: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+        expense_account = "Furniture and Equipment" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+        return query;
+    },
+
+    getFurnitureandEquipmentCredit: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+        paid_through = "Furniture and Equipment" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+        return query;
+    },
+
+    getPrepaidExpensesDebit: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+        expense_account = "Prepaid Expenses" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+        return query;
+    },
 
     getTaxpayablePaid: async ({ client_id, startDate, endDate }: Vendor) => {
         const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
