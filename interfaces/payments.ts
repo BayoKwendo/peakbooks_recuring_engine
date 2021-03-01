@@ -15,7 +15,6 @@ export default interface Payment {
   vendor_id?: string,
   bill_no?: string,
   order_no?: string,
-
   notes?: string,
   created_by?: number,
   startDate?: any,

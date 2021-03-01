@@ -250,6 +250,23 @@ export default {
         return result;
     },
 
+
+    getPaymentReceivedReports: async ({ startDate, endDate, page_size, offset, created_by }: Payment) => {
+        const result = await client.query(
+            `SELECT i.created, i.reference,i.notes, i.id, c.customer_display_name, i.invoice_no,i.payment_mode,i.amount_inexcess,i.amount_received FROM 
+        ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
+         c.client_id = ${created_by} AND i.status = 1 AND i.created BETWEEN ${startDate} AND ${endDate} order by i.id DESC LIMIT ${offset},${page_size}`);
+        return result;
+    },
+
+    getPaymentReceivedReportsSize: async ({ created_by, startDate, endDate }: Invoices) => {
+        const [result] = await client.query(
+            `SELECT COUNT(i.id) count FROM 
+        ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
+         c.client_id = ${created_by} AND i.status = 1 AND i.created BETWEEN ${startDate} AND ${endDate}`);
+        return result.count;
+    },
+
     getPaymentPettyCash: async ({ startDate, endDate, created_by }: Payment) => {
         const result = await client.query(
             `SELECT i.amount_received FROM 

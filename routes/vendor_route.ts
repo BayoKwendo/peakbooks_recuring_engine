@@ -32,7 +32,6 @@ router
   .get("/employee_expense2", authorize, vendorController.getEmployeeAdvanceExpense)
   .get("/furniture2", authorize, vendorController.getFurnitureandEquipmentCredit)
   .get("/prepaid2", authorize, vendorController.getPrepaidExpensesDebit)
-  
   .get("/rembursementcredit", authorize, vendorController.getReimbursementsCredit)
   .get("/taxamountexpense", authorize, vendorController.getTaxAmountTaxExpense)
 

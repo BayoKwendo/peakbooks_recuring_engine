@@ -95,7 +95,7 @@ export default {
 
     getInvoices: async ({ offset, created_by, estimate }: Invoices) => {
         const result = await client.query(
-            `SELECT i.invoice_no, i.terms, i.due_date, i.status, i.invoice_date, i.date_modified, i.discount_amount, i.sub_total, i.tax_amount, i.message_invoice,i.statement_invoice,
+            `SELECT i.invoice_no, i.terms,i.notes, i.due_date, i.status, i.invoice_date, i.date_modified, i.discount_amount, i.sub_total, i.tax_amount, i.message_invoice,i.statement_invoice,
              i.due_amount, i.amount, c.customer_display_name,c.email, c.company_name  FROM 
             ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
             WHERE i.created_by = ? AND i.estimate = ? order by i.date_modified DESC LIMIT ?,10`, [created_by, estimate, offset]);
@@ -104,9 +104,19 @@ export default {
 
 
     getInvoicesAmount: async ({ created_by, startDate, endDate }: Invoices) => {
-
         const result = await client.query(
             `SELECT amount  FROM 
+            ${TABLE.INVOICES}  
+            WHERE created_by = ${created_by} AND created_at BETWEEN ${startDate} AND ${endDate} `);
+        console.log(endDate)
+
+        return result;
+    },
+
+
+    getInvoicesTaxAmount: async ({ created_by, startDate, endDate }: Invoices) => {
+        const result = await client.query(
+            `SELECT tax_amount  FROM 
             ${TABLE.INVOICES}  
             WHERE created_by = ${created_by} AND created_at BETWEEN ${startDate} AND ${endDate} `);
         console.log(endDate)
