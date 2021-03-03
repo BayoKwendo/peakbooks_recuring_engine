@@ -95,12 +95,96 @@ export default {
 
     getInvoices: async ({ offset, created_by, estimate }: Invoices) => {
         const result = await client.query(
-            `SELECT i.invoice_no, i.terms,i.notes, i.due_date, i.status, i.invoice_date, i.date_modified, i.discount_amount, i.sub_total, i.tax_amount, i.message_invoice,i.statement_invoice,
+            `SELECT i.invoice_no, i.terms, i.due_date, i.status, i.invoice_date, i.date_modified, i.discount_amount, i.sub_total, i.tax_amount, i.message_invoice,i.statement_invoice,
              i.due_amount, i.amount, c.customer_display_name,c.email, c.company_name  FROM 
             ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
             WHERE i.created_by = ? AND i.estimate = ? order by i.date_modified DESC LIMIT ?,10`, [created_by, estimate, offset]);
         return result;
     },
+
+
+    //Customer balance report query
+    getCustomerBalanceInvoice: async ({ offset, created_by, page_size, estimate, startDate, endDate }: Invoices) => {
+        const result = await client.query(
+            `SELECT c.customer_display_name, 
+             sum(CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2))) invoice_amount,
+             IFNULL(sum(CAST(SUBSTRING(replace(n.amount, ',', ''),5) AS DECIMAL(10,2))), 0) credit_amount,
+            (sum(CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)))-IFNULL(sum(CAST(SUBSTRING(replace(n.amount, ',', ''),5)
+             AS DECIMAL(10,2))), 0)) balance  FROM 
+            ${TABLE.CUSTOMER} c 
+            left join ${TABLE.INVOICES} i on c.id = i.customer_id 
+            left join ${TABLE.CREDIT_NOTE} n on n.customer_id = c.id 
+            WHERE i.created_by = ${created_by} AND i.status = "0" AND i.estimate = '0' 
+            AND i.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY c.customer_display_name 
+            order by i.date_modified DESC LIMIT ${offset},${page_size}`);
+        return result;
+    },
+
+    getCustomerBalanceInvoiceSize: async ({ created_by, startDate, endDate }: Invoices) => {
+        const [result] = await client.query(
+            `SELECT COUNT(DISTINCT c.id) count
+            FROM 
+            ${TABLE.CUSTOMER} c 
+            left join ${TABLE.INVOICES} i on c.id = i.customer_id 
+            left join ${TABLE.CREDIT_NOTE} n on n.customer_id = c.id 
+            WHERE i.created_by = ${created_by} AND i.status = "0" AND i.estimate = '0' AND i.created_at BETWEEN ${startDate} AND ${endDate} `);
+        return result.count;
+    },
+
+
+    //aging summary
+
+    getAgingSummaryInvoice: async ({ offset, created_by, page_size, estimate, startDate, endDate }: Invoices) => {
+        const result = await client.query(
+            `SELECT c.customer_display_name, 
+            
+             sum(CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2))) total_amount,
+
+             sum( if ( DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) = 0,
+             CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)),0)) as current_amount,
+
+             sum( if ( (DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) < 16  
+             AND
+             DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) > 0),
+             CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)),0)) as overdue_15,
+
+             sum( if ( (DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) < 31  
+             AND
+             DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) > 15),
+             CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)),0)) as overdue_15_30,
+
+             sum( if ( (DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) < 46  
+             AND
+             DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) > 30),
+             CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)),0)) as overdue_30_45,
+
+
+             sum( if ( (DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) > 45 ),
+             CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)),0)) as overdue_45
+
+             FROM 
+            ${TABLE.INVOICES} i
+            inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
+            WHERE i.created_by = ${created_by} AND i.status = "0" AND i.estimate = '0'
+            AND i.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY c.customer_display_name 
+            order by i.date_modified DESC LIMIT ${offset},${page_size}`);
+        return result;
+    },
+
+    getAgingSummarySize: async ({ created_by, startDate, endDate }: Invoices) => {
+        const [result] = await client.query(
+            `SELECT COUNT(DISTINCT c.id) count
+            FROM 
+            ${TABLE.CUSTOMER} c 
+            left join ${TABLE.INVOICES} i on c.id = i.customer_id 
+            left join ${TABLE.CREDIT_NOTE} n on n.customer_id = c.id 
+            WHERE i.created_by = ${created_by} AND i.status = "0" AND i.estimate = '0' AND i.created_at BETWEEN ${startDate} AND ${endDate} `);
+        return result.count;
+    },
+
+
+
+
 
 
     getInvoicesAmount: async ({ created_by, startDate, endDate }: Invoices) => {

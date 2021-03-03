@@ -31,7 +31,7 @@ export default {
         return result;
     },
 
-    updatedCredit: async ({ customer_id, credit_date, terms_condition,credit_no, sub_total, customer_note, amount, due_amount, tax_amount, discount_amount, created_by }: Credit) => {
+    updatedCredit: async ({ customer_id, credit_date, terms_condition, credit_no, sub_total, customer_note, amount, due_amount, tax_amount, discount_amount, created_by }: Credit) => {
         const result = await client.query(`UPDATE ${TABLE.CREDIT_NOTE} 
         SET
         customer_id=?, 
@@ -68,6 +68,32 @@ export default {
             WHERE i.created_by = ? order by i.date_modified DESC LIMIT ?,10`, [created_by, offset]);
         return result;
     },
+
+    getCreditNoteReport: async ({ startDate, endDate, page_size, offset, created_by }: Credit) => {
+        const result = await client.query(
+            `SELECT i.credit_no, i.credit_date,  i.status, i.customer_note,i.date_modified,i.terms_condition, i.reference, i.sub_total, i.tax_amount,
+             i.due_amount, i.amount, c.customer_display_name, c.email, c.company_name  FROM 
+            ${TABLE.CREDIT_NOTE} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
+            WHERE i.created_by = ${created_by} AND i.created_at BETWEEN ${startDate} AND ${endDate} order by i.date_modified DESC LIMIT ${offset},${page_size}`);
+        return result;
+    },
+
+    getCreditNoteReportSize: async ({ startDate, endDate, page_size, offset, created_by }: Credit) => {
+        const [result] = await client.query(
+            `SELECT COUNT(i.credit_no) count  FROM 
+            ${TABLE.CREDIT_NOTE} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
+            WHERE i.created_by = ${created_by} AND i.created_at BETWEEN ${startDate} AND ${endDate}`);
+        return result.count;
+    },
+
+    // getPaymentReceivedReportsSize: async ({ created_by, startDate, endDate }: Invoices) => {
+    //     const [result] = await client.query(
+    //         `SELECT COUNT(i.id) count FROM 
+    //     ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
+    //      c.client_id = ${created_by} AND i.status = 1 AND i.created BETWEEN ${startDate} AND ${endDate}`);
+    //     return result.count;
+    // },
+
 
 
     createCrediNoteVendor: async ({ vendor_id, credit_date, sub_total, notes, amount, due_amount, tax_amount, discount_amount, created_by }: Credit) => {
@@ -167,6 +193,6 @@ export default {
 
 
 
-    
+
 
 };

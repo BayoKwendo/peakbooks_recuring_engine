@@ -20,7 +20,13 @@ router
   .get("/invoicerecurring", authorize, InvoicesController.getFrequencyInvoices)
   .put("/recurringinvoice", authorize, InvoicesController.updatefrequencystatus)
   .put("/recurringinvoice2", authorize, InvoicesController.updatefrequencystatus2)
+
+  //reports invoices
   .get("/invoiceamount", authorize, InvoicesController.getInvoicesAmount)
   .get("/invoicetaxamount", authorize, InvoicesController.getInvoicesTaxAmount)
+  .get("/customerbalance", authorize, InvoicesController.getCustomerBalanceInvoiceReport)
+  .get("/agingsummary", authorize, InvoicesController.getAgingSummaryInvoice)
+
+
 
 export default router;

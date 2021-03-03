@@ -12,6 +12,7 @@ router
   .get('/credit', authorize, CreditController.getCreditNote)
   .get('/creditItem', authorize, CreditController.getCreditItem)
   .get('/creditvendorItem', authorize, CreditController.getCreditVendorItems)
+  .get("/creditnotereport", authorize, CreditController.getCreditNoteReport)
 
 // .put("/convertestimate", authorize, InvoicesController.convertEstimate)
 // .get("/invoiceitem", authorize, InvoicesController.getInvoiceItem)

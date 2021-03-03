@@ -29,7 +29,6 @@ router
 
   .get("/payment_report", authorize, paymentController.getPaymentReceivedReports)
 
-
   .get("/undepositeddebit", authorize, paymentController.getPaymentUndeposited)
 
 

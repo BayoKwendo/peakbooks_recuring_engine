@@ -24,6 +24,7 @@ export default interface Bet {
   statement_message?: string,
   filter_value?: any,
   start_time?: string,
+  page_size?: number,
   end_time?: string,
   frequecy?: string,
   recurring?: string,
