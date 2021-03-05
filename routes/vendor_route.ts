@@ -13,6 +13,7 @@ router
   .get("/vendor", authorize, vendorController.getAllVendors)
   .get("/expense_recurring", authorize, vendorController.getAllExpensesRecuring)
 
+  .put("/vendor", authorize, vendorController.updateVendor)
   .put("/recurringexpense", authorize, vendorController.updatefrequencyexpensestatus)
   .put("/recurringexpense2", authorize, vendorController.updatefrequencyexpensestatus2)
   .get("/expensesamount", authorize, vendorController.getExpenseReport)
@@ -32,6 +33,7 @@ router
   .get("/employee_expense2", authorize, vendorController.getEmployeeAdvanceExpense)
   .get("/furniture2", authorize, vendorController.getFurnitureandEquipmentCredit)
   .get("/prepaid2", authorize, vendorController.getPrepaidExpensesDebit)
+  
   .get("/rembursementcredit", authorize, vendorController.getReimbursementsCredit)
   .get("/taxamountexpense", authorize, vendorController.getTaxAmountTaxExpense)
 
