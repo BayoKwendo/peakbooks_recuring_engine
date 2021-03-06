@@ -11,6 +11,8 @@ router
   .delete("/item/:id",authorize, ItemController.deleteItem)
 
   .get("/item",authorize, ItemController.getItems)
+  .get("/salesbyitem", authorize, ItemController.getItemSales)
+
   // .put("/estimate",authorize, InvoicesController.updateEstimatePDF)
   // .get("/estimate",authorize, InvoicesController.getEstimates)
 

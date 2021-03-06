@@ -93,32 +93,124 @@ export default {
     },
 
 
-    getInvoices: async ({ offset, created_by, estimate }: Invoices) => {
+    getInvoices: async ({ offset, startDate, endDate, created_by, estimate, page_size }: Invoices) => {
         const result = await client.query(
-            `SELECT i.invoice_no, i.terms, i.due_date, i.status, i.invoice_date, i.date_modified, i.discount_amount, i.sub_total, i.tax_amount, i.message_invoice,i.statement_invoice,
+            `SELECT i.invoice_no, i.terms, 
+            
+            DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) period,
+            i.due_date, i.status, i.invoice_date, i.date_modified, i.discount_amount, i.sub_total, i.tax_amount, i.message_invoice,i.statement_invoice,
              i.due_amount, i.amount, c.customer_display_name,c.email, c.company_name  FROM 
             ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
-            WHERE i.created_by = ? AND i.estimate = ? order by i.date_modified DESC LIMIT ?,10`, [created_by, estimate, offset]);
+            
+            WHERE i.created_by = ${created_by} AND i.estimate = ${estimate} 
+              AND i.created_at BETWEEN ${startDate} AND ${endDate}
+            order by i.date_modified DESC LIMIT ${offset},${page_size}`);
         return result;
+    },
+
+    //receivable summary
+    getReceivableSummary: async ({ offset, startDate, endDate, created_by, estimate, page_size }: Invoices) => {
+        const result = await client.query(
+            `SELECT t.transaction,t.transaction_type,t.amount, t.customer_name, t.date_created, t.balance, t.status
+             FROM (
+            ( SELECT i.invoice_no transaction, 
+              CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)) amount,
+
+              if(i.invoice_no, "Invoice", "Invoice") transaction_type,
+
+              if(i.status = "1", 0, CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2))) balance,
+
+              if(i.status = "1", "Sent", "Overdue") status,
+
+              i.created_at date_created, c.customer_display_name customer_name  FROM
+             ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
+              WHERE i.created_by = ${created_by} AND i.estimate = ${estimate} 
+              AND i.created_at BETWEEN ${startDate} AND ${endDate} ) 
+              UNION ALL
+
+            (   SELECT i.credit_no transaction, 
+                CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)) amount,
+
+                if(i.credit_no, "Credit Note", "Credit Note") transaction_type,
+
+                if(i.status = "0", 0, CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2))) balance,
+
+                if(i.status = "1", "Open", "Closed") status,
+
+                i.created_at date_created, c.customer_display_name customer_name  FROM
+             ${TABLE.CREDIT_NOTE} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
+             WHERE i.created_by = ${created_by} 
+             AND i.created_at BETWEEN ${startDate} AND ${endDate}) 
+            ) as t
+             order by t.date_created DESC
+             LIMIT ${offset},${page_size}
+            `
+
+        );
+        return result;
+    },
+
+
+    getReceivableSummarySize: async ({ offset, startDate, endDate, created_by, estimate, page_size }: Invoices) => {
+        const [result] = await client.query(
+
+            `SELECT sum(t.counts) count
+             FROM (
+            ( SELECT COUNT(i.invoice_no) counts
+               FROM
+             ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
+              WHERE i.created_by = ${created_by} AND i.estimate = ${estimate} 
+              AND i.created_at BETWEEN ${startDate} AND ${endDate} ) 
+              UNION ALL
+
+            (   SELECT COUNT(i.credit_no) counts
+                 FROM
+             ${TABLE.CREDIT_NOTE} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
+             WHERE i.created_by = ${created_by} 
+             AND i.created_at BETWEEN ${startDate} AND ${endDate}) 
+            ) as t 
+            `
+        );
+        return result.count;
     },
 
 
     //Customer balance report query
     getCustomerBalanceInvoice: async ({ offset, created_by, page_size, estimate, startDate, endDate }: Invoices) => {
         const result = await client.query(
-            `SELECT c.customer_display_name, 
-             sum(CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2))) invoice_amount,
-             IFNULL(sum(CAST(SUBSTRING(replace(n.amount, ',', ''),5) AS DECIMAL(10,2))), 0) credit_amount,
-            (sum(CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)))-IFNULL(sum(CAST(SUBSTRING(replace(n.amount, ',', ''),5)
-             AS DECIMAL(10,2))), 0)) balance  FROM 
-            ${TABLE.CUSTOMER} c 
-            left join ${TABLE.INVOICES} i on c.id = i.customer_id 
-            left join ${TABLE.CREDIT_NOTE} n on n.customer_id = c.id 
-            WHERE i.created_by = ${created_by} AND i.status = "0" AND i.estimate = '0' 
-            AND i.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY c.customer_display_name 
-            order by i.date_modified DESC LIMIT ${offset},${page_size}`);
+            `SELECT customer_display_name,count, IFNULL(invoice_amount, 0) invoice_amount,  IFNULL(credit_amount, 0) credit_amount, (IFNULL(invoice_amount, 0) - IFNULL(credit_amount, 0)) balance  
+             FROM (
+
+             (SELECT  c.customer_display_name, 
+             COUNt(i.id) count,
+             i.customer_id,
+             sum( CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2))) invoice_amount 
+             from
+             ${TABLE.CUSTOMER} c 
+             left join  ${TABLE.INVOICES} i on c.id = i.customer_id 
+             WHERE i.created_by = ${created_by} AND i.status = "0" AND i.estimate = '0' 
+             AND i.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY c.customer_display_name) a
+
+             left join
+
+             ( SELECT  d.customer_display_name customer,
+                         COUNt(n.id) counts,
+                                      n.customer_id,
+             sum( CAST(SUBSTRING(replace(n.due_amount, ',', ''),5) AS DECIMAL(10,2))) credit_amount
+             from
+             ${TABLE.CUSTOMER} d 
+             left join  ${TABLE.CREDIT_NOTE} n on n.customer_id = d.id 
+             WHERE n.created_by = ${created_by} AND n.status = "1"
+             AND n.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY d.customer_display_name) b
+             
+             on a.customer_id = b.customer_id
+             ) 
+              LIMIT ${offset},${page_size}`);
         return result;
     },
+
+
+
 
     getCustomerBalanceInvoiceSize: async ({ created_by, startDate, endDate }: Invoices) => {
         const [result] = await client.query(
@@ -129,6 +221,49 @@ export default {
             left join ${TABLE.CREDIT_NOTE} n on n.customer_id = c.id 
             WHERE i.created_by = ${created_by} AND i.status = "0" AND i.estimate = '0' AND i.created_at BETWEEN ${startDate} AND ${endDate} `);
         return result.count;
+    },
+
+
+    //customer sales report
+
+    getCustomerSales: async ({ offset, created_by, page_size, estimate, startDate, endDate }: Invoices) => {
+        const result = await client.query(
+            `SELECT 
+            customer_display_name, count invoice_counts, 
+            (IFNULL(invoice_amount, 0) - IFNULL(credit_amount, 0)) sales_with_tax, 
+            IFNULL(invoice_amount, 0)-(IFNULL(credit_tax, 0)+IFNULL(invoice_tax, 0)+IFNULL(credit_amount, 0)) sales
+            
+             FROM (
+
+             (SELECT  c.customer_display_name, 
+             COUNt(i.id) count,
+             i.customer_id,
+             sum( CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2))) invoice_amount, 
+             sum( CAST(SUBSTRING(replace(i.tax_amount, ',', ''),5) AS DECIMAL(10,2))) invoice_tax 
+             from
+             ${TABLE.CUSTOMER} c 
+             left join  ${TABLE.INVOICES} i on c.id = i.customer_id 
+             WHERE i.created_by = ${created_by} AND i.status = "0" AND i.estimate = '0' 
+             AND i.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY c.customer_display_name) a
+
+             left join
+
+             ( SELECT  
+             d.customer_display_name customer,
+             COUNt(n.id) counts,
+              n.customer_id,
+             sum( CAST(SUBSTRING(replace(n.tax_amount, ',', ''),5) AS DECIMAL(10,2))) credit_tax, 
+             sum( CAST(SUBSTRING(replace(n.amount, ',', ''),5) AS DECIMAL(10,2))) credit_amount
+             from
+             ${TABLE.CUSTOMER} d 
+             left join  ${TABLE.CREDIT_NOTE} n on n.customer_id = d.id 
+             WHERE n.created_by = ${created_by} 
+             AND n.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY d.customer_display_name) b
+             
+             on a.customer_id = b.customer_id
+             ) 
+              LIMIT ${offset},${page_size}`);
+        return result;
     },
 
 
@@ -315,10 +450,12 @@ export default {
         return result.count;
     },
 
-    getPageSizeInvoice: async ({ created_by, estimate }: Invoices) => {
+    getPageSizeInvoice: async ({ created_by, startDate, endDate, estimate }: Invoices) => {
         const [result] = await client.query(
             `SELECT COUNT(i.id) count FROM ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER}
-             c on c.id = i.customer_id WHERE created_by = ?  AND estimate = ?`, [created_by, estimate]);
+             c on c.id = i.customer_id WHERE i.created_by = ${created_by} AND i.estimate = ${estimate}
+              AND i.created_at BETWEEN ${startDate} AND ${endDate}
+             `,);
         return result.count;
     },
     createEstimate: async ({ customer_id, estimate_no, expiry_date, estimate_date, estimate_message,

@@ -419,6 +419,63 @@ export default {
   },
 
 
+
+  //Customer  Salves Report Controller
+  getCustomerSales: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      let { page_number, page_size, startDate, endDate, created_by } = getQuery(ctx, { mergeParams: true });
+
+      const total = await invoiceService.getCustomerBalanceInvoiceSize({
+        created_by: Number(created_by),
+        startDate: startDate,
+        endDate: endDate,
+      });
+
+      // console.log(total)
+      if (page_number == null) {
+        page_number = "1"
+        page_size = "1000"
+
+        const offset = (Number(page_number) - 1) * Number(page_size);
+        const data = await invoiceService.getCustomerSales({
+          offset: Number(offset),
+          created_by: Number(created_by),
+          startDate: startDate,
+          endDate: endDate,
+          page_size: Number(page_size)
+        });
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          total: total,
+          data: data
+        };
+      } else {
+        const offset = (Number(page_number) - 1) * Number(page_size);
+        const data = await invoiceService.getCustomerSales({
+          offset: Number(offset),
+          created_by: Number(created_by),
+          startDate: startDate,
+          endDate: endDate,
+          page_size: Number(page_size)
+        });
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          total: total,
+          data: data
+        };
+      }
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
   //Customer Balance Report Controller
   getCustomerBalanceInvoiceReport: async (ctx: any) => {
     try {
@@ -476,7 +533,7 @@ export default {
   },
 
 
-  //Customer Balance Report Controller
+  //Customer Aging Report Controller
   getAgingSummaryInvoice: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
@@ -600,9 +657,11 @@ export default {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
-      let { page_number, filter_value, estimate, created_by } = getQuery(ctx, { mergeParams: true });
+      let { page_number, page_size, startDate, endDate, filter_value, estimate, created_by } = getQuery(ctx, { mergeParams: true });
       const total = await invoiceService.getPageSizeInvoice({
         created_by: Number(created_by),
+        startDate: startDate,
+        endDate: endDate,
         estimate: estimate
       });
       if (filter_value == null || filter_value == "") {
@@ -610,11 +669,15 @@ export default {
 
         if (page_number == null) {
           page_number = "1"
+          page_size = "10"
 
           const offset = (Number(page_number) - 1) * 10;
           const data = await invoiceService.getInvoices({
             offset: Number(offset),
             estimate: estimate,
+            startDate: startDate,
+            page_size: Number(page_size),
+            endDate: endDate,
             created_by: Number(created_by)
           });
           ctx.response.body = {
@@ -628,6 +691,9 @@ export default {
           const data = await invoiceService.getInvoices({
             offset: Number(offset),
             estimate: estimate,
+            startDate: startDate,
+            endDate: endDate,
+            page_size: Number(page_size),
             created_by: Number(created_by)
           });
           ctx.response.body = {
@@ -638,6 +704,7 @@ export default {
           };
         }
       }
+
 
       else {
         console.log(filter_value, '||| params');
@@ -665,6 +732,72 @@ export default {
       };
     }
   },
+
+
+
+  // receivable report
+
+  /**
+* @description Get all receivable
+*/
+  getReceivableSummary: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      // console.log("bayo", kw)
+      let { page_number, page_size, startDate, endDate, filter_value, estimate, created_by } = getQuery(ctx, { mergeParams: true });
+      const total = await invoiceService.getReceivableSummarySize({
+        created_by: Number(created_by),
+        startDate: startDate,
+        endDate: endDate,
+        estimate: estimate
+      });
+      
+      if (page_number == null) {
+        page_number = "1"
+        page_size = "10"
+
+        const offset = (Number(page_number) - 1) * 10;
+        const data = await invoiceService.getReceivableSummary({
+          offset: Number(offset),
+          estimate: estimate,
+          startDate: startDate,
+          page_size: Number(page_size),
+          endDate: endDate,
+          created_by: Number(created_by)
+        });
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          total: total,
+          data: data
+        };
+      } else {
+        const offset = (Number(page_number) - 1) * 10;
+        const data = await invoiceService.getReceivableSummary({
+          offset: Number(offset),
+          estimate: estimate,
+          startDate: startDate,
+          endDate: endDate,
+          page_size: Number(page_size),
+          created_by: Number(created_by)
+        });
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          total: total,
+          data: data
+        };
+      }
+
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
 
   /**
   * @description Get all Invoices List

@@ -27,6 +27,10 @@ router
   .get("/customerbalance", authorize, InvoicesController.getCustomerBalanceInvoiceReport)
   .get("/agingsummary", authorize, InvoicesController.getAgingSummaryInvoice)
 
+  .get("/customersales", authorize, InvoicesController.getCustomerSales)
+
+  .get("/receivables", authorize, InvoicesController.getReceivableSummary)
+
 
 
 export default router;

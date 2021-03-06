@@ -51,4 +51,56 @@ export default {
         return result;
     },
 
+    //sales per item
+
+    getItemSales: async ({ offset, created_by, page_size, startDate, endDate }: Item) => {
+        const result = await client.query(
+            `
+            SELECT
+             credit_item,
+             IFNULL((invoice_amount - credit_amount), 0) amount,
+             IFNULL((invoice_quantity - credit_quantity), 0) quantity,
+
+             CAST( (IFNULL((invoice_amount - credit_amount), 0)/IFNULL((invoice_quantity - credit_quantity), 0))  AS DECIMAL(10,2)) avarage
+
+             FROM ( 
+             ( SELECT 
+             p.name credit_item,
+             IFNULL((CAST( CAST(CAST(sum(quantity * price) AS DECIMAL(10,2))/CAST(sum(quantity) AS DECIMAL(10,2)) AS DECIMAL(10,2)) *
+             CAST(sum(quantity) AS DECIMAL(10,2))  AS DECIMAL(10,2))),0) credit_amount,
+             IFNULL((CAST(CAST(sum(quantity * price) AS DECIMAL(10,2))/CAST(sum(quantity) AS DECIMAL(10,2)) AS DECIMAL(10,2))),0) credit_avarage,
+             CAST(sum(quantity) AS DECIMAL(10,2)) credit_quantity
+             from
+             ${TABLE.CREDIT_ITEMS} p
+             left join  ${TABLE.CREDIT_NOTE} n on n.credit_no = p.credit_no
+             WHERE n.created_by = ${created_by} 
+             AND p.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY p.name ) a
+
+             left join
+
+            (SELECT
+             i.name invoice_item,
+             IFNULL((CAST( CAST(CAST(sum(quantity * price) AS DECIMAL(10,2))/CAST(sum(quantity) AS DECIMAL(10,2)) AS DECIMAL(10,2)) *
+             CAST(sum(quantity) AS DECIMAL(10,2))  AS DECIMAL(10,2))),0) invoice_amount,
+
+             IFNULL((CAST(CAST(sum(quantity * price) AS DECIMAL(10,2))/CAST(sum(quantity) AS DECIMAL(10,2)) AS DECIMAL(10,2))),0) invoice_avarage,
+
+             CAST(sum(quantity) AS DECIMAL(10,2)) invoice_quantity
+
+             from
+             
+             ${TABLE.INVOICE_ITEMS} i
+             left join  ${TABLE.INVOICES} n on n.invoice_no = i.invoice_no 
+             WHERE n.created_by = ${created_by} AND n.estimate = '0' 
+             AND i.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY i.name ) b
+
+             on  b.invoice_item = a.credit_item
+            )
+
+              LIMIT ${offset},${page_size}`);
+        return result;
+    },
+
+
+
 };

@@ -4,6 +4,7 @@ import { DATABASE, TABLE } from "./config.ts";
 import { SmtpClient } from "https://deno.land/x/smtp/mod.ts";
 
 
+
 const config: ClientConfig = {
   hostname: "157.230.229.119",
   username: "root",
@@ -11,9 +12,8 @@ const config: ClientConfig = {
   db: "Insight",
   port: 10330,
 
-	debug: true
+  debug: true
 }
-
 const client = await new Client().connect(config);
 
 
