@@ -104,18 +104,134 @@ export default {
     //Customer balance report query
     getVendorBalanceBills: async ({ offset, created_by, page_size, startDate, endDate }: Vendor) => {
         const result = await client.query(
-            `SELECT  c.opening_balance, c.vendor_display_name, 
-             CAST((sum(SUBSTRING(replace(IFNULL(i.amount, 0), ',', ''),5)) + IFNULL(c.opening_balance, 0)) AS DECIMAL(10,2)) bill_amount
+            `SELECT 
 
+            vendor_display_name, IFNULL(bill_amount, 0) bill_balance,
+            (IFNULL(bill_amount, 0) - IFNULL(credit_amount, 0)) balance,
+            IFNULL(credit_amount, 0) excess_amount
             FROM
+            (
+            ( 
+             SELECT c.opening_balance, c.vendor_display_name, i.vendor_id,
+             CAST((sum(SUBSTRING(replace(IFNULL(i.amount, 0), ',', ''),5)) + IFNULL(c.opening_balance, 0)) AS DECIMAL(10,2)) bill_amount
+             FROM
              ${TABLE.BILLS} i 
              inner join ${TABLE.VENDORS} c on c.id = i.vendor_id
-              WHERE
+             WHERE
              i.created_by = ${created_by} AND i.status = "0" 
-             AND i.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY c.vendor_display_name order by i.date_modified
+             AND i.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY c.vendor_display_name 
+             ) a
+             
+             left join 
+
+             ( SELECT  d.vendor_display_name vendor,
+                                      n.vendor_id,
+             sum( CAST(SUBSTRING(replace(n.due_amount, ',', ''),5) AS DECIMAL(10,2))) credit_amount
+             from
+             ${TABLE.VENDORS} d
+             left join  ${TABLE.CREDIT_NOTE_VENDOR} n on n.vendor_id = d.id
+             WHERE n.created_by = ${created_by} AND n.status = "1"
+             AND n.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY d.vendor_display_name) b
+             on a.vendor_id = b.vendor_id  ) 
               LIMIT ${offset},${page_size}`);
         return result;
     },
+
+
+    //payable summary
+    getPayableSummary: async ({ offset, startDate, endDate, created_by, page_size }: Vendor) => {
+        const result = await client.query(
+            `
+            
+            
+     SELECT t.transaction,t.transaction_type,t.amount, t.vendor_name, t.date_created, t.balance, t.status
+ FROM (
+
+            (SELECT
+            
+              i.bill_no transaction,
+
+              CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)) amount,
+
+              if(i.bill_no, "Bill", "Bill") transaction_type,
+
+              if(i.status = "1", 0, CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2))) balance,
+
+              if(i.status = "1", "Paid", "Overdue") status,
+
+              i.created_at date_created, c.vendor_display_name vendor_name  FROM
+             ${TABLE.BILLS} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id 
+              WHERE i.created_by = ${created_by}  
+              AND i.created_at BETWEEN ${startDate} AND ${endDate} )
+              
+              UNION ALL
+
+             (SELECT 
+              
+              if(i.bill_no, "Vendor opening balance", "Vendor opening balance") transaction,
+
+              CAST(c.opening_balance AS DECIMAL(10,2)) amount,
+
+              if(i.bill_no, "Bill", "Bill") transaction_type,
+
+              if(i.status = "1", 0, CAST(c.opening_balance AS DECIMAL(10,2))) balance,
+
+              if(i.status = "1", "Paid", "Overdue") status,
+
+              i.created_at date_created, c.vendor_display_name vendor_name  FROM
+              ${TABLE.BILLS} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id 
+              WHERE i.created_by = ${created_by}  
+              AND i.created_at BETWEEN ${startDate} AND ${endDate}  GROUP BY c.opening_balance )
+              ) t
+             order by t.date_created DESC
+             LIMIT ${offset},${page_size}
+            `
+
+        );
+        return result;
+    },
+
+
+    //payable summary
+    getPayableSummarySize: async ({ offset, startDate, endDate, created_by, page_size }: Vendor) => {
+        const [result] = await client.query(
+            `
+     SELECT COUNT(t.counts) count FROM (
+
+            (SELECT i.bill_no counts
+                FROM
+             ${TABLE.BILLS} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id 
+              WHERE i.created_by = ${created_by}  
+              AND i.created_at BETWEEN ${startDate} AND ${endDate} )
+              
+              UNION ALL
+
+             (SELECT i.vendor_id counts
+                FROM
+              ${TABLE.BILLS} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id 
+              WHERE i.created_by = ${created_by}  
+              AND i.created_at BETWEEN ${startDate} AND ${endDate}  GROUP BY c.opening_balance )
+              ) t
+            `
+
+        );
+        return result.count;
+    },
+
+
+    getVendorBalanceBillsSize: async ({ created_by, startDate, endDate }: Vendor) => {
+        const [result] = await client.query(
+            `SELECT COUNT(DISTINCT c.id) count
+            FROM 
+            ${TABLE.VENDORS} c 
+            left join ${TABLE.BILLS} i on c.id = i.vendor_id 
+            left join ${TABLE.CREDIT_NOTE_VENDOR} n on n.vendor_id = c.id
+            WHERE (i.created_by = ${created_by} OR n.created_by = ${created_by}) AND (i.status = "0" OR n.status = "1")  AND (i.created_at BETWEEN ${startDate} AND ${endDate} OR n.created_at BETWEEN ${startDate} AND ${endDate})  `);
+        return result.count;
+    },
+
+
+
 
 
 

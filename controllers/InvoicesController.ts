@@ -754,7 +754,7 @@ export default {
       
       if (page_number == null) {
         page_number = "1"
-        page_size = "10"
+        page_size = "100"
 
         const offset = (Number(page_number) - 1) * 10;
         const data = await invoiceService.getReceivableSummary({

@@ -40,7 +40,7 @@ router
 
    //vendorbalance report 
   .get("/vendorbalancebill", authorize, vendorController.getVendorBalanceBills)
-// .put("/customermore",authorize, customerController.updateUserCustomerMore)
+  .get("/payablesummary", authorize, vendorController.getPayableSummary)
 // .post("/customermore",authorize, customerController.createBilling)
 // .get("/customermore",authorize, customerController.getAllCustomersInfo)
 

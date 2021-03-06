@@ -219,7 +219,10 @@ export default {
             ${TABLE.CUSTOMER} c 
             left join ${TABLE.INVOICES} i on c.id = i.customer_id 
             left join ${TABLE.CREDIT_NOTE} n on n.customer_id = c.id 
-            WHERE i.created_by = ${created_by} AND i.status = "0" AND i.estimate = '0' AND i.created_at BETWEEN ${startDate} AND ${endDate} `);
+            WHERE (i.created_by = ${created_by} OR n.created_by = ${created_by}) AND (i.status = "0" OR n.status = "1") AND i.estimate = '0' AND
+             (i.created_at BETWEEN ${startDate} AND ${endDate} OR 
+             n.created_at BETWEEN ${startDate} AND ${endDate})
+             `);
         return result.count;
     },
 
