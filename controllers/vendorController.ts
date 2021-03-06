@@ -127,60 +127,60 @@ export default {
   /**
    * Update vendor
    */
-  updateVendor: async ({
-    request,
-    response,
-  }: {
-    request: any;
-    response: any;
-  }) => {
-    const body = await request.body();
+  // updateVendor: async ({
+  //   request,
+  //   response,
+  // }: {
+  //   request: any;
+  //   response: any;
+  // }) => {
+  //   const body = await request.body();
 
-    if (!request.hasBody) {
-      response.status = 400;
-      response.body = {
-        success: false,
-        message: "No data provided",
-      };
-    }
-    try {
-      const values = await body.value;
-      await vendorService.updateVendor({
-        id: values.id,
-        client_id: values.client_id,
-        title: values.title,
-        first_name: values.first_name,
-        other_name: values.other_name,
-        msisdn: values.msisdn,
-        email: values.email,
-        company_name: values.company_name,
-        vendor_display_name: values.vendor_display_name,
-        website: values.website,
-        street: values.street,
-        city_town: values.city_town,
-        state_province: values.state_province,
-        country: values.country,
-        street1: values.street1,
-        city_town1: values.city_town1,
-        state_province1: values.state_province1,
-        country1: values.country1,
-        remarks: values.remarks,
-        terms: values.terms,
-        opening_balance: values.opening_balance,
-      });
-      response.body = {
-        status: true,
-        status_code: 200,
-        message: "Vendor Updated Successfully",
-      };
-    } catch (error) {
-      response.status = 400;
-      response.body = {
-        success: false,
-        message: `${error}`,
-      };
-    }
-  },
+  //   if (!request.hasBody) {
+  //     response.status = 400;
+  //     response.body = {
+  //       success: false,
+  //       message: "No data provided",
+  //     };
+  //   }
+  //   try {
+  //     const values = await body.value;
+  //     await vendorService.updateVendor({
+  //       id: values.id,
+  //       client_id: values.client_id,
+  //       title: values.title,
+  //       first_name: values.first_name,
+  //       other_name: values.other_name,
+  //       msisdn: values.msisdn,
+  //       email: values.email,
+  //       company_name: values.company_name,
+  //       vendor_display_name: values.vendor_display_name,
+  //       website: values.website,
+  //       street: values.street,
+  //       city_town: values.city_town,
+  //       state_province: values.state_province,
+  //       country: values.country,
+  //       street1: values.street1,
+  //       city_town1: values.city_town1,
+  //       state_province1: values.state_province1,
+  //       country1: values.country1,
+  //       remarks: values.remarks,
+  //       terms: values.terms,
+  //       opening_balance: values.opening_balance,
+  //     });
+  //     response.body = {
+  //       status: true,
+  //       status_code: 200,
+  //       message: "Vendor Updated Successfully",
+  //     };
+  //   } catch (error) {
+  //     response.status = 400;
+  //     response.body = {
+  //       success: false,
+  //       message: `${error}`,
+  //     };
+  //   }
+  // },
 
   /**
    * @description Get all Vendors List
@@ -946,6 +946,66 @@ export default {
       };
     }
   },
+
+
+
+  /**
+* @description Get all receivable
+*/
+  getVendorBalanceBills: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      // console.log("bayo", kw)
+      let { page_number, page_size, startDate, endDate, filter_value, created_by } = getQuery(ctx, { mergeParams: true });
+      const total = "0"
+      // await invoiceService.getReceivableSummarySize({
+      //   created_by: Number(created_by),
+      //   startDate: startDate,
+      //   endDate: endDate
+      // });
+
+      if (page_number == null) {
+        page_number = "1"
+        page_size = "100"
+        const offset = (Number(page_number) - 1) * 10;
+        const data = await vendorService.getVendorBalanceBills({
+          offset: Number(offset),
+          startDate: startDate,
+          page_size: Number(page_size),
+          endDate: endDate,
+          created_by: created_by
+        });
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          total: total,
+          data: data
+        };
+      } else {
+        const offset = (Number(page_number) - 1) * 10;
+        const data = await vendorService.getVendorBalanceBills({
+          offset: Number(offset),
+          startDate: startDate,
+          endDate: endDate,
+          page_size: Number(page_size),
+          created_by: created_by
+        });
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          total: total,
+          data: data
+        };
+      }
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
   //   /**
   //    * @description Get One Customers List
   //    */

@@ -1,172 +1,61 @@
 import client from "../db/client.ts";
 import { TABLE } from "../db/config.ts";
-import { getQuery } from "https://deno.land/x/oak/helpers.ts";
+import { getQuery } from 'https://deno.land/x/oak/helpers.ts';
 import Vendor from "../interfaces/Vendor.ts";
 
 export default {
-  createVendor: async ({
-    client_id,
-    title,
-    first_name,
-    other_name,
-    msisdn,
-    email,
-    company_name,
-    vendor_display_name,
-    website,
-    street,
-    city_town,
-    state_province,
-    country,
-    street1,
-    city_town1,
-    state_province1,
-    country1,
-    remarks,
-    terms,
-    opening_balance,
-  }: Vendor) => {
-    const result = await client.query(
-      `INSERT INTO ${TABLE.VENDORS}  SET
+    createVendor: async ({ client_id, title, first_name, other_name,
+        msisdn, email, company_name, vendor_display_name, website, street, city_town, state_province, country, street1,
+        city_town1, state_province1, country1, remarks, terms, opening_balance }: Vendor) => {
+        const result = await client.query(`INSERT INTO ${TABLE.VENDORS}  SET
               client_id=?, title=?,
               first_name =?, other_name =?,
               msisdn=?, email =?, company_name=?,
               vendor_display_name=?, website=?, 
               street=?, city_town=?, state_province=?, country=?, 
               street1=?, city_town1=?, state_province1=?, country1=?, 
-              remarks=?, terms=?, opening_balance=?`,
-      [
-        client_id,
-        title,
-        first_name,
-        other_name,
-        msisdn,
-        email,
-        company_name,
-        vendor_display_name,
-        website,
-        street,
-        city_town,
-        state_province,
-        country,
-        street1,
-        city_town1,
-        state_province1,
-        country1,
-        remarks,
-        terms,
-        opening_balance,
-      ]
-    );
-    return result;
-  },
+              remarks=?, terms=?, opening_balance=?`, [
+            client_id,
+            title,
+            first_name,
+            other_name,
+            msisdn,
+            email,
+            company_name,
+            vendor_display_name,
+            website,
+            street,
+            city_town,
+            state_province,
+            country,
+            street1,
+            city_town1,
+            state_province1,
+            country1,
+            remarks,
+            terms,
+            opening_balance
+        ]);
+        return result;
+    },
 
-  updateVendor: async ({
-    id,
-    client_id,
-    title,
-    first_name,
-    other_name,
-    msisdn,
-    email,
-    company_name,
-    vendor_display_name,
-    website,
-    street,
-    city_town,
-    state_province,
-    country,
-    street1,
-    city_town1,
-    state_province1,
-    country1,
-    remarks,
-    terms,
-    opening_balance,
-  }: Vendor) => {
-    const query = await client.query(
-      `UPDATE ${TABLE.VENDORS}  SET
-              client_id=?, title=?,
-              first_name =?, other_name =?,
-              msisdn=?, email =?, company_name=?,
-              vendor_display_name=?, website=?, 
-              street=?, city_town=?, state_province=?, country=?, 
-              street1=?, city_town1=?, state_province1=?, country1=?, 
-              remarks=?, terms=?, opening_balance=? WHERE id=?`,
-      [
-        client_id,
-        title,
-        first_name,
-        other_name,
-        msisdn,
-        email,
-        company_name,
-        vendor_display_name,
-        website,
-        street,
-        city_town,
-        state_province,
-        country,
-        street1,
-        city_town1,
-        state_province1,
-        country1,
-        remarks,
-        terms,
-        opening_balance,
-        id,
-      ]
-    );
-    return query;
-  },
 
-  createExpense: async ({
-    client_id,
-    date,
-    expense_account,
-    amount,
-    paid_through,
-    customer_id,
-    vendor_id,
-    billable,
-    product_name,
-    notes,
-    tax_amount,
-  }: Vendor) => {
-    const result = await client.query(
-      `INSERT INTO ${TABLE.EXPENSES}  SET
+    createExpense: async ({ client_id, date, expense_account, amount, paid_through, customer_id, vendor_id, billable, product_name, notes, tax_amount }: Vendor) => {
+        const result = await client.query(`INSERT INTO ${TABLE.EXPENSES}  SET
               client_id=?, date =?,
               expense_account=?, amount =?, paid_through=?,
               customer_id=?, vendor_id=?, 
-              notes=?,billable=?,product=?, tax_amount= ?`,
-      [
-        client_id,
-        date,
-        expense_account,
-        amount,
-        paid_through,
-        customer_id,
-        vendor_id,
-        notes,
-        billable,
-        product_name,
-        tax_amount,
-      ]
-    );
-    return result;
-  },
+              notes=?,billable=?,product=?, tax_amount= ?`, [
+            client_id, date, expense_account, amount, paid_through, customer_id, vendor_id, notes, billable, product_name, tax_amount
+        ]);
+        return result;
+    },
 
-  createRecurringExpense: async ({
-    start_time,
-    end_time,
-    customer_id,
-    frequecy,
-    vendor_id,
-    created_by,
-    frequency_type,
-  }: Vendor) => {
-    const result = await client.query(
-      `INSERT INTO ${TABLE.RECURRING_EXPENSE}  SET
+
+
+
+    createRecurringExpense: async ({ start_time, end_time, customer_id, frequecy, vendor_id, created_by, frequency_type }: Vendor) => {
+        const result = await client.query(`INSERT INTO ${TABLE.RECURRING_EXPENSE}  SET
         start_time=?, 
         end_time =?, 
         customer_id =?,
@@ -175,172 +64,169 @@ export default {
         created_by=?,
         vendor_id =?,
         last_updated = '1',
-        status ='1'`,
-      [
-        start_time,
-        end_time,
-        customer_id,
-        frequecy,
-        frequency_type,
-        created_by,
-        vendor_id,
-      ]
-    );
-    return result;
-  },
+        status ='1'`, [
+            start_time,
+            end_time,
+            customer_id,
+            frequecy,
+            frequency_type,
+            created_by,
+            vendor_id
+        ]);
+        return result;
+    },
 
-  // createAddress: async ({
-  //     customer_id, street, city_town, state_province, country, tax_info,
-  //     notes, payment_method, delivery_method, terms, out_of_balance }: Vendor) => {
-  //     const result = await client.query(`INSERT INTO ${TABLE.CUSTOMER_MORE}
-  //       SET
-  //       customer_id=?, street=?, city_town=?, state_province=?, country=?, tax_info=?,
-  //       notes=?, payment_method=?, delivery_method=?, terms=?, out_of_balance=?`,
-  //         [
-  //             customer_id,
-  //             street,
-  //             city_town,
-  //             state_province,
-  //             country,
-  //             tax_info,
-  //             notes,
-  //             payment_method,
-  //             delivery_method,
-  //             terms,
-  //             out_of_balance
-  //         ]);
-  //     return result;
-  // },
+    // createAddress: async ({
+    //     customer_id, street, city_town, state_province, country, tax_info,
+    //     notes, payment_method, delivery_method, terms, out_of_balance }: Vendor) => {
+    //     const result = await client.query(`INSERT INTO ${TABLE.CUSTOMER_MORE}
+    //       SET
+    //       customer_id=?, street=?, city_town=?, state_province=?, country=?, tax_info=?, 
+    //       notes=?, payment_method=?, delivery_method=?, terms=?, out_of_balance=?`,
+    //         [
+    //             customer_id,
+    //             street,
+    //             city_town,
+    //             state_province,
+    //             country,
+    //             tax_info,
+    //             notes,
+    //             payment_method,
+    //             delivery_method,
+    //             terms,
+    //             out_of_balance
+    //         ]);
+    //     return result;
+    // },
 
-  getAll: async ({ offset, client_id }: Vendor) => {
-    const query = await client.query(
-      `SELECT * FROM ${TABLE.VENDORS} WHERE client_id = ? LIMIT ?,10`,
-      [client_id, offset]
-    );
-    return query;
-  },
+    //vendor balance report
 
-  getExpenseReport: async ({ client_id, startDate, endDate }: Vendor) => {
-    const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+    //Customer balance report query
+    getVendorBalanceBills: async ({ offset, created_by, page_size, startDate, endDate }: Vendor) => {
+        const result = await client.query(
+            `SELECT  c.opening_balance, c.vendor_display_name, 
+             CAST((sum(SUBSTRING(replace(IFNULL(i.amount, 0), ',', ''),5)) + IFNULL(c.opening_balance, 0)) AS DECIMAL(10,2)) bill_amount
+
+            FROM
+             ${TABLE.BILLS} i 
+             inner join ${TABLE.VENDORS} c on c.id = i.vendor_id
+              WHERE
+             i.created_by = ${created_by} AND i.status = "0" 
+             AND i.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY c.vendor_display_name order by i.date_modified
+              LIMIT ${offset},${page_size}`);
+        return result;
+    },
+
+
+
+    getAll: async ({ offset, client_id }: Vendor) => {
+        const query = await client.query(`SELECT * FROM ${TABLE.VENDORS} WHERE client_id = ? LIMIT ?,10`, [client_id, offset]);
+        return query;
+    },
+
+    getExpenseReport: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
         expense_account = "Cost of Goods Sold" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
-    return query;
-  },
+        return query;
+    },
 
-  getEmployeeAdvance: async ({ client_id, startDate, endDate }: Vendor) => {
-    const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+    getEmployeeAdvance: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
         paid_through = "Employee Advance" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
-    return query;
-  },
+        return query;
+    },
 
-  getEmployeeAdvanceExpense: async ({
-    client_id,
-    startDate,
-    endDate,
-  }: Vendor) => {
-    const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+    getEmployeeAdvanceExpense: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
         expense_account = "Employee Advance" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
-    return query;
-  },
+        return query;
+    },
 
-  getPrepaidExpenses: async ({ client_id, startDate, endDate }: Vendor) => {
-    const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+
+    getPrepaidExpenses: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
         paid_through = "Prepaid Expenses" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
-    return query;
-  },
+        return query;
+    },
 
-  getPettyCash: async ({ client_id, startDate, endDate }: Vendor) => {
-    const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+
+    getPettyCash: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
         paid_through = "Petty Cash" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
-    return query;
-  },
+        return query;
+    },
 
-  getUndepositedFunds: async ({ client_id, startDate, endDate }: Vendor) => {
-    const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+
+
+    getUndepositedFunds: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
         paid_through = "Undeposited Funds" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
-    return query;
-  },
+        return query;
+    },
 
-  getReimbursements: async ({ client_id, startDate, endDate }: Vendor) => {
-    const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+    getReimbursements: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
         expense_account = "Employee Reimbursements" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
-    return query;
-  },
+        return query;
+    },
 
-  getReimbursementsCredit: async ({
-    client_id,
-    startDate,
-    endDate,
-  }: Vendor) => {
-    const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+    getReimbursementsCredit: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
         paid_through = "Employee Reimbursements" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
-    return query;
-  },
-  getAdvanceTax: async ({ client_id, startDate, endDate }: Vendor) => {
-    const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+        return query;
+    },
+    getAdvanceTax: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
         expense_account = "Advance Tax" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
-    return query;
-  },
+        return query;
+    },
 
-  getAdvanceTaxPaid: async ({ client_id, startDate, endDate }: Vendor) => {
-    const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+    getAdvanceTaxPaid: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
         paid_through = "Advance Tax" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
-    return query;
-  },
+        return query;
+    },
 
-  getTaxpayable: async ({ client_id, startDate, endDate }: Vendor) => {
-    const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+    getTaxpayable: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
         expense_account = "Tax Payable" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
-    return query;
-  },
+        return query;
+    },
 
-  getFurnitureandEquipment: async ({
-    client_id,
-    startDate,
-    endDate,
-  }: Vendor) => {
-    const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+
+    getFurnitureandEquipment: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
         expense_account = "Furniture and Equipment" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
-    return query;
-  },
+        return query;
+    },
 
-  getFurnitureandEquipmentCredit: async ({
-    client_id,
-    startDate,
-    endDate,
-  }: Vendor) => {
-    const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+    getFurnitureandEquipmentCredit: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
         paid_through = "Furniture and Equipment" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
-    return query;
-  },
+        return query;
+    },
 
-  getPrepaidExpensesDebit: async ({
-    client_id,
-    startDate,
-    endDate,
-  }: Vendor) => {
-    const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+    getPrepaidExpensesDebit: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
         expense_account = "Prepaid Expenses" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
-    return query;
-  },
+        return query;
+    },
 
-  getTaxAmountTaxExpense: async ({ client_id, startDate, endDate }: Vendor) => {
-    const query = await client.query(`SELECT tax_amount FROM ${TABLE.EXPENSES} WHERE 
+    getTaxAmountTaxExpense: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT tax_amount FROM ${TABLE.EXPENSES} WHERE 
         client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
-    return query;
-  },
+        return query;
+    },
 
-  getTaxpayablePaid: async ({ client_id, startDate, endDate }: Vendor) => {
-    const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+    getTaxpayablePaid: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
         paid_through = "Tax Payable" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
-    return query;
-  },
+        return query;
+    },
 
-  getExpenseReportExpenseCost: async ({
-    client_id,
-    startDate,
-    endDate,
-  }: Vendor) => {
-    const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+
+    getExpenseReportExpenseCost: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
        (expense_account = "Advertising And Marketing" or
         expense_account = "Bank Fees and Charges" or
         expense_account = "Bad Debt" or
@@ -362,214 +248,170 @@ export default {
         expense_account = "Travel Expenses" or
         expense_account = "Telephone Expense")
         AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
-    return query;
-  },
+        return query;
+    },
 
-  getExpenses: async ({ offset, client_id }: Vendor) => {
-    const query = await client.query(
-      `SELECT i.date, i.expense_account,  c.customer_display_name, v.vendor_display_name, i.paid_through,i.reference, i.billable,i.product,i.notes, i.amount
+
+    getExpenses: async ({ offset, client_id }: Vendor) => {
+        const query = await client.query(`SELECT i.date, i.expense_account,  c.customer_display_name, v.vendor_display_name, i.paid_through,i.reference, i.billable,i.product,i.notes, i.amount
         FROM (( ${TABLE.EXPENSES} i
         INNER JOIN ${TABLE.VENDORS} v ON i.vendor_id = v.id)
-        INNER JOIN ${TABLE.CUSTOMER} c ON i.customer_id = c.id) WHERE i.client_id = ? LIMIT ?,10`,
-      [client_id, offset]
-    );
-    return query;
-  },
+        INNER JOIN ${TABLE.CUSTOMER} c ON i.customer_id = c.id) WHERE i.client_id = ? LIMIT ?,10`, [client_id, offset]);
+        return query;
+    },
 
-  getPageSizeExpense: async ({ client_id }: Vendor) => {
-    const [
-      result,
-    ] = await client.query(
-      `SELECT COUNT(id) count FROM  ${TABLE.EXPENSES} WHERE client_id = ?`,
-      [client_id]
-    );
-    return result.count;
-  },
+    getPageSizeExpense: async ({ client_id }: Vendor) => {
+        const [result] = await client.query(
+            `SELECT COUNT(id) count FROM  ${TABLE.EXPENSES} WHERE client_id = ?`, [client_id]);
+        return result.count;
+    },
 
-  getVendorBalance: async ({ client_id, startDate, endDate }: Vendor) => {
-    const result = await client.query(
-      `SELECT opening_balance FROM  ${TABLE.VENDORS}  WHERE
+    getVendorBalance: async ({ client_id, startDate, endDate }: Vendor) => {
+        const result = await client.query(
+            `SELECT opening_balance FROM  ${TABLE.VENDORS}  WHERE
              client_id = ${client_id} AND 
-             created_at BETWEEN ${startDate} AND ${endDate}`
-    );
-    return result;
-  },
+             created_at BETWEEN ${startDate} AND ${endDate}`);
+        return result;
+    },
 
-  getExpenseFilter: async ({ offset, client_id }: Vendor) => {
-    const query = await client.query(
-      `SELECT i.date, i.expense_account,  c.customer_display_name, v.vendor_display_name, i.paid_through,i.reference, i.billable,i.product,i.notes, i.amount
+
+    getExpenseFilter: async ({ offset, client_id }: Vendor) => {
+        const query = await client.query(`SELECT i.date, i.expense_account,  c.customer_display_name, v.vendor_display_name, i.paid_through,i.reference, i.billable,i.product,i.notes, i.amount
         FROM (( ${TABLE.EXPENSES} i
         INNER JOIN ${TABLE.VENDORS} v ON i.vendor_id = v.id)
-        INNER JOIN ${TABLE.CUSTOMER} c ON i.customer_id = c.id) WHERE i.client_id = ? AND i.expense_ref=? LIMIT ?,10`,
-      [client_id, offset]
-    );
-    return query;
-  },
+        INNER JOIN ${TABLE.CUSTOMER} c ON i.customer_id = c.id) WHERE i.client_id = ? AND i.expense_ref=? LIMIT ?,10`, [client_id, offset]);
+        return query;
+    },
 
-  getRecurringExpenses: async ({ offset, client_id }: Vendor) => {
-    const query = await client.query(
-      `SELECT i.date, i.expense_account, r.status,r.frequecy,r.expense_ref, c.customer_display_name,
+    getRecurringExpenses: async ({ offset, client_id }: Vendor) => {
+        const query = await client.query(`SELECT i.date, i.expense_account, r.status,r.frequecy,r.expense_ref, c.customer_display_name,
          v.vendor_display_name, r.frequency_type, r.start_time, r.end_time, 
          i.paid_through,i.reference, i.billable,i.product,i.notes, i.amount
         FROM  ${TABLE.RECURRING_EXPENSE} r
         INNER JOIN ${TABLE.EXPENSES} i ON r.expense_ref = i.reference
         INNER JOIN ${TABLE.VENDORS} v ON r.vendor_id = v.id 
-        INNER JOIN ${TABLE.CUSTOMER} c ON r.customer_id = c.id  WHERE r.created_by = ? LIMIT ?,10`,
-      [client_id, offset]
-    );
-    return query;
-  },
+        INNER JOIN ${TABLE.CUSTOMER} c ON r.customer_id = c.id  WHERE r.created_by = ? LIMIT ?,10`, [client_id, offset]);
+        return query;
+    },
 
-  getPageSizeExpenseRe: async ({ client_id }: Vendor) => {
-    const [
-      result,
-    ] = await client.query(
-      `SELECT COUNT(id) count FROM  ${TABLE.RECURRING_EXPENSE} WHERE created_by = ?`,
-      [client_id]
-    );
-    return result.count;
-  },
+    getPageSizeExpenseRe: async ({ client_id }: Vendor) => {
+        const [result] = await client.query(
+            `SELECT COUNT(id) count FROM  ${TABLE.RECURRING_EXPENSE} WHERE created_by = ?`, [client_id]);
+        return result.count;
+    },
 
-  getfrequencyExpense: async () => {
-    const [result] = await client.query(
-      `SELECT * FROM  ${TABLE.RECURRING_EXPENSE} WHERE frequecy < UNIX_TIMESTAMP(NOW()) AND status = 1 order by id ASC limit 1`
-    );
-    return result;
-  },
 
-  updatefrequencyExpenses: async ({ frequecy, reference }: Vendor) => {
-    const result = await client.query(
-      `UPDATE ${TABLE.RECURRING_EXPENSE} SET 
+    getfrequencyExpense: async () => {
+        const [result] = await client.query(
+            `SELECT * FROM  ${TABLE.RECURRING_EXPENSE} WHERE frequecy < UNIX_TIMESTAMP(NOW()) AND status = 1 order by id ASC limit 1`);
+        return result;
+    },
+
+
+    updatefrequencyExpenses: async ({ frequecy, reference }: Vendor) => {
+        const result = await client.query(
+            `UPDATE ${TABLE.RECURRING_EXPENSE} SET 
             frequecy = ?, 
             start_time = DATE_FORMAT(now(), "%Y-%m-%d %h:%i:%s")
             WHERE expense_ref = ? `,
-      [frequecy, reference]
-    );
-    return result;
-  },
+            [frequecy, reference]);
+        return result;
+    },
 
-  getRecurringExpeFilter: async ({ filter_value }: Vendor) => {
-    const result = await client.query(
-      `SELECT * FROM  ${TABLE.EXPENSES} WHERE reference = ? `,
-      [filter_value]
-    );
-    return result;
-  },
-  updateCustomerAll: async ({
-    client_id,
-    customer_type,
-    title,
-    first_name,
-    other_name,
-    msisdn,
-    email,
-    company_name,
-    vendor_display_name,
-    website,
-    customer_id,
-  }: Vendor) => {
-    const query = await client.query(
-      `UPDATE ${TABLE.CUSTOMER} SET 
+    getRecurringExpeFilter: async ({ filter_value }: Vendor) => {
+        const result = await client.query(
+            `SELECT * FROM  ${TABLE.EXPENSES} WHERE reference = ? `, [filter_value]);
+        return result;
+    },
+    updateCustomerAll: async ({ client_id, customer_type, title, first_name, other_name, msisdn, email, company_name, vendor_display_name, website, customer_id }: Vendor) => {
+        const query = await client.query(`UPDATE ${TABLE.CUSTOMER} SET 
         client_id=?, customer_type=?, title=?, first_name =?, other_name =?, msisdn=?, email =?, company_name=?, vendor_display_name=?, website=?
         WHERE id = ?
-        `,
-      [
-        client_id,
-        customer_type,
-        title,
-        first_name,
-        other_name,
-        msisdn,
-        email,
-        company_name,
-        vendor_display_name,
-        website,
-        customer_id,
-      ]
-    );
-    return query;
-  },
+        `, [
+            client_id,
+            customer_type,
+            title,
+            first_name,
+            other_name,
+            msisdn,
+            email,
+            company_name,
+            vendor_display_name,
+            website,
+            customer_id
+        ]);
+        return query;
+    },
 
-  getCustomerMore: async ({ customer_id }: Vendor) => {
-    const query = await client.query(
-      `SELECT * FROM ${TABLE.CUSTOMER_MORE} WHERE customer_id = ?`,
-      [customer_id]
-    );
-    return query;
-  },
+    getCustomerMore: async ({ customer_id }: Vendor) => {
+        const query = await client.query(`SELECT * FROM ${TABLE.CUSTOMER_MORE} WHERE customer_id = ?`, [customer_id]);
+        return query;
+    },
 
-  // updateCustomerMore: async ({
-  //     customer_id, street, city_town, state_province, country,
-  //     street1, tax_info,
-  //     notes, delivery_method, terms, out_of_balance
-  // }: Vendor) => {
-  //     const query = await client.query(`UPDATE ${TABLE.CUSTOMER_MORE} SET
-  //       street=?,
-  //       city_town=?,
-  //       state_province=?,
-  //       country=?,
-  //       tax_info=?,
-  //       notes=?,
-  //       delivery_method=?,
-  //       terms=?,
-  //       out_of_balance=?
-  //       WHERE customer_id=?`,
-  //         [
-  //             street,
-  //             city_town,
-  //             state_province,
-  //             country,
-  //             tax_info,
-  //             notes,
-  //             delivery_method,
-  //             terms,
-  //             out_of_balance,
-  //             customer_id
-  //         ]);
-  //     return query;
-  // },
+    // updateCustomerMore: async ({
+    //     customer_id, street, city_town, state_province, country,
+    //     street1, tax_info,
+    //     notes, delivery_method, terms, out_of_balance
+    // }: Vendor) => {
+    //     const query = await client.query(`UPDATE ${TABLE.CUSTOMER_MORE} SET 
+    //       street=?, 
+    //       city_town=?,
+    //       state_province=?, 
+    //       country=?,
+    //       tax_info=?,
+    //       notes=?,
+    //       delivery_method=?, 
+    //       terms=?, 
+    //       out_of_balance=?
+    //       WHERE customer_id=?`,
+    //         [
+    //             street,
+    //             city_town,
+    //             state_province,
+    //             country,
+    //             tax_info,
+    //             notes,
+    //             delivery_method,
+    //             terms,
+    //             out_of_balance,
+    //             customer_id
+    //         ]);
+    //     return query;
+    // },
 
-  getVendorFilter: async ({ filter_value }: Vendor) => {
-    const result = await client.query(
-      `SELECT * FROM  ${TABLE.VENDORS} WHERE email LIKE ? or msisdn LIKE ? or customer_display_name LIKE ?`,
-      [filter_value, filter_value, filter_value]
-    );
-    return result;
-  },
-  getPageSizeVendor: async ({ client_id }: Vendor) => {
-    const [
-      result,
-    ] = await client.query(
-      `SELECT COUNT(id) count FROM  ${TABLE.VENDORS} WHERE client_id = ?`,
-      [client_id]
-    );
-    return result.count;
-  },
-  updateCustomer: async ({ customer_id }: Vendor) => {
-    const query = await client.query(
-      `UPDATE ${TABLE.CUSTOMER} SET status = 1 WHERE id = ? `,
-      [customer_id]
-    );
-    return query;
-  },
+    getVendorFilter: async ({ filter_value }: Vendor) => {
+        const result = await client.query(
+            `SELECT * FROM  ${TABLE.VENDORS} WHERE email LIKE ? or msisdn LIKE ? or customer_display_name LIKE ?`, [filter_value, filter_value, filter_value]);
+        return result;
+    },
+    getPageSizeVendor: async ({ client_id }: Vendor) => {
+        const [result] = await client.query(
+            `SELECT COUNT(id) count FROM  ${TABLE.VENDORS} WHERE client_id = ?`, [client_id]);
+        return result.count;
+    },
+    updateCustomer: async ({ customer_id }: Vendor) => {
+        const query = await client.query(`UPDATE ${TABLE.CUSTOMER} SET status = 1 WHERE id = ? `, [customer_id]);
+        return query;
+    },
 
-  updatefrequencyexpensestatus: async ({ expense_ref }: Vendor) => {
-    const result = await client.query(
-      `UPDATE ${TABLE.RECURRING_EXPENSE} SET 
+    updatefrequencyexpensestatus: async ({ expense_ref }: Vendor) => {
+        const result = await client.query(
+            `UPDATE ${TABLE.RECURRING_EXPENSE} SET 
             status = 0
             WHERE expense_ref = ?`,
-      [expense_ref]
-    );
-    return result;
-  },
+            [expense_ref]);
+        return result;
+    },
 
-  updatefrequencyexpensestatus2: async ({ expense_ref }: Vendor) => {
-    const result = await client.query(
-      `UPDATE ${TABLE.RECURRING_EXPENSE} SET 
+
+    updatefrequencyexpensestatus2: async ({ expense_ref }: Vendor) => {
+        const result = await client.query(
+            `UPDATE ${TABLE.RECURRING_EXPENSE} SET 
             status = 1
             WHERE expense_ref = ?`,
-      [expense_ref]
-    );
-    return result;
-  },
+            [expense_ref]);
+        return result;
+    },
+
+
 };

@@ -31,6 +31,7 @@ router
 
   .get("/undepositeddebit", authorize, paymentController.getPaymentUndeposited)
 
+  .get("/paymentmadereport", authorize, paymentController.getPaymentMadeReports)
 
 
 // .put("/estimate",authorize, InvoicesController.updateEstimatePDF)

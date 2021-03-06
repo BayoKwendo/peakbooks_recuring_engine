@@ -13,7 +13,7 @@ router
   .get("/vendor", authorize, vendorController.getAllVendors)
   .get("/expense_recurring", authorize, vendorController.getAllExpensesRecuring)
 
-  .put("/vendor", authorize, vendorController.updateVendor)
+  // .put("/vendor", authorize, vendorController.updateVendor)
   .put("/recurringexpense", authorize, vendorController.updatefrequencyexpensestatus)
   .put("/recurringexpense2", authorize, vendorController.updatefrequencyexpensestatus2)
   .get("/expensesamount", authorize, vendorController.getExpenseReport)
@@ -38,8 +38,8 @@ router
   .get("/taxamountexpense", authorize, vendorController.getTaxAmountTaxExpense)
 
 
-
-// .put("/customer",authorize, customerController.updateUserCustomer)
+   //vendorbalance report 
+  .get("/vendorbalancebill", authorize, vendorController.getVendorBalanceBills)
 // .put("/customermore",authorize, customerController.updateUserCustomerMore)
 // .post("/customermore",authorize, customerController.createBilling)
 // .get("/customermore",authorize, customerController.getAllCustomersInfo)

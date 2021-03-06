@@ -665,6 +665,68 @@ export default {
 
 
 
+
+  /**
+  * @description Get all Payment Made Report List
+  */
+  getPaymentMadeReports: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      // console.log("bayo", kw)
+      let { page_number, page_size, startDate, endDate, created_by } = getQuery(ctx, { mergeParams: true });
+
+      const total = await paymentService.getPaymentMadeReportsSize({
+        created_by: Number(created_by),
+        startDate: startDate,
+        endDate: endDate,
+      });
+
+
+      if (page_number == null) {
+        page_number = "1"
+        page_size = "10"
+
+        const offset = (Number(page_number) - 1) * Number(page_size);
+        const data = await paymentService.getPaymentMadeReports({
+          offset: Number(offset),
+          created_by: Number(created_by),
+          startDate: startDate,
+          endDate: endDate,
+          page_size: Number(page_size)
+        });
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          total: total,
+          data: data
+        };
+      } else {
+        const offset = (Number(page_number) - 1) * Number(page_size);
+        const data = await paymentService.getPaymentMadeReports({
+          offset: Number(offset),
+          created_by: Number(created_by),
+          startDate: startDate,
+          endDate: endDate,
+          page_size: Number(page_size)
+        });
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          total: total,
+          data: data
+        };
+      }
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
+
   /**
   * @description Get all Invoices List
   */
