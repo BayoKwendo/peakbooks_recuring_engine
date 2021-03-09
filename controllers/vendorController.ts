@@ -35,7 +35,7 @@ export default {
     }
     try {
       const values = await body.value;
-      console.log(values);
+      // console.log(values);
       await vendorService.createVendor({
         client_id: values.client_id,
         title: values.title,
