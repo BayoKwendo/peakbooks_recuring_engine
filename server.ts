@@ -41,6 +41,8 @@ app.use(logger.responseTime);
 //   // console.log('This method will run on 60 seconds')
 // })
 
+console.log(new Date())
+
 let task = cron('*/.5 * * * * *', async () => {
   stop()
   const invoice_no = await invoiceService.getfrequency();
@@ -83,7 +85,10 @@ let task = cron('*/.5 * * * * *', async () => {
         const dataInvoice = await invoiceService.getInvoices({
           offset: offset,
           estimate: "0",
-          created_by: data[0].created_by
+          page_size: Number("100"),
+          created_by: data[0].created_by,
+          startDate: `"${"2020-01-10 00:00:00"}"`,
+          endDate: `"${"2023-01-10 00:00:00"}"`
         });
 
         // let innvoiceNo = { invoice_no: dataInvoice[0].invoice_no };

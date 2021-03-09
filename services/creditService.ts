@@ -71,7 +71,10 @@ export default {
 
     getCreditNoteReport: async ({ startDate, endDate, page_size, offset, created_by }: Credit) => {
         const result = await client.query(
-            `SELECT i.credit_no, i.credit_date,  i.status, i.customer_note,i.date_modified,i.terms_condition, i.reference, i.sub_total, i.tax_amount,
+            `SELECT i.credit_no,
+              CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)) credit_amount,
+
+            i.credit_date,  i.status, i.customer_note,i.date_modified,i.terms_condition, i.reference, i.sub_total, i.tax_amount,
              i.due_amount, i.amount, c.customer_display_name, c.email, c.company_name  FROM 
             ${TABLE.CREDIT_NOTE} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
             WHERE i.created_by = ${created_by} AND i.created_at BETWEEN ${startDate} AND ${endDate} order by i.date_modified DESC LIMIT ${offset},${page_size}`);

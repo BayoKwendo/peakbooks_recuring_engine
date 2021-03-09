@@ -17,6 +17,7 @@ export const TABLE = {
   CREDIT_NOTE: "credit_note",
   CREDIT_NOTE_VENDOR: "credit_note_vendor",
   CREDIT_NOTE_ITEMS: "credit_items_vendor",
+  BILL_ITEMS: "bill_items",
 
   CREDIT_ITEMS: "credit_items",
   VENDORS: "vendors",

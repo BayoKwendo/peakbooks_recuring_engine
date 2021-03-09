@@ -950,6 +950,67 @@ export default {
   
 
 
+    /**
+* @description Sales by vendor
+*/
+  getVendorSales: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      // console.log("bayo", kw)
+      let { page_number, page_size, startDate, endDate, filter_value, created_by } = getQuery(ctx, { mergeParams: true });
+    
+      const total = await vendorService.getVendorSalesSize({
+        created_by: created_by,
+        startDate: startDate,
+        endDate: endDate
+      });
+
+      
+
+      if (page_number == null) {
+        page_number = "1"
+        page_size = "100"
+        const offset = (Number(page_number) - 1) * 10;
+        const data = await vendorService.getVendorSales({
+          offset: Number(offset),
+          startDate: startDate,
+          page_size: Number(page_size),
+          endDate: endDate,
+          created_by: created_by
+        });
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          total: total,
+          data: data
+        };
+      } else {
+        const offset = (Number(page_number) - 1) * 10;
+        const data = await vendorService.getVendorSales({
+          offset: Number(offset),
+          startDate: startDate,
+          endDate: endDate,
+          page_size: Number(page_size),
+          created_by: created_by
+        });
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          total: total,
+          data: data
+        };
+      }
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
+
    /**
 * @description Get all payaable
 */

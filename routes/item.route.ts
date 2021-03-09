@@ -12,6 +12,7 @@ router
 
   .get("/item",authorize, ItemController.getItems)
   .get("/salesbyitem", authorize, ItemController.getItemSales)
+  .get("/purchasebyitem", authorize, ItemController.getItemPurchase)
 
   // .put("/estimate",authorize, InvoicesController.updateEstimatePDF)
   // .get("/estimate",authorize, InvoicesController.getEstimates)

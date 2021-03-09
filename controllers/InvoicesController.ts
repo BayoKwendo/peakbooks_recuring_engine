@@ -435,7 +435,7 @@ export default {
       // console.log(total)
       if (page_number == null) {
         page_number = "1"
-        page_size = "1000"
+        page_size = "100"
 
         const offset = (Number(page_number) - 1) * Number(page_size);
         const data = await invoiceService.getCustomerSales({
@@ -669,7 +669,7 @@ export default {
 
         if (page_number == null) {
           page_number = "1"
-          page_size = "10"
+          page_size = "50"
 
           const offset = (Number(page_number) - 1) * 10;
           const data = await invoiceService.getInvoices({
