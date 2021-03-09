@@ -61,11 +61,20 @@ export default {
 */
   createCreditNoteVendor: async ({ request, response }: { request: any; response: any },) => {
     const body = await request.body();
+    const values = await body.value;
     if (!request.hasBody) {
       response.status = 400;
       response.body = {
         success: false,
         message: "No data provided",
+      };
+      return;
+    }
+    if (!values.vendor_id) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "Please select a vendor",
       };
       return;
     }
