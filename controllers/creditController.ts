@@ -1,15 +1,20 @@
-import { getQuery } from 'https://deno.land/x/oak/helpers.ts'
+import { getQuery } from "https://deno.land/x/oak/helpers.ts";
 import * as log from "https://deno.land/std/log/mod.ts";
-import creditService from '../services/creditService.ts';
-
-
+import creditService from "../services/creditService.ts";
 
 export default {
   /**
-* @description Add a new invoice
-*/
-  createCreditNote: async ({ request, response }: { request: any; response: any },) => {
+   * @description Add a new invoice
+   */
+  createCreditNote: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
     const body = await request.body();
+    const values = await body.value;
     if (!request.hasBody) {
       response.status = 400;
       response.body = {
@@ -18,24 +23,30 @@ export default {
       };
       return;
     }
+    if (!values.customer_id) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "Please select a customer",
+      };
+      return;
+    }
     try {
       const values = await body.value;
-      // 
-      const body222 = await creditService.createCrediNote(
-        {
-          customer_id: values.customer_id,
-          credit_no: values.credit_no,
-          credit_date: values.credit_date,
-          customer_note: values.customer_note,
-          terms_condition: values.terms_condition,
-          amount: values.amount,
-          due_amount: values.due_amount,
-          discount_amount: values.discount_amount,
-          sub_total: values.sub_total,
-          tax_amount: values.tax_amount,
-          created_by: values.created_by,
-        }
-      );
+      //
+      const body222 = await creditService.createCrediNote({
+        customer_id: values.customer_id,
+        credit_no: values.credit_no,
+        credit_date: values.credit_date,
+        customer_note: values.customer_note,
+        terms_condition: values.terms_condition,
+        amount: values.amount,
+        due_amount: values.due_amount,
+        discount_amount: values.discount_amount,
+        sub_total: values.sub_total,
+        tax_amount: values.tax_amount,
+        created_by: values.created_by,
+      });
 
       if (body222) {
         response.body = {
@@ -44,7 +55,6 @@ export default {
           message: "Credit Note added successfully",
         };
       }
-
     } catch (error) {
       response.status = 400;
       response.body = {
@@ -54,12 +64,16 @@ export default {
     }
   },
 
-
-
   /**
-* @description Add a new Credit note vendor
-*/
-  createCreditNoteVendor: async ({ request, response }: { request: any; response: any },) => {
+   * @description Add a new Credit note vendor
+   */
+  createCreditNoteVendor: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
     const body = await request.body();
     const values = await body.value;
     if (!request.hasBody) {
@@ -80,21 +94,19 @@ export default {
     }
     try {
       const values = await body.value;
-      // 
-      const body222 = await creditService.createCrediNoteVendor(
-        {
-          vendor_id: values.vendor_id,
-          credit_no: values.credit_no,
-          credit_date: values.credit_date,
-          notes: values.notes,
-          amount: values.amount,
-          due_amount: values.due_amount,
-          discount_amount: values.discount_amount,
-          sub_total: values.sub_total,
-          tax_amount: values.tax_amount,
-          created_by: values.created_by,
-        }
-      );
+      //
+      const body222 = await creditService.createCrediNoteVendor({
+        vendor_id: values.vendor_id,
+        credit_no: values.credit_no,
+        credit_date: values.credit_date,
+        notes: values.notes,
+        amount: values.amount,
+        due_amount: values.due_amount,
+        discount_amount: values.discount_amount,
+        sub_total: values.sub_total,
+        tax_amount: values.tax_amount,
+        created_by: values.created_by,
+      });
 
       if (body222) {
         response.body = {
@@ -103,7 +115,6 @@ export default {
           message: "Credit Note  Vendor added successfully",
         };
       }
-
     } catch (error) {
       response.status = 400;
       response.body = {
@@ -113,7 +124,13 @@ export default {
     }
   },
 
-  updateCreditNote: async ({ request, response }: { request: any; response: any },) => {
+  updateCreditNote: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
     const body = await request.body();
     if (!request.hasBody) {
       response.status = 400;
@@ -125,22 +142,20 @@ export default {
     }
     try {
       const values = await body.value;
-      // 
-      const body222 = await creditService.updatedCredit(
-        {
-          customer_id: values.customer_id,
-          credit_no: values.credit_no,
-          credit_date: values.credit_date,
-          customer_note: values.customer_note,
-          terms_condition: values.terms_condition,
-          amount: values.amount,
-          due_amount: values.due_amount,
-          discount_amount: values.discount_amount,
-          sub_total: values.sub_total,
-          tax_amount: values.tax_amount,
-          created_by: values.created_by,
-        }
-      );
+      //
+      const body222 = await creditService.updatedCredit({
+        customer_id: values.customer_id,
+        credit_no: values.credit_no,
+        credit_date: values.credit_date,
+        customer_note: values.customer_note,
+        terms_condition: values.terms_condition,
+        amount: values.amount,
+        due_amount: values.due_amount,
+        discount_amount: values.discount_amount,
+        sub_total: values.sub_total,
+        tax_amount: values.tax_amount,
+        created_by: values.created_by,
+      });
 
       if (body222) {
         response.body = {
@@ -149,7 +164,6 @@ export default {
           message: "Credit Note added successfully",
         };
       }
-
     } catch (error) {
       response.status = 400;
       response.body = {
@@ -181,7 +195,6 @@ export default {
   //         data: data
   //       };
 
-
   //     } catch (error) {
   //       ctx.response.status = 400;
   //       ctx.response.body = {
@@ -197,44 +210,44 @@ export default {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
-      let { page_number, filter_value, created_by } = getQuery(ctx, { mergeParams: true });
+      let { page_number, filter_value, created_by } = getQuery(ctx, {
+        mergeParams: true,
+      });
       const total = await creditService.getPageSizeCredit({
-        created_by: Number(created_by)
+        created_by: Number(created_by),
       });
       if (filter_value == null || filter_value == "") {
-        console.log(page_number, '||| params');
+        console.log(page_number, "||| params");
 
         if (page_number == null) {
-          page_number = "1"
+          page_number = "1";
 
           const offset = (Number(page_number) - 1) * 10;
           const data = await creditService.getCreditNote({
             offset: Number(offset),
-            created_by: Number(created_by)
+            created_by: Number(created_by),
           });
           ctx.response.body = {
             status: true,
             status_code: 200,
             total: total,
-            data: data
+            data: data,
           };
         } else {
           const offset = (Number(page_number) - 1) * 10;
           const data = await creditService.getCreditNote({
             offset: Number(offset),
-            created_by: Number(created_by)
+            created_by: Number(created_by),
           });
           ctx.response.body = {
             status: true,
             status_code: 200,
             total: total,
-            data: data
+            data: data,
           };
         }
-      }
-
-      else {
-        console.log(filter_value, '||| params');
+      } else {
+        console.log(filter_value, "||| params");
         const data = await creditService.getCreditFilter({
           filter_value: filter_value,
         });
@@ -243,11 +256,9 @@ export default {
           status: true,
           status_code: 200,
           total: total,
-          data: data
+          data: data,
         };
-
       }
-
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = {
@@ -257,14 +268,19 @@ export default {
     }
   },
 
-
   /**
-  * @description Get all Payment Reports List
-  */
+   * @description Get all Payment Reports List
+   */
   getCreditNoteReport: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
-      let { page_number, page_size, startDate, endDate, created_by } = getQuery(ctx, { mergeParams: true });
+      let {
+        page_number,
+        page_size,
+        startDate,
+        endDate,
+        created_by,
+      } = getQuery(ctx, { mergeParams: true });
 
       const total = await creditService.getCreditNoteReportSize({
         created_by: Number(created_by),
@@ -272,8 +288,8 @@ export default {
         endDate: endDate,
       });
       if (page_number == null) {
-        page_number = "1"
-        page_size = "100"
+        page_number = "1";
+        page_size = "100";
 
         const offset = (Number(page_number) - 1) * Number(page_size);
         const data = await creditService.getCreditNoteReport({
@@ -281,13 +297,13 @@ export default {
           created_by: Number(created_by),
           startDate: startDate,
           endDate: endDate,
-          page_size: Number(page_size)
+          page_size: Number(page_size),
         });
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data
+          data: data,
         };
       } else {
         const offset = (Number(page_number) - 1) * Number(page_size);
@@ -296,13 +312,13 @@ export default {
           created_by: Number(created_by),
           startDate: startDate,
           endDate: endDate,
-          page_size: Number(page_size)
+          page_size: Number(page_size),
         });
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data
+          data: data,
         };
       }
     } catch (error) {
@@ -314,51 +330,48 @@ export default {
     }
   },
 
-
-
-
   getCreditNoteVendor: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
-      let { page_number, filter_value, created_by } = getQuery(ctx, { mergeParams: true });
+      let { page_number, filter_value, created_by } = getQuery(ctx, {
+        mergeParams: true,
+      });
       const total = await creditService.getPageSizeVendorCredit({
-        created_by: Number(created_by)
+        created_by: Number(created_by),
       });
       if (filter_value == null || filter_value == "") {
-        console.log(page_number, '||| params');
+        console.log(page_number, "||| params");
 
         if (page_number == null) {
-          page_number = "1"
+          page_number = "1";
 
           const offset = (Number(page_number) - 1) * 10;
           const data = await creditService.getCreditVendorNote({
             offset: Number(offset),
-            created_by: Number(created_by)
+            created_by: Number(created_by),
           });
           ctx.response.body = {
             status: true,
             status_code: 200,
             total: total,
-            data: data
+            data: data,
           };
         } else {
           const offset = (Number(page_number) - 1) * 10;
           const data = await creditService.getCreditVendorNote({
             offset: Number(offset),
-            created_by: Number(created_by)
+            created_by: Number(created_by),
           });
           ctx.response.body = {
             status: true,
             status_code: 200,
             total: total,
-            data: data
+            data: data,
           };
         }
-      }
-
-      else {
-        console.log(filter_value, '||| params');
+      } else {
+        console.log(filter_value, "||| params");
         const data = await creditService.getCreditVendorFilter({
           filter_value: filter_value,
         });
@@ -367,11 +380,9 @@ export default {
           status: true,
           status_code: 200,
           total: total,
-          data: data
+          data: data,
         };
-
       }
-
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = {
@@ -380,8 +391,6 @@ export default {
       };
     }
   },
-
-
 
   //   /**
   // * @description Get all credit item list
@@ -391,14 +400,12 @@ export default {
       let { filter_value } = getQuery(ctx, { mergeParams: true });
       const data = await creditService.getCreditVendorItems({
         filter_value: filter_value,
-
       });
       ctx.response.body = {
         status: true,
         status_code: 200,
-        data: data
+        data: data,
       };
-
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = {
@@ -416,14 +423,12 @@ export default {
       let { filter_value } = getQuery(ctx, { mergeParams: true });
       const data = await creditService.getCreditItems({
         filter_value: filter_value,
-
       });
       ctx.response.body = {
         status: true,
         status_code: 200,
-        data: data
+        data: data,
       };
-
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = {
@@ -432,5 +437,4 @@ export default {
       };
     }
   },
-
 };
