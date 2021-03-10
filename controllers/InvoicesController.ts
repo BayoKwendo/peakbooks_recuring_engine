@@ -10,6 +10,7 @@ export default {
 */
   createInvoices: async ({ request, response }: { request: any; response: any },) => {
     const body = await request.body();
+    const values = await body.value;
     if (!request.hasBody) {
       response.status = 400;
       response.body = {
@@ -18,7 +19,22 @@ export default {
       };
       return;
     }
-
+    if (!values.customer_id) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "Please select a customer",
+      };
+      return;
+    }
+    if (values.due_amount == "KSH 0.00") {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "Please add an item",
+      };
+      return;
+    }
     try {
       const values = await body.value;
       // 
