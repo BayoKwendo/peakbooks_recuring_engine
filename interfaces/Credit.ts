@@ -6,6 +6,7 @@ export default interface Credit {
   credit_no?: string,
   created_by?: number,
   credit_date?: string,
+  tax_exclusive?: string,
   page_size?: number,
   amount?: string,
   due_amount?: string,
@@ -17,6 +18,7 @@ export default interface Credit {
   vendor_id?: string,
   customer_note?: string,
   startDate?: any,
+
   endDate?: any,
 
   filter_value?: any,

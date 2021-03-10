@@ -10,20 +10,11 @@ export default {
 */
   createCreditNote: async ({ request, response }: { request: any; response: any },) => {
     const body = await request.body();
-    const values = await body.value;
     if (!request.hasBody) {
       response.status = 400;
       response.body = {
         success: false,
         message: "No data provided",
-      };
-      return;
-    }
-    if (!values.customer_id) {
-      response.status = 400;
-      response.body = {
-        success: false,
-        message: "Please select a customer",
       };
       return;
     }
@@ -39,6 +30,7 @@ export default {
           terms_condition: values.terms_condition,
           amount: values.amount,
           due_amount: values.due_amount,
+          tax_exclusive: values.tax_exclusive,
           discount_amount: values.discount_amount,
           sub_total: values.sub_total,
           tax_amount: values.tax_amount,
@@ -70,20 +62,11 @@ export default {
 */
   createCreditNoteVendor: async ({ request, response }: { request: any; response: any },) => {
     const body = await request.body();
-    const values = await body.value;
     if (!request.hasBody) {
       response.status = 400;
       response.body = {
         success: false,
         message: "No data provided",
-      };
-      return;
-    }
-    if (!values.vendor_id) {
-      response.status = 400;
-      response.body = {
-        success: false,
-        message: "Please select a vendor",
       };
       return;
     }
@@ -144,6 +127,7 @@ export default {
           terms_condition: values.terms_condition,
           amount: values.amount,
           due_amount: values.due_amount,
+          tax_exclusive: values.tax_exclusive,
           discount_amount: values.discount_amount,
           sub_total: values.sub_total,
           tax_amount: values.tax_amount,
@@ -206,7 +190,7 @@ export default {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
-      let { page_number, filter_value, created_by } = getQuery(ctx, { mergeParams: true });
+      let { page_number, filter_value, created_by, page_size } = getQuery(ctx, { mergeParams: true });
       const total = await creditService.getPageSizeCredit({
         created_by: Number(created_by)
       });
@@ -215,10 +199,12 @@ export default {
 
         if (page_number == null) {
           page_number = "1"
+          page_size = "10"
 
           const offset = (Number(page_number) - 1) * 10;
           const data = await creditService.getCreditNote({
             offset: Number(offset),
+            page_size: Number(page_size),
             created_by: Number(created_by)
           });
           ctx.response.body = {
@@ -231,6 +217,8 @@ export default {
           const offset = (Number(page_number) - 1) * 10;
           const data = await creditService.getCreditNote({
             offset: Number(offset),
+            page_size: Number(page_size),
+
             created_by: Number(created_by)
           });
           ctx.response.body = {

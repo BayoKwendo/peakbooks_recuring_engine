@@ -14,6 +14,9 @@ export default interface Bet {
   expiry_date?: string,
   estimate_message?: string,
   estimate?: string,
+
+  tax_exclusive?: string,
+
   amount?: string,
   due_amount?: string,
   tax_amount?: string,

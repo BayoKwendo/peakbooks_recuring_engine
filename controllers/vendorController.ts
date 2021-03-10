@@ -16,7 +16,6 @@ export default {
     response: any;
   }) => {
     const body = await request.body();
-    const values = await body.value;
     if (!request.hasBody) {
       response.status = 400;
       response.body = {
@@ -25,17 +24,8 @@ export default {
       };
       return;
     }
-    if (!values.title) {
-      response.status = 400;
-      response.body = {
-        success: false,
-        message: "Please select title",
-      };
-      return;
-    }
     try {
       const values = await body.value;
-      // console.log(values);
       await vendorService.createVendor({
         client_id: values.client_id,
         title: values.title,
@@ -957,44 +947,42 @@ export default {
     }
   },
 
-  /**
-   * @description Sales by vendor
-   */
+  
+
+
+    /**
+* @description Sales by vendor
+*/
   getVendorSales: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
-      let {
-        page_number,
-        page_size,
-        startDate,
-        endDate,
-        filter_value,
-        created_by,
-      } = getQuery(ctx, { mergeParams: true });
-
+      let { page_number, page_size, startDate, endDate, filter_value, created_by } = getQuery(ctx, { mergeParams: true });
+    
       const total = await vendorService.getVendorSalesSize({
         created_by: created_by,
         startDate: startDate,
-        endDate: endDate,
+        endDate: endDate
       });
 
+      
+
       if (page_number == null) {
-        page_number = "1";
-        page_size = "100";
+        page_number = "1"
+        page_size = "100"
         const offset = (Number(page_number) - 1) * 10;
         const data = await vendorService.getVendorSales({
           offset: Number(offset),
           startDate: startDate,
           page_size: Number(page_size),
           endDate: endDate,
-          created_by: created_by,
+          created_by: created_by
         });
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data,
+          data: data
         };
       } else {
         const offset = (Number(page_number) - 1) * 10;
@@ -1003,13 +991,13 @@ export default {
           startDate: startDate,
           endDate: endDate,
           page_size: Number(page_size),
-          created_by: created_by,
+          created_by: created_by
         });
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data,
+          data: data
         };
       }
     } catch (error) {
@@ -1021,43 +1009,38 @@ export default {
     }
   },
 
-  /**
-   * @description Get all payaable
-   */
+
+
+   /**
+* @description Get all payaable
+*/
   getPayableSummary: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
-      let {
-        page_number,
-        page_size,
-        startDate,
-        endDate,
-        filter_value,
-        created_by,
-      } = getQuery(ctx, { mergeParams: true });
-      const total = await vendorService.getPayableSummarySize({
+      let { page_number, page_size, startDate, endDate, filter_value, created_by } = getQuery(ctx, { mergeParams: true });
+      const total =  await vendorService.getPayableSummarySize({
         created_by: created_by,
         startDate: startDate,
-        endDate: endDate,
+        endDate: endDate
       });
 
       if (page_number == null) {
-        page_number = "1";
-        page_size = "100";
+        page_number = "1"
+        page_size = "100"
         const offset = (Number(page_number) - 1) * 10;
         const data = await vendorService.getPayableSummary({
           offset: Number(offset),
           startDate: startDate,
           page_size: Number(page_size),
           endDate: endDate,
-          created_by: created_by,
+          created_by: created_by
         });
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data,
+          data: data
         };
       } else {
         const offset = (Number(page_number) - 1) * 10;
@@ -1066,13 +1049,13 @@ export default {
           startDate: startDate,
           endDate: endDate,
           page_size: Number(page_size),
-          created_by: created_by,
+          created_by: created_by
         });
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data,
+          data: data
         };
       }
     } catch (error) {
@@ -1084,43 +1067,38 @@ export default {
     }
   },
 
+
+
   /**
-   * @description Get all receivable
-   */
+* @description Get all receivable
+*/
   getVendorBalanceBills: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
-      let {
-        page_number,
-        page_size,
-        startDate,
-        endDate,
-        filter_value,
-        created_by,
-      } = getQuery(ctx, { mergeParams: true });
+      let { page_number, page_size, startDate, endDate, filter_value, created_by } = getQuery(ctx, { mergeParams: true });
       const total = await vendorService.getVendorBalanceBillsSize({
         created_by: created_by,
         startDate: startDate,
-        endDate: endDate,
+        endDate: endDate
       });
 
       if (page_number == null) {
-        page_number = "1";
-        page_size = "100";
+        page_number = "1"
+        page_size = "100"
         const offset = (Number(page_number) - 1) * 10;
         const data = await vendorService.getVendorBalanceBills({
           offset: Number(offset),
           startDate: startDate,
           page_size: Number(page_size),
           endDate: endDate,
-          created_by: created_by,
+          created_by: created_by
         });
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data,
+          data: data
         };
       } else {
         const offset = (Number(page_number) - 1) * 10;
@@ -1129,13 +1107,13 @@ export default {
           startDate: startDate,
           endDate: endDate,
           page_size: Number(page_size),
-          created_by: created_by,
+          created_by: created_by
         });
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data,
+          data: data
         };
       }
     } catch (error) {

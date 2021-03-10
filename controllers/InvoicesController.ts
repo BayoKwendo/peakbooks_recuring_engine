@@ -10,7 +10,6 @@ export default {
 */
   createInvoices: async ({ request, response }: { request: any; response: any },) => {
     const body = await request.body();
-    const values = await body.value;
     if (!request.hasBody) {
       response.status = 400;
       response.body = {
@@ -19,22 +18,7 @@ export default {
       };
       return;
     }
-    if (!values.customer_id) {
-      response.status = 400;
-      response.body = {
-        success: false,
-        message: "Please select a customer",
-      };
-      return;
-    }
-    if (values.due_amount == "KSH 0.00") {
-      response.status = 400;
-      response.body = {
-        success: false,
-        message: "Please add an item",
-      };
-      return;
-    }
+
     try {
       const values = await body.value;
       // 
@@ -48,6 +32,8 @@ export default {
           message_invoice: values.message_invoice,
           statement_invoice: values.statement_invoice,
           amount: values.amount,
+          tax_exclusive: values.tax_exclusive,
+
           estimate: values.estimate,
           due_amount: values.due_amount,
           discount_amount: values.discount_amount,
@@ -231,6 +217,7 @@ export default {
           due_amount: values.due_amount,
           discount_amount: values.discount_amount,
           sub_total: values.sub_total,
+          tax_exclusive: values.tax_exclusive,
           tax_amount: values.tax_amount,
           created_by: values.created_by
           // activation_key: values.activation_key
@@ -335,7 +322,7 @@ export default {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
-      let { page_number, filter_value, estimate, created_by } = getQuery(ctx, { mergeParams: true });
+      let { page_number, filter_value, estimate, created_by, page_size } = getQuery(ctx, { mergeParams: true });
       const total = await invoiceService.getPageSizeFrequencyInvoice({
         created_by: Number(created_by),
         estimate: estimate
@@ -346,10 +333,13 @@ export default {
         if (page_number == null) {
           page_number = "1"
 
+          page_size = "10"
           const offset = (Number(page_number) - 1) * 10;
           const data = await invoiceService.getFrequencyInvoices({
             offset: Number(offset),
             estimate: estimate,
+            page_size: Number(page_size),
+
             created_by: Number(created_by)
           });
           ctx.response.body = {
@@ -363,6 +353,8 @@ export default {
           const data = await invoiceService.getFrequencyInvoices({
             offset: Number(offset),
             estimate: estimate,
+            page_size: Number(page_size),
+
             created_by: Number(created_by)
           });
           ctx.response.body = {
@@ -674,12 +666,15 @@ export default {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
       let { page_number, page_size, startDate, endDate, filter_value, estimate, created_by } = getQuery(ctx, { mergeParams: true });
+      console.log(filter_value, '||| params');
+
       const total = await invoiceService.getPageSizeInvoice({
         created_by: Number(created_by),
         startDate: startDate,
         endDate: endDate,
         estimate: estimate
       });
+
       if (filter_value == null || filter_value == "") {
         console.log(page_number, '||| params');
 
@@ -723,7 +718,6 @@ export default {
 
 
       else {
-        console.log(filter_value, '||| params');
 
         const data = await invoiceService.getInvoiceFilter({
           filter_value: filter_value,
@@ -767,7 +761,7 @@ export default {
         endDate: endDate,
         estimate: estimate
       });
-      
+
       if (page_number == null) {
         page_number = "1"
         page_size = "100"

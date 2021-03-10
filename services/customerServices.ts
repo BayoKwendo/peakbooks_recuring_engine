@@ -70,10 +70,10 @@ export default {
     return result;
   },
 
-  getAll: async ({ offset, client_id }: Customers) => {
+  getAll: async ({ offset, client_id, page_size }: Customers) => {
     const query = await client.query(
-      `SELECT * FROM ${TABLE.CUSTOMER} WHERE client_id = ? LIMIT ?,10`,
-      [client_id, offset]
+      `SELECT * FROM ${TABLE.CUSTOMER} WHERE client_id = ? order by id DESC LIMIT ?,?`,
+      [client_id, offset, page_size]
     );
     return query;
   },
