@@ -947,10 +947,10 @@ export default {
     }
   },
 
-  
 
 
-    /**
+
+  /**
 * @description Sales by vendor
 */
   getVendorSales: async (ctx: any) => {
@@ -958,14 +958,14 @@ export default {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
       let { page_number, page_size, startDate, endDate, filter_value, created_by } = getQuery(ctx, { mergeParams: true });
-    
+
       const total = await vendorService.getVendorSalesSize({
         created_by: created_by,
         startDate: startDate,
         endDate: endDate
       });
 
-      
+
 
       if (page_number == null) {
         page_number = "1"
@@ -1011,7 +1011,7 @@ export default {
 
 
 
-   /**
+  /**
 * @description Get all payaable
 */
   getPayableSummary: async (ctx: any) => {
@@ -1019,7 +1019,7 @@ export default {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
       let { page_number, page_size, startDate, endDate, filter_value, created_by } = getQuery(ctx, { mergeParams: true });
-      const total =  await vendorService.getPayableSummarySize({
+      const total = await vendorService.getPayableSummarySize({
         created_by: created_by,
         startDate: startDate,
         endDate: endDate
