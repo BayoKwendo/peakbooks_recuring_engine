@@ -511,11 +511,11 @@ export default {
     },
 
 
-    getExpenses: async ({ offset, client_id }: Vendor) => {
-        const query = await client.query(`SELECT i.date, i.expense_account,  c.customer_display_name, v.vendor_display_name, i.paid_through,i.reference, i.billable,i.product,i.notes, i.amount
+    getExpenses: async ({ offset, client_id, page_size }: Vendor) => {
+        const query = await client.query(`SELECT i.date,i.tax_amount, i.expense_account,  c.customer_display_name, v.vendor_display_name, i.paid_through,i.reference, i.billable,i.product,i.notes, i.amount
         FROM (( ${TABLE.EXPENSES} i
         INNER JOIN ${TABLE.VENDORS} v ON i.vendor_id = v.id)
-        INNER JOIN ${TABLE.CUSTOMER} c ON i.customer_id = c.id) WHERE i.client_id = ? LIMIT ?,10`, [client_id, offset]);
+        INNER JOIN ${TABLE.CUSTOMER} c ON i.customer_id = c.id) WHERE i.client_id = ? order by i.id DESC LIMIT ?,?`, [client_id, offset, page_size]);
         return query;
     },
 
