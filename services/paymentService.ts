@@ -192,14 +192,20 @@ export default {
     },
 
 
-    getBill: async ({ offset, created_by }: Invoices) => {
+    getBill: async ({ offset, created_by, page_size }: Invoices) => {
         const result = await client.query(
             `SELECT i.bill_no, i.order_no, i.terms, i.due_date,i.due_amount, i.status, i.bill_date, i.date_modified, i.discount_amount, i.sub_total, i.tax_amount, i.notes,
               i.amount, c.vendor_display_name,c.email, c.company_name  FROM 
             ${TABLE.BILLS} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id 
-            WHERE i.created_by = ? order by i.date_modified DESC LIMIT ?,10`, [created_by, offset]);
+            WHERE i.created_by = ? order by i.date_modified DESC LIMIT ?,?`, [created_by, offset, page_size]);
         return result;
     },
+    getBillItems: async ({ filter_value }: Invoices) => {
+        const result = await client.query(
+            `SELECT * FROM  ${TABLE.BILL_ITEMS} WHERE bill_no = ?`, [filter_value]);
+        return result;
+    },
+
     getInvoiceFilter: async ({ created_by, filter_value }: Invoices) => {
         const result = await client.query(
             `SELECT * FROM 

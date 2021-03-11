@@ -33,6 +33,11 @@ router
 
   .get("/paymentmadereport", authorize, paymentController.getPaymentMadeReports)
 
+  .get("/billitems", authorize, paymentController.getBillItems)
+  .get("/billpaid", authorize, paymentController.getBillPaidReceipt)
+
+
+
 
 // .put("/estimate",authorize, InvoicesController.updateEstimatePDF)
 // .get("/estimate",authorize, InvoicesController.getEstimates)
