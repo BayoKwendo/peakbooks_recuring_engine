@@ -826,7 +826,7 @@ export default {
    */
   getAllExpenses: async (ctx: any) => {
     try {
-      let { page_number, filter_value,page_size, client_id } = getQuery(ctx, {
+      let { page_number, filter_value, page_size, client_id } = getQuery(ctx, {
         mergeParams: true,
       });
       const total = await vendorService.getPageSizeExpense({
@@ -892,7 +892,7 @@ export default {
    */
   getAllExpensesRecuring: async (ctx: any) => {
     try {
-      let { page_number, filter_value, client_id } = getQuery(ctx, {
+      let { page_number, filter_value, page_size, client_id } = getQuery(ctx, {
         mergeParams: true,
       });
       const total = await vendorService.getPageSizeExpenseRe({
@@ -901,10 +901,12 @@ export default {
       if (filter_value == null || filter_value == "") {
         if (page_number == null) {
           page_number = "1";
+          page_size = "10"
           const offset = (Number(page_number) - 1) * 10;
           const data = await vendorService.getRecurringExpenses({
             client_id: client_id,
             offset: Number(offset),
+            page_size: Number(page_size),
           });
           ctx.response.body = {
             status: true,
@@ -918,6 +920,7 @@ export default {
           const data = await vendorService.getRecurringExpenses({
             client_id: client_id,
             offset: Number(offset),
+            page_size: Number(page_size),
           });
 
           ctx.response.body = {

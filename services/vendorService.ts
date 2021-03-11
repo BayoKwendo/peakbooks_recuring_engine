@@ -542,14 +542,14 @@ export default {
         return query;
     },
 
-    getRecurringExpenses: async ({ offset, client_id }: Vendor) => {
-        const query = await client.query(`SELECT i.date, i.expense_account, r.status,r.frequecy,r.expense_ref, c.customer_display_name,
+    getRecurringExpenses: async ({ offset, client_id, page_size }: Vendor) => {
+        const query = await client.query(`SELECT i.date, i.expense_account,i.tax_amount, r.status,r.frequecy,r.expense_ref, c.customer_display_name,
          v.vendor_display_name, r.frequency_type, r.start_time, r.end_time, 
          i.paid_through,i.reference, i.billable,i.product,i.notes, i.amount
         FROM  ${TABLE.RECURRING_EXPENSE} r
-        INNER JOIN ${TABLE.EXPENSES} i ON r.expense_ref = i.reference
-        INNER JOIN ${TABLE.VENDORS} v ON r.vendor_id = v.id 
-        INNER JOIN ${TABLE.CUSTOMER} c ON r.customer_id = c.id  WHERE r.created_by = ? LIMIT ?,10`, [client_id, offset]);
+        left join ${TABLE.EXPENSES} i ON r.expense_ref = i.reference
+        left join ${TABLE.VENDORS} v ON r.vendor_id = v.id
+        left join ${TABLE.CUSTOMER} c ON r.customer_id = c.id  WHERE r.created_by = ? order by i.date_modified DESC LIMIT ?, ?`, [client_id, offset, page_size]);
         return query;
     },
 
