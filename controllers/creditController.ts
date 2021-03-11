@@ -80,6 +80,7 @@ export default {
           credit_date: values.credit_date,
           notes: values.notes,
           amount: values.amount,
+          tax_exclusive: values.tax_exclusive,
           due_amount: values.due_amount,
           discount_amount: values.discount_amount,
           sub_total: values.sub_total,

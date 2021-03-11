@@ -841,7 +841,7 @@ export default {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
       let { filter_value } = getQuery(ctx, { mergeParams: true });
-    
+
       console.log(filter_value, '||| params');
 
       const data = await paymentService.getBillFilterPaidReceipt({
@@ -862,7 +862,7 @@ export default {
   },
 
 
-  
+
 
 
 
@@ -971,6 +971,68 @@ export default {
       };
     }
   },
+
+
+  updatefrequencystatus: async ({ request, response }: { request: any; response: any },) => {
+    const body = await request.body();
+    if (!request.hasBody) {
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      await paymentService.updatefrequencystatus(
+        {
+          bill_no: values.bill_no,
+        },
+      );
+      response.body = {
+        status: true,
+        status_code: 200,
+        message: "Updated Successfully",
+      };
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+  updatefrequencystatus2: async ({ request, response }: { request: any; response: any },) => {
+    const body = await request.body();
+    if (!request.hasBody) {
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      await paymentService.updatefrequencystatus2(
+        {
+          bill_no: values.bill_no,
+        },
+      );
+      response.body = {
+        status: true,
+        status_code: 200,
+        message: "Updated Successfully",
+      };
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: `${error}`,
+      };
+    }
+  },
+
 
   /**
     * @description Get all unpaid bill List

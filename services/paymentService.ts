@@ -391,4 +391,24 @@ export default {
          c.client_id = ${created_by} AND i.status = 1 AND i.created BETWEEN ${startDate} AND ${endDate}`);
         return result.count;
     },
+
+//recurring bills ustatus update
+    updatefrequencystatus: async ({ bill_no }: Invoices) => {
+        const result = await client.query(
+            `UPDATE ${TABLE.RECURRING_BILLS} SET
+            status = 0
+            WHERE bill_no = ?`,
+            [bill_no]);
+        return result;
+    },
+
+
+    updatefrequencystatus2: async ({ bill_no }: Invoices) => {
+        const result = await client.query(
+            `UPDATE ${TABLE.RECURRING_BILLS} SET
+            status = 1
+            WHERE bill_no = ?`,
+            [bill_no]);
+        return result;
+    },
 };

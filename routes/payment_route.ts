@@ -20,6 +20,12 @@ router
   .post("/bill", authorize, paymentController.createBill)
   .get("/bill", authorize, paymentController.getBills)
   .get("/recure-bill", authorize, paymentController.getFrequencyBills)
+  .put("/recurebill", authorize, paymentController.getFrequencyBills)
+
+
+  .put("/recurringbill", authorize, paymentController.updatefrequencystatus)
+  .put("/recurringbill2", authorize, paymentController.updatefrequencystatus2)
+
   .get("/billunpaid", authorize, paymentController.getBillUnpaid)
   .post("/payment_received_bill", authorize, paymentController.createPaymentReceivedBillPay)
   .get("/payment_received_bill", authorize, paymentController.getPaymentReceivedPaidbILLS)
