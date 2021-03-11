@@ -40,6 +40,44 @@ export default {
     },
 
 
+
+    updateVendor: async ({ client_id, title, first_name, other_name,
+        msisdn, email, company_name, vendor_display_name, website, street, city_town, state_province, country, street1,
+        city_town1, state_province1, country1, remarks, terms, opening_balance }: Vendor) => {
+        const result = await client.query(`UPDATE ${TABLE.VENDORS}  SET
+              client_id=?, title=?,
+              first_name =?, other_name =?,
+              msisdn=?, email =?, company_name=?,
+              vendor_display_name=?, website=?, 
+              street=?, city_town=?, state_province=?, country=?, 
+              street1=?, city_town1=?, state_province1=?, country1=?, 
+              remarks=?, terms=?, opening_balance=? WHERE email=?`, [
+            client_id,
+            title,
+            first_name,
+            other_name,
+            msisdn,
+            email,
+            company_name,
+            vendor_display_name,
+            website,
+            street,
+            city_town,
+            state_province,
+            country,
+            street1,
+            city_town1,
+            state_province1,
+            country1,
+            remarks,
+            terms,
+            opening_balance,
+            email
+        ]);
+        return result;
+    },
+
+
     createExpense: async ({ client_id, date, expense_account, amount, paid_through, customer_id, vendor_id, billable, product_name, notes, tax_amount }: Vendor) => {
         const result = await client.query(`INSERT INTO ${TABLE.EXPENSES}  SET
               client_id=?, date =?,

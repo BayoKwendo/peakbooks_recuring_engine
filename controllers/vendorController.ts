@@ -127,60 +127,60 @@ export default {
   /**
    * Update vendor
    */
-  // updateVendor: async ({
-  //   request,
-  //   response,
-  // }: {
-  //   request: any;
-  //   response: any;
-  // }) => {
-  //   const body = await request.body();
+  updateVendor: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
+    const body = await request.body();
 
-  //   if (!request.hasBody) {
-  //     response.status = 400;
-  //     response.body = {
-  //       success: false,
-  //       message: "No data provided",
-  //     };
-  //   }
-  //   try {
-  //     const values = await body.value;
-  //     await vendorService.updateVendor({
-  //       id: values.id,
-  //       client_id: values.client_id,
-  //       title: values.title,
-  //       first_name: values.first_name,
-  //       other_name: values.other_name,
-  //       msisdn: values.msisdn,
-  //       email: values.email,
-  //       company_name: values.company_name,
-  //       vendor_display_name: values.vendor_display_name,
-  //       website: values.website,
-  //       street: values.street,
-  //       city_town: values.city_town,
-  //       state_province: values.state_province,
-  //       country: values.country,
-  //       street1: values.street1,
-  //       city_town1: values.city_town1,
-  //       state_province1: values.state_province1,
-  //       country1: values.country1,
-  //       remarks: values.remarks,
-  //       terms: values.terms,
-  //       opening_balance: values.opening_balance,
-  //     });
-  //     response.body = {
-  //       status: true,
-  //       status_code: 200,
-  //       message: "Vendor Updated Successfully",
-  //     };
-  //   } catch (error) {
-  //     response.status = 400;
-  //     response.body = {
-  //       success: false,
-  //       message: `${error}`,
-  //     };
-  //   }
-  // },
+    if (!request.hasBody) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+    }
+    try {
+      const values = await body.value;
+      await vendorService.updateVendor({
+        id: values.id,
+        client_id: values.client_id,
+        title: values.title,
+        first_name: values.first_name,
+        other_name: values.other_name,
+        msisdn: values.msisdn,
+        email: values.email,
+        company_name: values.company_name,
+        vendor_display_name: values.vendor_display_name,
+        website: values.website,
+        street: values.street,
+        city_town: values.city_town,
+        state_province: values.state_province,
+        country: values.country,
+        street1: values.street1,
+        city_town1: values.city_town1,
+        state_province1: values.state_province1,
+        country1: values.country1,
+        remarks: values.remarks,
+        terms: values.terms,
+        opening_balance: values.opening_balance,
+      });
+      response.body = {
+        status: true,
+        status_code: 200,
+        message: "Vendor Updated Successfully",
+      };
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: `${error}`,
+      };
+    }
+  },
 
   /**
    * @description Get all Vendors List
