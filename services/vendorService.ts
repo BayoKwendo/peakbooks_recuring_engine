@@ -465,6 +465,19 @@ export default {
         return query;
     },
 
+
+    getOffsetBalance: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+        paid_through = "Opening balance offset" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+        return query;
+    },
+
+    getDrawings: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+        paid_through = "Drawings" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+        return query;
+    },
+
     getPrepaidExpensesDebit: async ({ client_id, startDate, endDate }: Vendor) => {
         const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
         expense_account = "Prepaid Expenses" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);

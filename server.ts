@@ -74,6 +74,7 @@ let task = cron('*/.5 * * * * *', async () => {
           discount_amount: data[0].discount_amount,
           sub_total: data[0].sub_total,
           tax_amount: data[0].tax_amount,
+          tax_exclusive: data[0].tax_exclusive,
           created_by: data[0].created_by,
           recurring: data[0].recurring
         }

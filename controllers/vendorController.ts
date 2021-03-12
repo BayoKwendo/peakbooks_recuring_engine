@@ -476,6 +476,56 @@ export default {
     }
   },
 
+  getDrawings: async (ctx: any) => {
+    try {
+      let { client_id, startDate, endDate } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      const data = await vendorService.getDrawings({
+        startDate: startDate,
+        endDate: endDate,
+        client_id: client_id,
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
+  getOffsetBalance: async (ctx: any) => {
+    try {
+      let { client_id, startDate, endDate } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      const data = await vendorService.getOffsetBalance({
+        startDate: startDate,
+        endDate: endDate,
+        client_id: client_id,
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
   getFurnitureandEquipment: async (ctx: any) => {
     try {
       let { client_id, startDate, endDate } = getQuery(ctx, {
@@ -499,6 +549,7 @@ export default {
       };
     }
   },
+
 
   getTaxAmountTaxExpense: async (ctx: any) => {
     try {

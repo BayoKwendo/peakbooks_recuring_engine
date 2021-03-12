@@ -37,6 +37,8 @@ router
   .get("/rembursementcredit", authorize, vendorController.getReimbursementsCredit)
   .get("/taxamountexpense", authorize, vendorController.getTaxAmountTaxExpense)
 
+  .get("/drawings", authorize, vendorController.getDrawings)
+  .get("/offsetbalance", authorize, vendorController.getOffsetBalance)
 
 
   //sales by vendor purchase report
