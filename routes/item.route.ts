@@ -13,7 +13,8 @@ router
   .get("/item",authorize, ItemController.getItems)
   .get("/salesbyitem", authorize, ItemController.getItemSales)
   .get("/purchasebyitem", authorize, ItemController.getItemPurchase)
-
+  .post("/investment", authorize, ItemController.addInvestment)
+  .get("/investment", authorize, ItemController.getinvestment)
   // .put("/estimate",authorize, InvoicesController.updateEstimatePDF)
   // .get("/estimate",authorize, InvoicesController.getEstimates)
 

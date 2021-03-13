@@ -47,6 +47,12 @@ router
   //vendorbalance report 
   .get("/vendorbalancebill", authorize, vendorController.getVendorBalanceBills)
   .get("/payablesummary", authorize, vendorController.getPayableSummary)
+
+  .get("/vendorcreditreport", authorize, vendorController.getVendorCredit)
+
+  .get("/investmentreport", authorize, vendorController.getInvestmentReport)
+
+
 // .post("/customermore",authorize, customerController.createBilling)
 // .get("/customermore",authorize, customerController.getAllCustomersInfo)
 

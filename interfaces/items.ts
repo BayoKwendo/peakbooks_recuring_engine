@@ -7,9 +7,10 @@ export default interface Item {
   item_name?: string,
   filter_value?: any,
   notes?: string,
+  investment_type?: string,
+  amount?: string,
   vendor_id?: string,
   startDate?: any,
   endDate?: any,
   created_by?: number
-
 }

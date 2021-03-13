@@ -317,7 +317,7 @@ export default {
 
 
 
-    getVendorSalesSize: async ({  created_by, startDate, endDate }: Vendor) => {
+    getVendorSalesSize: async ({ created_by, startDate, endDate }: Vendor) => {
         const [result] = await client.query(
             `SELECT 
              COUNT(vendor_display_name) count 
@@ -386,6 +386,13 @@ export default {
     getExpenseReport: async ({ client_id, startDate, endDate }: Vendor) => {
         const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
         expense_account = "Cost of Goods Sold" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+        return query;
+    },
+
+
+    getCreditNoteVendor: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT due_amount FROM ${TABLE.CREDIT_NOTE_VENDOR} WHERE 
+        created_by = ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
         return query;
     },
 
@@ -498,37 +505,144 @@ export default {
 
 
     getExpenseReportExpenseCost: async ({ client_id, startDate, endDate }: Vendor) => {
-        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
-       (expense_account = "Advertising And Marketing" or
-        expense_account = "Bank Fees and Charges" or
-        expense_account = "Bad Debt" or
-        expense_account = "Consultant Expense" or
-        expense_account = "Automatic Expense" or
-        expense_account = "Credit Card Charges" or
-        expense_account = "Depreciation Expense" or
-        expense_account = "IT and Internet Expenses" or
-        expense_account = "Janitorial Expense" or
-        expense_account = "Lodging" or
-        expense_account = "Meals and Entertainment" or
-        expense_account = "Office Supplies" or
-        expense_account = "Other Expenses" or
-        expense_account = "Postage" or
-        expense_account = "Printing and Stationary" or
-        expense_account = "Rent Expense" or
-        expense_account = "Repairs and Maintenance" or
-        expense_account = "Salaries and Employee Wages" or
-        expense_account = "Travel Expenses" or
-        expense_account = "Telephone Expense")
-        AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+        const query = await client.query(`SELECT 
+
+          t.amount
+        
+        FROM (
+
+            (SELECT 
+              IFNULL(sum(amount), 0) amount from ${TABLE.EXPENSES} WHERE
+            ( expense_account = "Employee Advance") AND 
+            client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}
+            )
+            UNION  ALL
+
+             ( SELECT
+             IFNULL(sum(amount), 0) amount from ${TABLE.EXPENSES} WHERE
+            (expense_account = "Rent Expense") AND 
+            client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}
+            )
+
+            UNION ALL
+
+            ( SELECT
+             IFNULL(sum(amount), 0) amount from ${TABLE.EXPENSES} WHERE
+            ( expense_account = "Consultant Expense") AND
+            client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}
+            )
+            
+            UNION ALL
+
+            ( SELECT
+             IFNULL(sum(amount), 0) amount from ${TABLE.EXPENSES} WHERE
+            ( expense_account = "Depreciation Expense") AND
+            client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}
+            )
+
+            UNION ALL
+
+            ( SELECT
+             IFNULL(sum(amount), 0) amount from ${TABLE.EXPENSES} WHERE
+            (
+                 expense_account = "Credit Card Charges"
+                 OR
+                expense_account = "Bank Fees and Charges"    
+            ) AND
+            client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}
+            )
+
+
+
+           UNION ALL
+
+            ( SELECT
+             IFNULL(sum(amount), 0) amount from ${TABLE.EXPENSES} WHERE
+            (
+             expense_account = "Advertising And Marketing" or
+             expense_account = "Bad Debt" or
+             expense_account = "Automatic Expense" or
+             expense_account = "IT and Internet Expenses" or
+             expense_account = "Janitorial Expense" or
+             expense_account = "Lodging" or
+             expense_account = "Meals and Entertainment" or
+             expense_account = "Office and Supplies" or
+             expense_account = "Postage" or
+             expense_account = "Printing and Stationary" or
+            expense_account = "Repair and Maintenance" or
+            expense_account = "Salaries and Employee Wages" or
+            expense_account = "Travel Expenses" or
+            expense_account = "Telephone Expense")
+             
+             AND
+            client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}
+            )
+
+
+             UNION ALL
+
+            ( SELECT
+             IFNULL(sum(amount), 0) amount from ${TABLE.EXPENSES} WHERE
+            (
+                expense_account = "Other Expenses" 
+            ) AND
+            client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}
+            )
+
+
+
+            ) t
+            
+            `);
         return query;
     },
+
+
+    getInvestmentReport: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT 
+
+          t.amount
+        
+        FROM (
+
+            (SELECT 
+              IFNULL(sum(amount), 0) amount from ${TABLE.INVESTMENT} WHERE
+            ( investment_type = "Bank Interest") AND
+            created_by= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}
+            )
+            UNION  ALL
+
+             ( SELECT
+             IFNULL(sum(amount), 0) amount from ${TABLE.INVESTMENT} WHERE
+            (investment_type = "Insurance") AND
+            created_by= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}
+            )
+
+            UNION ALL
+
+            ( SELECT
+             IFNULL(sum(amount), 0) amount from ${TABLE.INVESTMENT} WHERE
+            ( investment_type = "Other Investments") AND
+            created_by= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}
+            )
+
+            ) t
+            
+            `);
+        return query;
+    },
+
+
+
+
+
 
 
     getExpenses: async ({ offset, client_id, page_size }: Vendor) => {
         const query = await client.query(`SELECT i.date,i.tax_amount, i.expense_account,  c.customer_display_name, v.vendor_display_name, i.paid_through,i.reference, i.billable,i.product,i.notes, i.amount
         FROM (( ${TABLE.EXPENSES} i
-        INNER JOIN ${TABLE.VENDORS} v ON i.vendor_id = v.id)
-        INNER JOIN ${TABLE.CUSTOMER} c ON i.customer_id = c.id) WHERE i.client_id = ? order by i.id DESC LIMIT ?,?`, [client_id, offset, page_size]);
+        left join ${TABLE.VENDORS} v ON i.vendor_id = v.id)
+        left join ${TABLE.CUSTOMER} c ON i.customer_id = c.id) WHERE i.client_id = ? order by i.id DESC LIMIT ?,?`, [client_id, offset, page_size]);
         return query;
     },
 

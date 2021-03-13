@@ -13,6 +13,33 @@ export default {
         return result;
     },
 
+
+    createInvestment: async ({ investment_type,amount, client_id }: Item) => {
+        const result = await client.query(`INSERT INTO ${TABLE.INVESTMENT} SET
+             investment_type =?,
+             amount= ?,
+             created_by= ?`, [
+            investment_type,
+            amount,
+            client_id
+        ]);
+        return result;
+    },
+
+
+    getinvestment: async ({ offset, client_id, page_size }: Item) => {
+        const result = await client.query(
+            `SELECT * FROM ${TABLE.INVESTMENT} WHERE created_by = ? order by id DESC LIMIT ?,?`, [client_id, offset, page_size]);
+        return result;
+    },
+
+    getPageSizeIvestment: async ({ client_id }: Item) => {
+        const [result] = await client.query(
+            `SELECT COUNT(id) count FROM ${TABLE.INVESTMENT} WHERE created_by = ? `, [client_id]);
+        return result.count;
+    },
+
+
     getItems: async ({ offset, client_id, page_size }: Item) => {
         const result = await client.query(
             `SELECT * FROM ${TABLE.ITEMS} WHERE client_id = ? order by id DESC LIMIT ?,?`, [client_id, offset, page_size]);
@@ -102,7 +129,7 @@ export default {
     },
 
 
-    getItemSalesSize: async ({  created_by,  startDate, endDate }: Item) => {
+    getItemSalesSize: async ({ created_by, startDate, endDate }: Item) => {
         const [result] = await client.query(
             `
             SELECT

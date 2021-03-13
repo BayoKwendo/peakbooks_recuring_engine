@@ -380,6 +380,57 @@ export default {
     }
   },
 
+
+  getInvestmentReport: async (ctx: any) => {
+    try {
+      let { client_id, startDate, endDate } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      const data = await vendorService.getInvestmentReport({
+        startDate: startDate,
+        endDate: endDate,
+        client_id: client_id,
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+  
+
+
+  getVendorCredit: async (ctx: any) => {
+    try {
+      let { client_id, startDate, endDate } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      const data = await vendorService.getCreditNoteVendor({
+        startDate: startDate,
+        endDate: endDate,
+        client_id: client_id,
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
   getVendorBalance: async (ctx: any) => {
     try {
       let { client_id, startDate, endDate } = getQuery(ctx, {
