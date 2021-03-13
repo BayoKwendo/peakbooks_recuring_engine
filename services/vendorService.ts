@@ -417,15 +417,22 @@ export default {
 
 
     getPettyCash: async ({ client_id, startDate, endDate }: Vendor) => {
-        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
-        paid_through = "Petty Cash" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+
+
+        const query = await client.query(`SELECT 
+        IFNULL(SUM(amount), 0) 
+        amount FROM ${TABLE.EXPENSES} WHERE 
+        paid_through = "Petty Cash" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}    
+        `);
         return query;
+
+
     },
 
 
 
     getUndepositedFunds: async ({ client_id, startDate, endDate }: Vendor) => {
-        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+        const query = await client.query(`SELECT IFNULL(SUM(amount), 0) amount FROM ${TABLE.EXPENSES} WHERE 
         paid_through = "Undeposited Funds" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
         return query;
     },
@@ -614,8 +621,8 @@ export default {
 
              ( SELECT
              IFNULL(sum(amount), 0) amount from ${TABLE.INVESTMENT} WHERE
-            (investment_type = "Insurance") AND
-            created_by= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}
+             (investment_type = "Insurance") AND
+             created_by= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}
             )
 
             UNION ALL

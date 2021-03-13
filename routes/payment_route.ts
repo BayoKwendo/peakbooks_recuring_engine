@@ -41,6 +41,8 @@ router
 
   .get("/billitems", authorize, paymentController.getBillItems)
   .get("/billpaid", authorize, paymentController.getBillPaidReceipt)
+  .get("/paymentamountmade", authorize, paymentController.getPaymentMadeReportAmount)
+
 
 
 

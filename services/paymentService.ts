@@ -250,7 +250,7 @@ export default {
 
     getPaymentReceivable: async ({ startDate, endDate, created_by }: Payment) => {
         const result = await client.query(
-            `SELECT i.amount_received FROM 
+            `SELECT IFNULL(SUM(i.amount_received), 0) amount_received FROM
         ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
          c.client_id = ${created_by} AND i.created BETWEEN ${startDate} AND ${endDate}`);
         return result;
@@ -278,7 +278,7 @@ export default {
 
     getPaymentPettyCash: async ({ startDate, endDate, created_by }: Payment) => {
         const result = await client.query(
-            `SELECT i.amount_received FROM 
+            `SELECT IFNULL(SUM(i.amount_received), 0) amount_received FROM
         ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
          c.client_id = ${created_by} AND i.deposit_to = "Petty Cash" AND i.created BETWEEN ${startDate} AND ${endDate}`);
         return result;
@@ -286,7 +286,7 @@ export default {
 
     getPaymentUndeposited: async ({ startDate, endDate, created_by }: Payment) => {
         const result = await client.query(
-            `SELECT i.amount_received FROM 
+            `SELECT IFNULL(SUM(i.amount_received), 0) amount_received  FROM 
         ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
          c.client_id = ${created_by} AND i.deposit_to = "Undeposited Funds" AND i.created BETWEEN ${startDate} AND ${endDate}`);
         return result;
@@ -384,6 +384,17 @@ export default {
         return result;
     },
 
+
+    getPaymentMadeReportAmount: async ({ startDate, endDate, created_by }: Payment) => {
+        const result = await client.query(
+            `SELECT 
+              IFNULL(SUM(i.amount_received), 0) amount 
+            FROM
+             ${TABLE.PAYMENT_RECEIVED_PAY_BILL} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id WHERE
+             c.client_id = ${created_by} AND i.status = 1 AND i.created BETWEEN ${startDate} AND ${endDate}`);
+        return result;
+    },
+
     getPaymentMadeReportsSize: async ({ created_by, startDate, endDate }: Invoices) => {
         const [result] = await client.query(
             `SELECT COUNT(i.id) count FROM 
@@ -392,7 +403,7 @@ export default {
         return result.count;
     },
 
-//recurring bills ustatus update
+    //recurring bills ustatus update
     updatefrequencystatus: async ({ bill_no }: Invoices) => {
         const result = await client.query(
             `UPDATE ${TABLE.RECURRING_BILLS} SET

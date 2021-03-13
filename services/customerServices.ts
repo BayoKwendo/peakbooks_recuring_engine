@@ -171,7 +171,7 @@ export default {
 
   getCustomerBalance: async ({ client_id, startDate, endDate }: Customers) => {
     const result = await client.query(
-      `SELECT out_of_balance FROM  ${TABLE.CUSTOMER} b LEFT JOIN ${TABLE.CUSTOMER_MORE} c ON b.id = c.customer_id WHERE
+      `SELECT  SUM(IFNULL(out_of_balance, 0)) out_of_balance FROM  ${TABLE.CUSTOMER} b LEFT JOIN ${TABLE.CUSTOMER_MORE} c ON b.id = c.customer_id WHERE
              b.client_id = ${client_id} AND 
              b.created_at BETWEEN ${startDate} AND ${endDate}`
     );

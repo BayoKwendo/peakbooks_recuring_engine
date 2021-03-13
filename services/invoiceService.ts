@@ -185,7 +185,9 @@ export default {
     //Customer balance report query
     getCustomerBalanceInvoice: async ({ offset, created_by, page_size, estimate, startDate, endDate }: Invoices) => {
         const result = await client.query(
-            `SELECT customer_display_name,count, IFNULL(invoice_amount, 0) invoice_amount,  IFNULL(credit_amount, 0) credit_amount, (IFNULL(invoice_amount, 0) - IFNULL(credit_amount, 0)) balance  
+            `SELECT customer_display_name,count, 
+            IFNULL(invoice_amount, 0) invoice_amount, 
+             IFNULL(credit_amount, 0) credit_amount, (IFNULL(invoice_amount, 0) - IFNULL(credit_amount, 0)) balance  
              FROM (
 
              (SELECT  c.customer_display_name, 
@@ -334,7 +336,8 @@ export default {
 
     getInvoicesAmount: async ({ created_by, startDate, endDate }: Invoices) => {
         const result = await client.query(
-            `SELECT amount  FROM 
+            `SELECT  IFNULL(sum( CAST(SUBSTRING(replace(amount, ',', ''),5) AS DECIMAL(10,2))), 0) amount
+            FROM
             ${TABLE.INVOICES}  
             WHERE created_by = ${created_by} AND created_at BETWEEN ${startDate} AND ${endDate} `);
         console.log(endDate)
@@ -345,7 +348,7 @@ export default {
 
     getInvoicesTaxAmount: async ({ created_by, startDate, endDate }: Invoices) => {
         const result = await client.query(
-            `SELECT tax_amount  FROM 
+            `SELECT IFNULL(SUM(tax_amount), 0) tax_amount  FROM 
             ${TABLE.INVOICES}  
             WHERE created_by = ${created_by} AND created_at BETWEEN ${startDate} AND ${endDate} `);
         console.log(endDate)

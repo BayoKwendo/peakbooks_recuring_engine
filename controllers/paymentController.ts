@@ -1062,6 +1062,32 @@ export default {
     }
   },
 
+
+  getPaymentMadeReportAmount: async (ctx: any) => {
+    try {
+      let { created_by, startDate, endDate } = getQuery(ctx, {
+        mergeParams: true,
+      });
+
+      const data = await paymentService.getPaymentMadeReportAmount({
+        startDate: startDate,
+        endDate: endDate,
+        created_by: Number(created_by),
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
   getPaymentReceivable: async (ctx: any) => {
     try {
       let { created_by, startDate, endDate } = getQuery(ctx, {
