@@ -1,15 +1,20 @@
-import { getQuery } from 'https://deno.land/x/oak/helpers.ts'
+import { getQuery } from "https://deno.land/x/oak/helpers.ts";
 import * as log from "https://deno.land/std/log/mod.ts";
-import invoiceService from '../services/invoiceService.ts';
-
-
+import invoiceService from "../services/invoiceService.ts";
 
 export default {
   /**
-* @description Add a new invoice
-*/
-  createInvoices: async ({ request, response }: { request: any; response: any },) => {
+   * @description Add a new invoice
+   */
+  createInvoices: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
     const body = await request.body();
+    const values = await body.value;
     if (!request.hasBody) {
       response.status = 400;
       response.body = {
@@ -18,42 +23,49 @@ export default {
       };
       return;
     }
+    if (!values.customer_id) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "Please select a customer",
+      };
+      return;
+    }
 
     try {
       const values = await body.value;
-      // 
-      const body222 = await invoiceService.createInvoice(
-        {
-          customer_id: values.customer_id,
-          invoice_no: "djf",
-          terms: values.terms,
-          due_date: values.due_date,
-          invoice_date: values.invoice_date,
-          message_invoice: values.message_invoice,
-          statement_invoice: values.statement_invoice,
-          amount: values.amount,
-          tax_exclusive: values.tax_exclusive,
+      //
+      const body222 = await invoiceService.createInvoice({
+        customer_id: values.customer_id,
+        invoice_no: "djf",
+        terms: values.terms,
+        due_date: values.due_date,
+        invoice_date: values.invoice_date,
+        message_invoice: values.message_invoice,
+        statement_invoice: values.statement_invoice,
+        amount: values.amount,
+        tax_exclusive: values.tax_exclusive,
 
-          estimate: values.estimate,
-          due_amount: values.due_amount,
-          discount_amount: values.discount_amount,
-          sub_total: values.sub_total,
-          tax_amount: values.tax_amount,
-          created_by: values.created_by,
-          recurring: values.recurring
-        }
-      );
+        estimate: values.estimate,
+        due_amount: values.due_amount,
+        discount_amount: values.discount_amount,
+        sub_total: values.sub_total,
+        tax_amount: values.tax_amount,
+        created_by: values.created_by,
+        recurring: values.recurring,
+      });
 
       if (body222) {
-
         if (values.frequecy == null) {
           response.body = {
             status: true,
             status_code: 200,
-            message: values.estimate == 0 ? "Invoice added successfully" : "Estimate added successfully",
+            message:
+              values.estimate == 0
+                ? "Invoice added successfully"
+                : "Estimate added successfully",
           };
         } else {
-
           const recurring_invoices = await invoiceService.createRecurringInvoice(
             {
               invoice_no: values.invoice_no,
@@ -63,9 +75,9 @@ export default {
               frequecy: values.frequecy,
               frequency_type: values.frequency_type,
               customer_id: values.customer_id,
-              created_by: values.created_by
-
-            })
+              created_by: values.created_by,
+            }
+          );
 
           if (recurring_invoices) {
             response.body = {
@@ -76,7 +88,6 @@ export default {
           }
         }
       }
-
     } catch (error) {
       response.status = 400;
       response.body = {
@@ -88,7 +99,13 @@ export default {
   /**
    * @description Add a new invoice
    */
-  createEstimates: async ({ request, response }: { request: any; response: any },) => {
+  createEstimates: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
     const body = await request.body();
     if (!request.hasBody) {
       response.status = 400;
@@ -100,22 +117,20 @@ export default {
     }
     try {
       const values = await body.value;
-      await invoiceService.createEstimate(
-        {
-          customer_id: values.customer_id,
-          estimate_no: values.estimate_no,
-          expiry_date: values.expiry_date,
-          estimate_date: values.estimate_date,
-          estimate_message: values.estimate_message,
-          statement_message: values.statement_message,
-          amount: values.amount,
-          due_amount: values.due_amount,
-          discount_amount: values.discount_amount,
-          sub_total: values.sub_total,
-          tax_amount: values.tax_amount,
-          created_by: values.created_by
-        }
-      );
+      await invoiceService.createEstimate({
+        customer_id: values.customer_id,
+        estimate_no: values.estimate_no,
+        expiry_date: values.expiry_date,
+        estimate_date: values.estimate_date,
+        estimate_message: values.estimate_message,
+        statement_message: values.statement_message,
+        amount: values.amount,
+        due_amount: values.due_amount,
+        discount_amount: values.discount_amount,
+        sub_total: values.sub_total,
+        tax_amount: values.tax_amount,
+        created_by: values.created_by,
+      });
       response.body = {
         status: true,
         status_code: 200,
@@ -130,9 +145,13 @@ export default {
     }
   },
 
-
-
-  updatefrequencystatus: async ({ request, response }: { request: any; response: any },) => {
+  updatefrequencystatus: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
     const body = await request.body();
     if (!request.hasBody) {
       response.body = {
@@ -143,11 +162,9 @@ export default {
     }
     try {
       const values = await body.value;
-      await invoiceService.updatefrequencystatus(
-        {
-          invoice_no: values.invoice_no,
-        },
-      );
+      await invoiceService.updatefrequencystatus({
+        invoice_no: values.invoice_no,
+      });
       response.body = {
         status: true,
         status_code: 200,
@@ -162,7 +179,13 @@ export default {
     }
   },
 
-  updatefrequencystatus2: async ({ request, response }: { request: any; response: any },) => {
+  updatefrequencystatus2: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
     const body = await request.body();
     if (!request.hasBody) {
       response.body = {
@@ -173,11 +196,9 @@ export default {
     }
     try {
       const values = await body.value;
-      await invoiceService.updatefrequencystatus2(
-        {
-          invoice_no: values.invoice_no,
-        },
-      );
+      await invoiceService.updatefrequencystatus2({
+        invoice_no: values.invoice_no,
+      });
       response.body = {
         status: true,
         status_code: 200,
@@ -192,7 +213,13 @@ export default {
     }
   },
 
-  updateInvoicePDF: async ({ request, response }: { request: any; response: any },) => {
+  updateInvoicePDF: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
     const body = await request.body();
     if (!request.hasBody) {
       response.status = 400;
@@ -204,25 +231,23 @@ export default {
     }
     try {
       const values = await body.value;
-      await invoiceService.updateInvoice(
-        {
-          customer_id: values.customer_id,
-          invoice_no: values.invoice_no,
-          terms: values.terms,
-          due_date: values.due_date,
-          invoice_date: values.invoice_date,
-          message_invoice: values.message_invoice,
-          statement_invoice: values.statement_invoice,
-          amount: values.amount,
-          due_amount: values.due_amount,
-          discount_amount: values.discount_amount,
-          sub_total: values.sub_total,
-          tax_exclusive: values.tax_exclusive,
-          tax_amount: values.tax_amount,
-          created_by: values.created_by
-          // activation_key: values.activation_key
-        },
-      );
+      await invoiceService.updateInvoice({
+        customer_id: values.customer_id,
+        invoice_no: values.invoice_no,
+        terms: values.terms,
+        due_date: values.due_date,
+        invoice_date: values.invoice_date,
+        message_invoice: values.message_invoice,
+        statement_invoice: values.statement_invoice,
+        amount: values.amount,
+        due_amount: values.due_amount,
+        discount_amount: values.discount_amount,
+        sub_total: values.sub_total,
+        tax_exclusive: values.tax_exclusive,
+        tax_amount: values.tax_amount,
+        created_by: values.created_by,
+        // activation_key: values.activation_key
+      });
       response.body = {
         status: true,
         status_code: 200,
@@ -237,8 +262,13 @@ export default {
     }
   },
 
-
-  updateEstimatePDF: async ({ request, response }: { request: any; response: any },) => {
+  updateEstimatePDF: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
     const body = await request.body();
     if (!request.hasBody) {
       response.status = 400;
@@ -250,23 +280,21 @@ export default {
     }
     try {
       const values = await body.value;
-      await invoiceService.updateEstimate(
-        {
-          customer_id: values.customer_id,
-          estimate_no: values.estimate_no,
-          expiry_date: values.expiry_date,
-          estimate_date: values.estimate_date,
-          estimate_message: values.estimate_message,
-          statement_message: values.statement_message,
-          amount: values.amount,
-          due_amount: values.due_amount,
-          discount_amount: values.discount_amount,
-          sub_total: values.sub_total,
-          tax_amount: values.tax_amount,
-          created_by: values.created_by
-          // activation_key: values.activation_key
-        },
-      );
+      await invoiceService.updateEstimate({
+        customer_id: values.customer_id,
+        estimate_no: values.estimate_no,
+        expiry_date: values.expiry_date,
+        estimate_date: values.estimate_date,
+        estimate_message: values.estimate_message,
+        statement_message: values.statement_message,
+        amount: values.amount,
+        due_amount: values.due_amount,
+        discount_amount: values.discount_amount,
+        sub_total: values.sub_total,
+        tax_amount: values.tax_amount,
+        created_by: values.created_by,
+        // activation_key: values.activation_key
+      });
       response.body = {
         status: true,
         status_code: 200,
@@ -281,8 +309,13 @@ export default {
     }
   },
 
-
-  convertEstimate: async ({ request, response }: { request: any; response: any },) => {
+  convertEstimate: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
     const body = await request.body();
     if (!request.hasBody) {
       response.status = 400;
@@ -294,11 +327,9 @@ export default {
     }
     try {
       const values = await body.value;
-      await invoiceService.convertEstimate(
-        {
-          invoice_no: values.invoice_no,
-        },
-      );
+      await invoiceService.convertEstimate({
+        invoice_no: values.invoice_no,
+      });
       response.body = {
         status: true,
         status_code: 200,
@@ -313,8 +344,6 @@ export default {
     }
   },
 
-
-
   /**
    * @description Get all rECURRING Invoices List
    */
@@ -322,31 +351,37 @@ export default {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
-      let { page_number, filter_value, estimate, created_by, page_size } = getQuery(ctx, { mergeParams: true });
+      let {
+        page_number,
+        filter_value,
+        estimate,
+        created_by,
+        page_size,
+      } = getQuery(ctx, { mergeParams: true });
       const total = await invoiceService.getPageSizeFrequencyInvoice({
         created_by: Number(created_by),
-        estimate: estimate
+        estimate: estimate,
       });
       if (filter_value == null || filter_value == "") {
-        console.log(page_number, '||| params');
+        console.log(page_number, "||| params");
 
         if (page_number == null) {
-          page_number = "1"
+          page_number = "1";
 
-          page_size = "10"
+          page_size = "10";
           const offset = (Number(page_number) - 1) * 10;
           const data = await invoiceService.getFrequencyInvoices({
             offset: Number(offset),
             estimate: estimate,
             page_size: Number(page_size),
 
-            created_by: Number(created_by)
+            created_by: Number(created_by),
           });
           ctx.response.body = {
             status: true,
             status_code: 200,
             total: total,
-            data: data
+            data: data,
           };
         } else {
           const offset = (Number(page_number) - 1) * 10;
@@ -355,34 +390,29 @@ export default {
             estimate: estimate,
             page_size: Number(page_size),
 
-            created_by: Number(created_by)
+            created_by: Number(created_by),
           });
           ctx.response.body = {
             status: true,
             status_code: 200,
             total: total,
-            data: data
+            data: data,
           };
         }
-      }
-
-      else {
-        console.log(filter_value, '||| params');
+      } else {
+        console.log(filter_value, "||| params");
 
         const data = await invoiceService.getFrequencyInvoicesFilter({
           filter_value: filter_value,
-
         });
 
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data
+          data: data,
         };
-
       }
-
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = {
@@ -392,31 +422,30 @@ export default {
     }
   },
 
-
   /**
- * @description Get all Invoices List
- */
+   * @description Get all Invoices List
+   */
   getOneInvoices: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
-      let { page_number, filter_value, estimate, created_by } = getQuery(ctx, { mergeParams: true });
+      let { page_number, filter_value, estimate, created_by } = getQuery(ctx, {
+        mergeParams: true,
+      });
 
-      page_number = "1"
+      page_number = "1";
 
       const offset = (Number(page_number) - 1) * 10;
       const data = await invoiceService.getOneInvoices({
         offset: Number(offset),
         estimate: estimate,
-        created_by: Number(created_by)
+        created_by: Number(created_by),
       });
       ctx.response.body = {
         status: true,
         status_code: 200,
-        data: data
+        data: data,
       };
-
-
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = {
@@ -426,13 +455,17 @@ export default {
     }
   },
 
-
-
   //Customer  Salves Report Controller
   getCustomerSales: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
-      let { page_number, page_size, startDate, endDate, created_by } = getQuery(ctx, { mergeParams: true });
+      let {
+        page_number,
+        page_size,
+        startDate,
+        endDate,
+        created_by,
+      } = getQuery(ctx, { mergeParams: true });
 
       const total = await invoiceService.getCustomerBalanceInvoiceSize({
         created_by: Number(created_by),
@@ -442,8 +475,8 @@ export default {
 
       // console.log(total)
       if (page_number == null) {
-        page_number = "1"
-        page_size = "100"
+        page_number = "1";
+        page_size = "100";
 
         const offset = (Number(page_number) - 1) * Number(page_size);
         const data = await invoiceService.getCustomerSales({
@@ -451,13 +484,13 @@ export default {
           created_by: Number(created_by),
           startDate: startDate,
           endDate: endDate,
-          page_size: Number(page_size)
+          page_size: Number(page_size),
         });
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data
+          data: data,
         };
       } else {
         const offset = (Number(page_number) - 1) * Number(page_size);
@@ -466,13 +499,13 @@ export default {
           created_by: Number(created_by),
           startDate: startDate,
           endDate: endDate,
-          page_size: Number(page_size)
+          page_size: Number(page_size),
         });
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data
+          data: data,
         };
       }
     } catch (error) {
@@ -488,7 +521,13 @@ export default {
   getCustomerBalanceInvoiceReport: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
-      let { page_number, page_size, startDate, endDate, created_by } = getQuery(ctx, { mergeParams: true });
+      let {
+        page_number,
+        page_size,
+        startDate,
+        endDate,
+        created_by,
+      } = getQuery(ctx, { mergeParams: true });
 
       const total = await invoiceService.getCustomerBalanceInvoiceSize({
         created_by: Number(created_by),
@@ -496,10 +535,10 @@ export default {
         endDate: endDate,
       });
 
-      console.log(total)
+      console.log(total);
       if (page_number == null) {
-        page_number = "1"
-        page_size = "1000"
+        page_number = "1";
+        page_size = "1000";
 
         const offset = (Number(page_number) - 1) * Number(page_size);
         const data = await invoiceService.getCustomerBalanceInvoice({
@@ -507,13 +546,13 @@ export default {
           created_by: Number(created_by),
           startDate: startDate,
           endDate: endDate,
-          page_size: Number(page_size)
+          page_size: Number(page_size),
         });
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data
+          data: data,
         };
       } else {
         const offset = (Number(page_number) - 1) * Number(page_size);
@@ -522,13 +561,13 @@ export default {
           created_by: Number(created_by),
           startDate: startDate,
           endDate: endDate,
-          page_size: Number(page_size)
+          page_size: Number(page_size),
         });
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data
+          data: data,
         };
       }
     } catch (error) {
@@ -540,12 +579,17 @@ export default {
     }
   },
 
-
   //Customer Aging Report Controller
   getAgingSummaryInvoice: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
-      let { page_number, page_size, startDate, endDate, created_by } = getQuery(ctx, { mergeParams: true });
+      let {
+        page_number,
+        page_size,
+        startDate,
+        endDate,
+        created_by,
+      } = getQuery(ctx, { mergeParams: true });
 
       const total = await invoiceService.getAgingSummarySize({
         created_by: Number(created_by),
@@ -553,10 +597,10 @@ export default {
         endDate: endDate,
       });
 
-      console.log(total)
+      console.log(total);
       if (page_number == null) {
-        page_number = "1"
-        page_size = "1000"
+        page_number = "1";
+        page_size = "1000";
 
         const offset = (Number(page_number) - 1) * Number(page_size);
         const data = await invoiceService.getAgingSummaryInvoice({
@@ -564,13 +608,13 @@ export default {
           created_by: Number(created_by),
           startDate: startDate,
           endDate: endDate,
-          page_size: Number(page_size)
+          page_size: Number(page_size),
         });
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data
+          data: data,
         };
       } else {
         const offset = (Number(page_number) - 1) * Number(page_size);
@@ -579,13 +623,13 @@ export default {
           created_by: Number(created_by),
           startDate: startDate,
           endDate: endDate,
-          page_size: Number(page_size)
+          page_size: Number(page_size),
         });
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data
+          data: data,
         };
       }
     } catch (error) {
@@ -597,29 +641,27 @@ export default {
     }
   },
 
-
-
-
-
   /**
-* @description Get all Invoices List
-*/
+   * @description Get all Invoices List
+   */
   getInvoicesAmount: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
-      let { created_by, startDate, endDate } = getQuery(ctx, { mergeParams: true });
+      let { created_by, startDate, endDate } = getQuery(ctx, {
+        mergeParams: true,
+      });
       const data = await invoiceService.getInvoicesAmount({
         startDate: startDate,
         endDate: endDate,
-        created_by: Number(created_by)
+        created_by: Number(created_by),
       });
 
-      console.log(created_by)
+      console.log(created_by);
 
       ctx.response.body = {
         status: true,
         status_code: 200,
-        data: data
+        data: data,
       };
     } catch (error) {
       ctx.response.status = 400;
@@ -633,19 +675,21 @@ export default {
   getInvoicesTaxAmount: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
-      let { created_by, startDate, endDate } = getQuery(ctx, { mergeParams: true });
+      let { created_by, startDate, endDate } = getQuery(ctx, {
+        mergeParams: true,
+      });
       const data = await invoiceService.getInvoicesTaxAmount({
         startDate: startDate,
         endDate: endDate,
-        created_by: Number(created_by)
+        created_by: Number(created_by),
       });
 
-      console.log(created_by)
+      console.log(created_by);
 
       ctx.response.body = {
         status: true,
         status_code: 200,
-        data: data
+        data: data,
       };
     } catch (error) {
       ctx.response.status = 400;
@@ -656,31 +700,37 @@ export default {
     }
   },
 
-
-
   /**
-  * @description Get all Invoices List
-  */
+   * @description Get all Invoices List
+   */
   getInvoices: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
-      let { page_number, page_size, startDate, endDate, filter_value, estimate, created_by } = getQuery(ctx, { mergeParams: true });
-      console.log(filter_value, '||| params');
+      let {
+        page_number,
+        page_size,
+        startDate,
+        endDate,
+        filter_value,
+        estimate,
+        created_by,
+      } = getQuery(ctx, { mergeParams: true });
+      console.log(filter_value, "||| params");
 
       const total = await invoiceService.getPageSizeInvoice({
         created_by: Number(created_by),
         startDate: startDate,
         endDate: endDate,
-        estimate: estimate
+        estimate: estimate,
       });
 
       if (filter_value == null || filter_value == "") {
-        console.log(page_number, '||| params');
+        console.log(page_number, "||| params");
 
         if (page_number == null) {
-          page_number = "1"
-          page_size = "50"
+          page_number = "1";
+          page_size = "50";
 
           const offset = (Number(page_number) - 1) * 10;
           const data = await invoiceService.getInvoices({
@@ -689,13 +739,13 @@ export default {
             startDate: startDate,
             page_size: Number(page_size),
             endDate: endDate,
-            created_by: Number(created_by)
+            created_by: Number(created_by),
           });
           ctx.response.body = {
             status: true,
             status_code: 200,
             total: total,
-            data: data
+            data: data,
           };
         } else {
           const offset = (Number(page_number) - 1) * 10;
@@ -705,35 +755,28 @@ export default {
             startDate: startDate,
             endDate: endDate,
             page_size: Number(page_size),
-            created_by: Number(created_by)
+            created_by: Number(created_by),
           });
           ctx.response.body = {
             status: true,
             status_code: 200,
             total: total,
-            data: data
+            data: data,
           };
         }
-      }
-
-
-      else {
-
+      } else {
         const data = await invoiceService.getInvoiceFilter({
           filter_value: filter_value,
-          created_by: Number(created_by)
-
+          created_by: Number(created_by),
         });
 
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data
+          data: data,
         };
-
       }
-
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = {
@@ -743,28 +786,34 @@ export default {
     }
   },
 
-
-
   // receivable report
 
   /**
-* @description Get all receivable
-*/
+   * @description Get all receivable
+   */
   getReceivableSummary: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
-      let { page_number, page_size, startDate, endDate, filter_value, estimate, created_by } = getQuery(ctx, { mergeParams: true });
+      let {
+        page_number,
+        page_size,
+        startDate,
+        endDate,
+        filter_value,
+        estimate,
+        created_by,
+      } = getQuery(ctx, { mergeParams: true });
       const total = await invoiceService.getReceivableSummarySize({
         created_by: Number(created_by),
         startDate: startDate,
         endDate: endDate,
-        estimate: estimate
+        estimate: estimate,
       });
 
       if (page_number == null) {
-        page_number = "1"
-        page_size = "100"
+        page_number = "1";
+        page_size = "100";
 
         const offset = (Number(page_number) - 1) * 10;
         const data = await invoiceService.getReceivableSummary({
@@ -773,13 +822,13 @@ export default {
           startDate: startDate,
           page_size: Number(page_size),
           endDate: endDate,
-          created_by: Number(created_by)
+          created_by: Number(created_by),
         });
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data
+          data: data,
         };
       } else {
         const offset = (Number(page_number) - 1) * 10;
@@ -789,16 +838,15 @@ export default {
           startDate: startDate,
           endDate: endDate,
           page_size: Number(page_size),
-          created_by: Number(created_by)
+          created_by: Number(created_by),
         });
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data
+          data: data,
         };
       }
-
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = {
@@ -808,10 +856,9 @@ export default {
     }
   },
 
-
   /**
-  * @description Get all Invoices List
-  */
+   * @description Get all Invoices List
+   */
   getInvoicesUnpaid: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
@@ -822,18 +869,17 @@ export default {
         created_by: Number(created_by),
       });
 
-      console.log(filter_value, '||| params');
+      console.log(filter_value, "||| params");
 
       const data = await invoiceService.getInvoiceFilterUnpaid({
         filter_value: filter_value,
-        created_by: Number(created_by)
-
+        created_by: Number(created_by),
       });
       ctx.response.body = {
         status: true,
         status_code: 200,
         total: total,
-        data: data
+        data: data,
       };
     } catch (error) {
       ctx.response.status = 400;
@@ -845,27 +891,27 @@ export default {
   },
 
   /**
-  * @description Get all Invoices List
-  */
+   * @description Get all Invoices List
+   */
   getInvoicesPaidReceipt: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
       let { filter_value } = getQuery(ctx, { mergeParams: true });
       const total = await invoiceService.getPageSizeInvoicePaidReceipt({
-        filter_value: filter_value
+        filter_value: filter_value,
       });
 
-      console.log(filter_value, '||| params');
+      console.log(filter_value, "||| params");
 
       const data = await invoiceService.getInvoiceFilterPaidReceipt({
-        filter_value: filter_value
+        filter_value: filter_value,
       });
       ctx.response.body = {
         status: true,
         status_code: 200,
         total: total,
-        data: data
+        data: data,
       };
     } catch (error) {
       ctx.response.status = 400;
@@ -876,34 +922,35 @@ export default {
     }
   },
 
-
   /**
-* @description Get all Estimates List
-*/
+   * @description Get all Estimates List
+   */
   getEstimates: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
-      let { page_number, filter_value, created_by } = getQuery(ctx, { mergeParams: true });
+      let { page_number, filter_value, created_by } = getQuery(ctx, {
+        mergeParams: true,
+      });
       const total = await invoiceService.getPageSizeEstimates({
-        created_by: Number(created_by)
+        created_by: Number(created_by),
       });
       if (filter_value == null || filter_value == "") {
-        console.log(page_number, '||| params');
+        console.log(page_number, "||| params");
 
         if (page_number == null) {
-          page_number = "1"
+          page_number = "1";
 
           const offset = (Number(page_number) - 1) * 10;
           const data = await invoiceService.getEstimates({
             offset: Number(offset),
-            created_by: Number(created_by)
+            created_by: Number(created_by),
           });
           ctx.response.body = {
             status: true,
             status_code: 200,
             total: total,
-            data: data
+            data: data,
           };
         } else {
           const offset = (Number(page_number) - 1) * 10;
@@ -916,25 +963,23 @@ export default {
             status: true,
             status_code: 200,
             total: total,
-            data: data
+            data: data,
           };
         }
       } else {
-        console.log(filter_value, '||| params');
+        console.log(filter_value, "||| params");
 
         const data = await invoiceService.getEstimateFilter({
-          filter_value: filter_value
+          filter_value: filter_value,
         });
 
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data
+          data: data,
         };
-
       }
-
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = {
@@ -944,23 +989,20 @@ export default {
     }
   },
 
-
   /**
-* @description Get all Invoices item list
-*/
+   * @description Get all Invoices item list
+   */
   getInvoiceItem: async (ctx: any) => {
     try {
       let { filter_value } = getQuery(ctx, { mergeParams: true });
       const data = await invoiceService.getInvoiceItems({
         filter_value: filter_value,
-
       });
       ctx.response.body = {
         status: true,
         status_code: 200,
-        data: data
+        data: data,
       };
-
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = {
@@ -970,24 +1012,20 @@ export default {
     }
   },
 
-
-
   /**
-* @description Get all Invoices item list
-*/
+   * @description Get all Invoices item list
+   */
   getEstimateItem: async (ctx: any) => {
     try {
       let { filter_value } = getQuery(ctx, { mergeParams: true });
       const data = await invoiceService.geteEstimateItems({
         filter_value: filter_value,
-
       });
       ctx.response.body = {
         status: true,
         status_code: 200,
-        data: data
+        data: data,
       };
-
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = {
@@ -996,6 +1034,4 @@ export default {
       };
     }
   },
-
-
 };

@@ -1,14 +1,18 @@
-import { getQuery } from 'https://deno.land/x/oak/helpers.ts'
+import { getQuery } from "https://deno.land/x/oak/helpers.ts";
 import * as log from "https://deno.land/std/log/mod.ts";
-import paymentService from '../services/paymentService.ts';
-
-
+import paymentService from "../services/paymentService.ts";
 
 export default {
   /**
-* @description Add a new Item
-*/
-  createPaymentMethod: async ({ request, response }: { request: any; response: any },) => {
+   * @description Add a new Item
+   */
+  createPaymentMethod: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
     const body = await request.body();
     if (!request.hasBody) {
       response.status = 400;
@@ -20,13 +24,10 @@ export default {
     }
     try {
       const values = await body.value;
-      await paymentService.createPayment(
-        {
-          name: values.name,
-          client_id: values.client_id,
-
-        }
-      );
+      await paymentService.createPayment({
+        name: values.name,
+        client_id: values.client_id,
+      });
       response.body = {
         status: true,
         status_code: 200,
@@ -42,21 +43,21 @@ export default {
   },
 
   /**
-* @description Get all Items List
-*/
+   * @description Get all Items List
+   */
   getPayments: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
-      let { page_number, filter_value, page_size, client_id } = getQuery(ctx, { mergeParams: true });
+      let { page_number, filter_value, page_size, client_id } = getQuery(ctx, {
+        mergeParams: true,
+      });
       // const total = await itemService.getPageSizeItem({
       //   client_id: Number(client_id),
       // });
-      console.log(page_size, '||| params');
-
+      console.log(page_size, "||| params");
 
       if (filter_value == null || filter_value == "") {
-
         if (page_number == null) {
           page_number = "1";
 
@@ -67,44 +68,42 @@ export default {
           const data = await paymentService.getPayment({
             offset: Number(offset),
             page_size: Number(page_size),
-            client_id: Number(client_id)
+            client_id: Number(client_id),
           });
           ctx.response.body = {
             status: true,
             status_code: 200,
-            data: data
+            data: data,
           };
         } else {
           const offset = (Number(page_number) - 1) * 10;
           const data = await paymentService.getPayment({
             offset: Number(offset),
             page_size: Number(page_size),
-            client_id: Number(client_id)
+            client_id: Number(client_id),
           });
 
           ctx.response.body = {
             status: true,
             status_code: 200,
             // total: total,
-            data: data
+            data: data,
           };
         }
       } else {
-        console.log(filter_value, '||| params');
+        console.log(filter_value, "||| params");
 
         const data = await paymentService.getPaymentFilter({
           filter_value: filter_value,
-          client_id: Number(client_id)
+          client_id: Number(client_id),
         });
 
         ctx.response.body = {
           status: true,
           status_code: 200,
-          data: data
+          data: data,
         };
-
       }
-
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = {
@@ -114,13 +113,16 @@ export default {
     }
   },
 
-
-
-
   /**
-* @description Add a new Item
-*/
-  createDeposit_to: async ({ request, response }: { request: any; response: any },) => {
+   * @description Add a new Item
+   */
+  createDeposit_to: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
     const body = await request.body();
     if (!request.hasBody) {
       response.status = 400;
@@ -132,13 +134,10 @@ export default {
     }
     try {
       const values = await body.value;
-      await paymentService.createDeposit_to(
-        {
-          name: values.name,
-          client_id: values.client_id,
-
-        }
-      );
+      await paymentService.createDeposit_to({
+        name: values.name,
+        client_id: values.client_id,
+      });
       response.body = {
         status: true,
         status_code: 200,
@@ -154,21 +153,21 @@ export default {
   },
 
   /**
-  * @description Get all Items List
-  */
+   * @description Get all Items List
+   */
   getDeposit_to: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
-      let { page_number, filter_value, page_size, client_id } = getQuery(ctx, { mergeParams: true });
+      let { page_number, filter_value, page_size, client_id } = getQuery(ctx, {
+        mergeParams: true,
+      });
       // const total = await itemService.getPageSizeItem({
       //   client_id: Number(client_id),
       // });
-      console.log(page_size, '||| params');
-
+      console.log(page_size, "||| params");
 
       if (filter_value == null || filter_value == "") {
-
         if (page_number == null) {
           page_number = "1";
 
@@ -179,44 +178,42 @@ export default {
           const data = await paymentService.getDeposit_to({
             offset: Number(offset),
             page_size: Number(page_size),
-            client_id: Number(client_id)
+            client_id: Number(client_id),
           });
           ctx.response.body = {
             status: true,
             status_code: 200,
-            data: data
+            data: data,
           };
         } else {
           const offset = (Number(page_number) - 1) * 10;
           const data = await paymentService.getDeposit_to({
             offset: Number(offset),
             page_size: Number(page_size),
-            client_id: Number(client_id)
+            client_id: Number(client_id),
           });
 
           ctx.response.body = {
             status: true,
             status_code: 200,
             // total: total,
-            data: data
+            data: data,
           };
         }
       } else {
-        console.log(filter_value, '||| params');
+        console.log(filter_value, "||| params");
 
         const data = await paymentService.getDeposittoFilter({
           filter_value: filter_value,
-          client_id: Number(client_id)
+          client_id: Number(client_id),
         });
 
         ctx.response.body = {
           status: true,
           status_code: 200,
-          data: data
+          data: data,
         };
-
       }
-
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = {
@@ -229,7 +226,13 @@ export default {
   /**
    * @description Add a new payment received
    */
-  createPaymentReceivedPay: async ({ request, response }: { request: any; response: any },) => {
+  createPaymentReceivedPay: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
     const body = await request.body();
     if (!request.hasBody) {
       response.status = 400;
@@ -242,19 +245,17 @@ export default {
     try {
       const values = await body.value;
 
-      await paymentService.createPaymentReceived(
-        {
-          customer_id: values.customer_id,
-          invoice_no: values.invoice_no,
-          amount_received: values.amount_received,
-          payment_date: values.payment_date,
-          payment_mode: values.payment_mode,
-          reference: values.reference,
-          deposit_to: values.deposit_to,
-          notes: values.notes,
-          amount_inexcess: values.amount_inexcess
-        }
-      );
+      await paymentService.createPaymentReceived({
+        customer_id: values.customer_id,
+        invoice_no: values.invoice_no,
+        amount_received: values.amount_received,
+        payment_date: values.payment_date,
+        payment_mode: values.payment_mode,
+        reference: values.reference,
+        deposit_to: values.deposit_to,
+        notes: values.notes,
+        amount_inexcess: values.amount_inexcess,
+      });
       response.body = {
         status: true,
         status_code: 200,
@@ -269,24 +270,21 @@ export default {
     }
   },
 
-
-
   /**
- * @description Get all id payment rreceived
- */
+   * @description Get all id payment rreceived
+   */
   getPaymentUnpaidrecord: async (ctx: any) => {
     try {
       let { customer_id } = getQuery(ctx, { mergeParams: true });
 
       const data = await paymentService.getPaymentUnpaidrecord({
-        customer_id: customer_id
+        customer_id: customer_id,
       });
       ctx.response.body = {
         status: true,
         status_code: 200,
-        data: data
+        data: data,
       };
-
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = {
@@ -296,23 +294,21 @@ export default {
     }
   },
 
-
   /**
- * @description Get all id payment rreceived
- */
+   * @description Get all id payment rreceived
+   */
   getPaymentUnpaidrecordbill: async (ctx: any) => {
     try {
       let { vendor_id } = getQuery(ctx, { mergeParams: true });
 
       const data = await paymentService.getPaymentUnpaidrecordbill({
-        vendor_id: vendor_id
+        vendor_id: vendor_id,
       });
       ctx.response.body = {
         status: true,
         status_code: 200,
-        data: data
+        data: data,
       };
-
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = {
@@ -322,8 +318,13 @@ export default {
     }
   },
 
-
-  updatePaymentBillUnpaidrecord: async ({ request, response }: { request: any; response: any },) => {
+  updatePaymentBillUnpaidrecord: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
     const body = await request.body();
     if (!request.hasBody) {
       response.status = 400;
@@ -335,11 +336,9 @@ export default {
     }
     try {
       const values = await body.value;
-      await paymentService.updatePaymentBillUnpaidrecord(
-        {
-          vendor_id: values.vendor_id,
-        },
-      );
+      await paymentService.updatePaymentBillUnpaidrecord({
+        vendor_id: values.vendor_id,
+      });
       response.body = {
         status: true,
         status_code: 200,
@@ -354,7 +353,13 @@ export default {
     }
   },
 
-  updatePaymentUnpaidrecord: async ({ request, response }: { request: any; response: any },) => {
+  updatePaymentUnpaidrecord: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
     const body = await request.body();
     if (!request.hasBody) {
       response.status = 400;
@@ -366,11 +371,9 @@ export default {
     }
     try {
       const values = await body.value;
-      await paymentService.updatePaymentUnpaidrecord(
-        {
-          customer_id: values.customer_id,
-        },
-      );
+      await paymentService.updatePaymentUnpaidrecord({
+        customer_id: values.customer_id,
+      });
       response.body = {
         status: true,
         status_code: 200,
@@ -385,71 +388,67 @@ export default {
     }
   },
 
-
   /**
-  * @description Get all Payment made List
-  */
+   * @description Get all Payment made List
+   */
   getPaymentReceivedPaid: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
-      let { page_number, filter_value, created_by, page_size } = getQuery(ctx, { mergeParams: true });
+      let { page_number, filter_value, created_by, page_size } = getQuery(ctx, {
+        mergeParams: true,
+      });
       const total = await paymentService.getPageSizePaymentReceived({
         created_by: Number(created_by),
       });
       if (filter_value == null || filter_value == "") {
-        console.log(page_number, '||| params');
+        console.log(page_number, "||| params");
 
         if (page_number == null) {
-          page_number = "1"
-          page_size = "10"
+          page_number = "1";
+          page_size = "10";
 
           const offset = (Number(page_number) - 1) * 10;
           const data = await paymentService.getPaymentReceivedUnpaid({
             offset: Number(offset),
             page_size: Number(page_size),
-            created_by: Number(created_by)
+            created_by: Number(created_by),
           });
           ctx.response.body = {
             status: true,
             status_code: 200,
             total: total,
-            data: data
+            data: data,
           };
         } else {
           const offset = (Number(page_number) - 1) * 10;
           const data = await paymentService.getPaymentReceivedUnpaid({
             offset: Number(offset),
             page_size: Number(page_size),
-            created_by: Number(created_by)
+            created_by: Number(created_by),
           });
 
           ctx.response.body = {
             status: true,
             status_code: 200,
             total: total,
-            data: data
+            data: data,
           };
         }
-      }
-
-      else {
-        console.log(filter_value, '||| params');
+      } else {
+        console.log(filter_value, "||| params");
 
         const data = await paymentService.getReceivedFilter({
           filter_value: filter_value,
-
         });
 
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data
+          data: data,
         };
-
       }
-
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = {
@@ -459,52 +458,51 @@ export default {
     }
   },
   /**
-  * @description Get all Payment made List FOR BILLS
-  */
+   * @description Get all Payment made List FOR BILLS
+   */
   getPaymentReceivedPaidbILLS: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
-      let { page_number, filter_value, created_by } = getQuery(ctx, { mergeParams: true });
+      let { page_number, filter_value, created_by } = getQuery(ctx, {
+        mergeParams: true,
+      });
       const total = await paymentService.getPageSizePaymentReceivedBills({
         created_by: Number(created_by),
       });
-      console.log(created_by, '||| params');
+      console.log(created_by, "||| params");
 
       if (filter_value == null || filter_value == "") {
-
         if (page_number == null) {
-          page_number = "1"
+          page_number = "1";
 
           const offset = (Number(page_number) - 1) * 10;
           const data = await paymentService.getPaymentReceivedpaidbills({
             offset: Number(offset),
-            created_by: Number(created_by)
+            created_by: Number(created_by),
           });
           ctx.response.body = {
             status: true,
             status_code: 200,
             total: total,
-            data: data
+            data: data,
           };
         } else {
           const offset = (Number(page_number) - 1) * 10;
           const data = await paymentService.getPaymentReceivedpaidbills({
             offset: Number(offset),
-            created_by: Number(created_by)
+            created_by: Number(created_by),
           });
 
           ctx.response.body = {
             status: true,
             status_code: 200,
             total: total,
-            data: data
+            data: data,
           };
         }
-      }
-
-      else {
-        console.log(filter_value, '||| params');
+      } else {
+        console.log(filter_value, "||| params");
         const data = await paymentService.getReceivedFilterBills({
           filter_value: filter_value,
         });
@@ -512,7 +510,7 @@ export default {
           status: true,
           status_code: 200,
           total: total,
-          data: data
+          data: data,
         };
       }
     } catch (error) {
@@ -525,10 +523,17 @@ export default {
   },
 
   /**
-* @description Add a new bill
-*/
-  createBill: async ({ request, response }: { request: any; response: any },) => {
+   * @description Add a new bill
+   */
+  createBill: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
     const body = await request.body();
+    const values = await body.value;
     if (!request.hasBody) {
       response.status = 400;
       response.body = {
@@ -537,31 +542,36 @@ export default {
       };
       return;
     }
+    if (!values.vendor_id) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "Please select a vendor",
+      };
+      return;
+    }
     try {
       const values = await body.value;
-      // 
-      const body222 = await paymentService.createBill(
-        {
-          vendor_id: values.vendor_id,
-          bill_no: values.bill_no,
-          terms: values.terms,
-          bill_date: values.bill_date,
-          due_date: values.due_date,
-          notes: values.notes,
-          tax_inclusive: values.tax_inclusive,
-          amount: values.amount,
-          due_amount: values.due_amount,
+      //
+      const body222 = await paymentService.createBill({
+        vendor_id: values.vendor_id,
+        bill_no: values.bill_no,
+        terms: values.terms,
+        bill_date: values.bill_date,
+        due_date: values.due_date,
+        notes: values.notes,
+        tax_inclusive: values.tax_inclusive,
+        amount: values.amount,
+        due_amount: values.due_amount,
 
-          discount_amount: values.discount_amount,
-          sub_total: values.sub_total,
-          tax_amount: values.tax_amount,
-          created_by: values.created_by,
-          recurring: values.recurring
-        }
-      );
+        discount_amount: values.discount_amount,
+        sub_total: values.sub_total,
+        tax_amount: values.tax_amount,
+        created_by: values.created_by,
+        recurring: values.recurring,
+      });
 
       if (body222) {
-
         if (values.frequecy == null) {
           response.body = {
             status: true,
@@ -569,19 +579,16 @@ export default {
             message: "Bill added successfully",
           };
         } else {
-
-          const recurring_invoices = await paymentService.createRecurringBill(
-            {
-              bill_no: values.bill_no,
-              start_time: values.start_time,
-              due_amount: values.due_amount,
-              end_time: values.end_time,
-              frequecy: values.frequecy,
-              frequency_type: values.frequency_type,
-              vendor_id: values.vendor_id,
-              created_by: values.created_by
-
-            })
+          const recurring_invoices = await paymentService.createRecurringBill({
+            bill_no: values.bill_no,
+            start_time: values.start_time,
+            due_amount: values.due_amount,
+            end_time: values.end_time,
+            frequecy: values.frequecy,
+            frequency_type: values.frequency_type,
+            vendor_id: values.vendor_id,
+            created_by: values.created_by,
+          });
 
           if (recurring_invoices) {
             response.body = {
@@ -592,7 +599,6 @@ export default {
           }
         }
       }
-
     } catch (error) {
       response.status = 400;
       response.body = {
@@ -602,19 +608,20 @@ export default {
     }
   },
 
-
-
-
-
-
   /**
-  * @description Get all Payment Reports List
-  */
+   * @description Get all Payment Reports List
+   */
   getPaymentReceivedReports: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
-      let { page_number, page_size, startDate, endDate, created_by } = getQuery(ctx, { mergeParams: true });
+      let {
+        page_number,
+        page_size,
+        startDate,
+        endDate,
+        created_by,
+      } = getQuery(ctx, { mergeParams: true });
 
       const total = await paymentService.getPaymentReceivedReportsSize({
         created_by: Number(created_by),
@@ -622,10 +629,9 @@ export default {
         endDate: endDate,
       });
 
-
       if (page_number == null) {
-        page_number = "1"
-        page_size = "100"
+        page_number = "1";
+        page_size = "100";
 
         const offset = (Number(page_number) - 1) * Number(page_size);
         const data = await paymentService.getPaymentReceivedReports({
@@ -633,13 +639,13 @@ export default {
           created_by: Number(created_by),
           startDate: startDate,
           endDate: endDate,
-          page_size: Number(page_size)
+          page_size: Number(page_size),
         });
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data
+          data: data,
         };
       } else {
         const offset = (Number(page_number) - 1) * Number(page_size);
@@ -648,13 +654,13 @@ export default {
           created_by: Number(created_by),
           startDate: startDate,
           endDate: endDate,
-          page_size: Number(page_size)
+          page_size: Number(page_size),
         });
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data
+          data: data,
         };
       }
     } catch (error) {
@@ -666,17 +672,20 @@ export default {
     }
   },
 
-
-
-
   /**
-  * @description Get all Payment Made Report List
-  */
+   * @description Get all Payment Made Report List
+   */
   getPaymentMadeReports: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
-      let { page_number, page_size, startDate, endDate, created_by } = getQuery(ctx, { mergeParams: true });
+      let {
+        page_number,
+        page_size,
+        startDate,
+        endDate,
+        created_by,
+      } = getQuery(ctx, { mergeParams: true });
 
       const total = await paymentService.getPaymentMadeReportsSize({
         created_by: Number(created_by),
@@ -684,10 +693,9 @@ export default {
         endDate: endDate,
       });
 
-
       if (page_number == null) {
-        page_number = "1"
-        page_size = "100"
+        page_number = "1";
+        page_size = "100";
 
         const offset = (Number(page_number) - 1) * Number(page_size);
         const data = await paymentService.getPaymentMadeReports({
@@ -695,13 +703,13 @@ export default {
           created_by: Number(created_by),
           startDate: startDate,
           endDate: endDate,
-          page_size: Number(page_size)
+          page_size: Number(page_size),
         });
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data
+          data: data,
         };
       } else {
         const offset = (Number(page_number) - 1) * Number(page_size);
@@ -710,13 +718,13 @@ export default {
           created_by: Number(created_by),
           startDate: startDate,
           endDate: endDate,
-          page_size: Number(page_size)
+          page_size: Number(page_size),
         });
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data
+          data: data,
         };
       }
     } catch (error) {
@@ -728,39 +736,43 @@ export default {
     }
   },
 
-
-
   /**
-  * @description Get all Invoices List
-  */
+   * @description Get all Invoices List
+   */
   getBills: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
-      let { page_number, filter_value, estimate, page_size, created_by } = getQuery(ctx, { mergeParams: true });
+      let {
+        page_number,
+        filter_value,
+        estimate,
+        page_size,
+        created_by,
+      } = getQuery(ctx, { mergeParams: true });
       const total = await paymentService.getPageSizeBill({
         created_by: Number(created_by),
-        estimate: estimate
+        estimate: estimate,
       });
       if (filter_value == null || filter_value == "") {
-        console.log(page_number, '||| params');
+        console.log(page_number, "||| params");
 
         if (page_number == null) {
-          page_number = "1"
-          page_size = "10"
+          page_number = "1";
+          page_size = "10";
 
           const offset = (Number(page_number) - 1) * 10;
           const data = await paymentService.getBill({
             offset: Number(offset),
             estimate: estimate,
             page_size: Number(page_size),
-            created_by: Number(created_by)
+            created_by: Number(created_by),
           });
           ctx.response.body = {
             status: true,
             status_code: 200,
             total: total,
-            data: data
+            data: data,
           };
         } else {
           const offset = (Number(page_number) - 1) * 10;
@@ -768,35 +780,30 @@ export default {
             offset: Number(offset),
             estimate: estimate,
             page_size: Number(page_size),
-            created_by: Number(created_by)
+            created_by: Number(created_by),
           });
           ctx.response.body = {
             status: true,
             status_code: 200,
             total: total,
-            data: data
+            data: data,
           };
         }
-      }
-
-      else {
-        console.log(filter_value, '||| params');
+      } else {
+        console.log(filter_value, "||| params");
 
         const data = await paymentService.getInvoiceFilter({
           filter_value: filter_value,
-          created_by: Number(created_by)
-
+          created_by: Number(created_by),
         });
 
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data
+          data: data,
         };
-
       }
-
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = {
@@ -806,23 +813,20 @@ export default {
     }
   },
 
-
   /**
-* @description Get all bill item list
-*/
+   * @description Get all bill item list
+   */
   getBillItems: async (ctx: any) => {
     try {
       let { filter_value } = getQuery(ctx, { mergeParams: true });
       const data = await paymentService.getBillItems({
         filter_value: filter_value,
-
       });
       ctx.response.body = {
         status: true,
         status_code: 200,
-        data: data
+        data: data,
       };
-
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = {
@@ -832,25 +836,24 @@ export default {
     }
   },
 
-
   /**
- * @description Get all paid bill List
- */
+   * @description Get all paid bill List
+   */
   getBillPaidReceipt: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
       let { filter_value } = getQuery(ctx, { mergeParams: true });
 
-      console.log(filter_value, '||| params');
+      console.log(filter_value, "||| params");
 
       const data = await paymentService.getBillFilterPaidReceipt({
-        filter_value: filter_value
+        filter_value: filter_value,
       });
       ctx.response.body = {
         status: true,
         status_code: 200,
-        data: data
+        data: data,
       };
     } catch (error) {
       ctx.response.status = 400;
@@ -860,11 +863,6 @@ export default {
       };
     }
   },
-
-
-
-
-
 
   /**
    * @description Get all rECURRING Invoices List
@@ -873,62 +871,59 @@ export default {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
-      let { page_number, filter_value, estimate, created_by } = getQuery(ctx, { mergeParams: true });
+      let { page_number, filter_value, estimate, created_by } = getQuery(ctx, {
+        mergeParams: true,
+      });
       const total = await paymentService.getPageSizeFrequencyBills({
         created_by: Number(created_by),
-        estimate: estimate
+        estimate: estimate,
       });
       if (filter_value == null || filter_value == "") {
-        console.log(page_number, '||| params');
+        console.log(page_number, "||| params");
 
         if (page_number == null) {
-          page_number = "1"
+          page_number = "1";
 
           const offset = (Number(page_number) - 1) * 10;
           const data = await paymentService.getFrequencyBills({
             offset: Number(offset),
             estimate: estimate,
-            created_by: Number(created_by)
+            created_by: Number(created_by),
           });
           ctx.response.body = {
             status: true,
             status_code: 200,
             total: total,
-            data: data
+            data: data,
           };
         } else {
           const offset = (Number(page_number) - 1) * 10;
           const data = await paymentService.getFrequencyBills({
             offset: Number(offset),
             estimate: estimate,
-            created_by: Number(created_by)
+            created_by: Number(created_by),
           });
           ctx.response.body = {
             status: true,
             status_code: 200,
             total: total,
-            data: data
+            data: data,
           };
         }
-      }
-
-      else {
-        console.log(filter_value, '||| params');
+      } else {
+        console.log(filter_value, "||| params");
 
         const data = await paymentService.getFrequencyBillsFilter({
           filter_value: filter_value,
-
         });
 
         ctx.response.body = {
           status: true,
           status_code: 200,
           total: total,
-          data: data
+          data: data,
         };
-
       }
-
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = {
@@ -938,8 +933,8 @@ export default {
     }
   },
   /**
-    * @description Get all unpaid bill List
-    */
+   * @description Get all unpaid bill List
+   */
   getBillUnpaid: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
@@ -950,18 +945,17 @@ export default {
         created_by: Number(created_by),
       });
 
-      console.log(filter_value, '||| params');
+      console.log(filter_value, "||| params");
 
       const data = await paymentService.getFilterBillsUnpaid({
         filter_value: filter_value,
-        created_by: Number(created_by)
-
+        created_by: Number(created_by),
       });
       ctx.response.body = {
         status: true,
         status_code: 200,
         total: total,
-        data: data
+        data: data,
       };
     } catch (error) {
       ctx.response.status = 400;
@@ -972,8 +966,13 @@ export default {
     }
   },
 
-
-  updatefrequencystatus: async ({ request, response }: { request: any; response: any },) => {
+  updatefrequencystatus: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
     const body = await request.body();
     if (!request.hasBody) {
       response.body = {
@@ -984,11 +983,9 @@ export default {
     }
     try {
       const values = await body.value;
-      await paymentService.updatefrequencystatus(
-        {
-          bill_no: values.bill_no,
-        },
-      );
+      await paymentService.updatefrequencystatus({
+        bill_no: values.bill_no,
+      });
       response.body = {
         status: true,
         status_code: 200,
@@ -1003,7 +1000,13 @@ export default {
     }
   },
 
-  updatefrequencystatus2: async ({ request, response }: { request: any; response: any },) => {
+  updatefrequencystatus2: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
     const body = await request.body();
     if (!request.hasBody) {
       response.body = {
@@ -1014,11 +1017,9 @@ export default {
     }
     try {
       const values = await body.value;
-      await paymentService.updatefrequencystatus2(
-        {
-          bill_no: values.bill_no,
-        },
-      );
+      await paymentService.updatefrequencystatus2({
+        bill_no: values.bill_no,
+      });
       response.body = {
         status: true,
         status_code: 200,
@@ -1032,25 +1033,25 @@ export default {
       };
     }
   },
-
 
   /**
-    * @description Get all unpaid bill List
-    */
+   * @description Get all unpaid bill List
+   */
   getBillingsAmount: async (ctx: any) => {
     try {
-
-      let { created_by, startDate, endDate } = getQuery(ctx, { mergeParams: true });
+      let { created_by, startDate, endDate } = getQuery(ctx, {
+        mergeParams: true,
+      });
 
       const data = await paymentService.getBillingsAmount({
         startDate: startDate,
         endDate: endDate,
-        created_by: Number(created_by)
+        created_by: Number(created_by),
       });
       ctx.response.body = {
         status: true,
         status_code: 200,
-        data: data
+        data: data,
       };
     } catch (error) {
       ctx.response.status = 400;
@@ -1063,18 +1064,19 @@ export default {
 
   getPaymentReceivable: async (ctx: any) => {
     try {
-
-      let { created_by, startDate, endDate } = getQuery(ctx, { mergeParams: true });
+      let { created_by, startDate, endDate } = getQuery(ctx, {
+        mergeParams: true,
+      });
 
       const data = await paymentService.getPaymentReceivable({
         startDate: startDate,
         endDate: endDate,
-        created_by: Number(created_by)
+        created_by: Number(created_by),
       });
       ctx.response.body = {
         status: true,
         status_code: 200,
-        data: data
+        data: data,
       };
     } catch (error) {
       ctx.response.status = 400;
@@ -1087,18 +1089,19 @@ export default {
 
   getPaymentPettyCash: async (ctx: any) => {
     try {
-
-      let { created_by, startDate, endDate } = getQuery(ctx, { mergeParams: true });
+      let { created_by, startDate, endDate } = getQuery(ctx, {
+        mergeParams: true,
+      });
 
       const data = await paymentService.getPaymentPettyCash({
         startDate: startDate,
         endDate: endDate,
-        created_by: Number(created_by)
+        created_by: Number(created_by),
       });
       ctx.response.body = {
         status: true,
         status_code: 200,
-        data: data
+        data: data,
       };
     } catch (error) {
       ctx.response.status = 400;
@@ -1109,22 +1112,21 @@ export default {
     }
   },
 
-
-
   getPaymentUndeposited: async (ctx: any) => {
     try {
-
-      let { created_by, startDate, endDate } = getQuery(ctx, { mergeParams: true });
+      let { created_by, startDate, endDate } = getQuery(ctx, {
+        mergeParams: true,
+      });
 
       const data = await paymentService.getPaymentUndeposited({
         startDate: startDate,
         endDate: endDate,
-        created_by: Number(created_by)
+        created_by: Number(created_by),
       });
       ctx.response.body = {
         status: true,
         status_code: 200,
-        data: data
+        data: data,
       };
     } catch (error) {
       ctx.response.status = 400;
@@ -1135,12 +1137,16 @@ export default {
     }
   },
 
-
-
   /**
-     * @description Add a new payment received
-     */
-  createPaymentReceivedBillPay: async ({ request, response }: { request: any; response: any },) => {
+   * @description Add a new payment received
+   */
+  createPaymentReceivedBillPay: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
     const body = await request.body();
     if (!request.hasBody) {
       response.status = 400;
@@ -1153,20 +1159,18 @@ export default {
     try {
       const values = await body.value;
 
-      await paymentService.createPaymentReceivedBill(
-        {
-          vendor_id: values.vendor_id,
-          bill_no: values.bill_no,
-          order_no: values.order_no,
-          amount_received: values.amount_received,
-          payment_date: values.payment_date,
-          payment_mode: values.payment_mode,
-          reference: values.reference,
-          deposit_to: values.deposit_to,
-          notes: values.notes,
-          amount_inexcess: values.amount_inexcess
-        }
-      );
+      await paymentService.createPaymentReceivedBill({
+        vendor_id: values.vendor_id,
+        bill_no: values.bill_no,
+        order_no: values.order_no,
+        amount_received: values.amount_received,
+        payment_date: values.payment_date,
+        payment_mode: values.payment_mode,
+        reference: values.reference,
+        deposit_to: values.deposit_to,
+        notes: values.notes,
+        amount_inexcess: values.amount_inexcess,
+      });
       response.body = {
         status: true,
         status_code: 200,
@@ -1180,6 +1184,4 @@ export default {
       };
     }
   },
-
-
 };
