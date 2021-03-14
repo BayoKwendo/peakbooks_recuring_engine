@@ -700,6 +700,65 @@ export default {
     }
   },
 
+
+
+  getInvoicesCreditNoteVendorTax: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      let { created_by, startDate, endDate } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      const data = await invoiceService.getInvoicesCreditNoteVendorTax({
+        startDate: startDate,
+        endDate: endDate,
+        created_by: Number(created_by),
+      });
+
+      console.log(created_by);
+
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
+  getInvoicesCreditNoteTax: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      let { created_by, startDate, endDate } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      const data = await invoiceService.getInvoicesCreditNoteTax({
+        startDate: startDate,
+        endDate: endDate,
+        created_by: Number(created_by),
+      });
+
+      console.log(created_by);
+
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
   /**
    * @description Get all Invoices List
    */

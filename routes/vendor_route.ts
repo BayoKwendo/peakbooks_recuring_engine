@@ -34,6 +34,11 @@ router
   .get("/furniture2", authorize, vendorController.getFurnitureandEquipmentCredit)
   .get("/prepaid2", authorize, vendorController.getPrepaidExpensesDebit)
 
+  .get("/othercurrentassets", authorize, vendorController.othercurrentasset)
+  .get("/intangibleasset", authorize, vendorController.intangibleasset)
+  .get("/othernoncurrent", authorize, vendorController.othernoncurrent)
+
+  
   .get("/rembursementcredit", authorize, vendorController.getReimbursementsCredit)
   .get("/taxamountexpense", authorize, vendorController.getTaxAmountTaxExpense)
 
@@ -51,6 +56,9 @@ router
   .get("/vendorcreditreport", authorize, vendorController.getVendorCredit)
 
   .get("/investmentreport", authorize, vendorController.getInvestmentReport)
+
+  .get("/liabilities", authorize, vendorController.getLiability)
+
 
 
 // .post("/customermore",authorize, customerController.createBilling)

@@ -242,7 +242,11 @@ export default {
     },
     getBillingsAmount: async ({ created_by, startDate, endDate }: Invoices) => {
         const result = await client.query(
-            `SELECT amount FROM  ${TABLE.BILLS} WHERE
+            `SELECT 
+             IFNULL(sum(CAST(SUBSTRING(replace(amount, ',', ''),5) AS DECIMAL(10,2))), 0) amount
+             
+             FROM  ${TABLE.BILLS}
+              WHERE
              created_by = ${created_by} AND 
              created_at BETWEEN ${startDate} AND ${endDate}`);
         return result;

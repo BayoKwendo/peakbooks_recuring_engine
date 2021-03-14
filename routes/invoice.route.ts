@@ -31,6 +31,11 @@ router
 
   .get("/receivables", authorize, InvoicesController.getReceivableSummary)
 
+  .get("/credittaxamount", authorize, InvoicesController.getInvoicesCreditNoteTax)
+
+
+  .get("/creditvendortaxamount", authorize, InvoicesController.getInvoicesCreditNoteVendorTax)
+
 
 
 export default router;

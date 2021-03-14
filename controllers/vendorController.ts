@@ -509,6 +509,80 @@ export default {
     }
   },
 
+
+
+  othercurrentasset: async (ctx: any) => {
+    try {
+      let { client_id, startDate, endDate } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      const data = await vendorService.othercurrentasset({
+        startDate: startDate,
+        endDate: endDate,
+        client_id: client_id,
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+  othernoncurrent: async (ctx: any) => {
+    try {
+      let { client_id, startDate, endDate } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      const data = await vendorService.othernoncurrent({
+        startDate: startDate,
+        endDate: endDate,
+        client_id: client_id,
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+  intangibleasset: async (ctx: any) => {
+    try {
+      let { client_id, startDate, endDate } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      const data = await vendorService.intangibleasset({
+        startDate: startDate,
+        endDate: endDate,
+        client_id: client_id,
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
   getTaxpayablePaid: async (ctx: any) => {
     try {
       let { client_id, startDate, endDate } = getQuery(ctx, {
@@ -874,6 +948,31 @@ export default {
         mergeParams: true,
       });
       const data = await vendorService.getExpenseReportExpenseCost({
+        startDate: startDate,
+        endDate: endDate,
+        client_id: client_id,
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
+  getLiability: async (ctx: any) => {
+    try {
+      let { client_id, startDate, endDate } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      const data = await vendorService.getLiability({
         startDate: startDate,
         endDate: endDate,
         client_id: client_id,

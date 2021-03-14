@@ -346,10 +346,33 @@ export default {
     },
 
 
+   
     getInvoicesTaxAmount: async ({ created_by, startDate, endDate }: Invoices) => {
         const result = await client.query(
-            `SELECT IFNULL(SUM(tax_amount), 0) tax_amount  FROM 
+            `SELECT IFNULL(sum( CAST(SUBSTRING(replace(tax_amount, ',', ''),5) AS DECIMAL(10,2))), 0) tax_amount  FROM
             ${TABLE.INVOICES}  
+            WHERE created_by = ${created_by} AND created_at BETWEEN ${startDate} AND ${endDate} `);
+        console.log(endDate)
+
+        return result;
+    },
+
+
+
+    getInvoicesCreditNoteTax: async ({ created_by, startDate, endDate }: Invoices) => {
+        const result = await client.query(
+            `SELECT IFNULL(sum( CAST(SUBSTRING(replace(tax_amount, ',', ''),5) AS DECIMAL(10,2))), 0) tax_amount  FROM
+            ${TABLE.CREDIT_NOTE}  
+            WHERE created_by = ${created_by} AND created_at BETWEEN ${startDate} AND ${endDate} `);
+        console.log(endDate)
+
+        return result;
+    },
+
+    getInvoicesCreditNoteVendorTax: async ({ created_by, startDate, endDate }: Invoices) => {
+        const result = await client.query(
+            `SELECT IFNULL(sum( CAST(SUBSTRING(replace(tax_amount, ',', ''),5) AS DECIMAL(10,2))), 0) tax_amount  FROM
+            ${TABLE.CREDIT_NOTE_VENDOR}  
             WHERE created_by = ${created_by} AND created_at BETWEEN ${startDate} AND ${endDate} `);
         console.log(endDate)
 

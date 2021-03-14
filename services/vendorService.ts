@@ -384,17 +384,27 @@ export default {
     },
 
     getExpenseReport: async ({ client_id, startDate, endDate }: Vendor) => {
-        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+        const query = await client.query(`SELECT IFNULL(sum(IFNULL(amount, 0 )), 0) amount FROM ${TABLE.EXPENSES} WHERE 
         expense_account = "Cost of Goods Sold" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
         return query;
     },
 
 
+
+
     getCreditNoteVendor: async ({ client_id, startDate, endDate }: Vendor) => {
-        const query = await client.query(`SELECT due_amount FROM ${TABLE.CREDIT_NOTE_VENDOR} WHERE 
+        const query = await client.query(`SELECT 
+            IFNULL(sum(CAST(SUBSTRING(replace(due_amount, ',', ''),5) AS DECIMAL(10,2))), 0) due_amount
+
+        
+         FROM ${TABLE.CREDIT_NOTE_VENDOR} WHERE 
         created_by = ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
         return query;
     },
+
+
+
+
 
     getEmployeeAdvance: async ({ client_id, startDate, endDate }: Vendor) => {
         const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
@@ -443,6 +453,27 @@ export default {
         return query;
     },
 
+
+    othercurrentasset: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT IFNULL(SUM(amount), 0) amount FROM ${TABLE.EXPENSES} WHERE 
+        expense_account = "Other current assets" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+        return query;
+    },
+
+
+    othernoncurrent: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT IFNULL(SUM(amount), 0) amount FROM ${TABLE.EXPENSES} WHERE 
+        expense_account = "Other non-current assets" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+        return query;
+    },
+
+
+    intangibleasset: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT IFNULL(SUM(amount), 0) amount FROM ${TABLE.EXPENSES} WHERE 
+        expense_account = "Intangible Assets" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+        return query;
+    },
+
     getReimbursementsCredit: async ({ client_id, startDate, endDate }: Vendor) => {
         const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
         paid_through = "Employee Reimbursements" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
@@ -461,7 +492,7 @@ export default {
     },
 
     getTaxpayable: async ({ client_id, startDate, endDate }: Vendor) => {
-        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+        const query = await client.query(`SELECT SUM(IFNULL(amount, 0)) amount FROM ${TABLE.EXPENSES} WHERE 
         expense_account = "Tax Payable" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
         return query;
     },
@@ -481,13 +512,13 @@ export default {
 
 
     getOffsetBalance: async ({ client_id, startDate, endDate }: Vendor) => {
-        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+        const query = await client.query(`SELECT SUM(amount) amount FROM ${TABLE.EXPENSES} WHERE 
         paid_through = "Opening balance offset" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
         return query;
     },
 
     getDrawings: async ({ client_id, startDate, endDate }: Vendor) => {
-        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+        const query = await client.query(`SELECT IFNULL(sum(amount), 0) amount FROM ${TABLE.EXPENSES} WHERE 
         paid_through = "Drawings" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
         return query;
     },
@@ -499,7 +530,9 @@ export default {
     },
 
     getTaxAmountTaxExpense: async ({ client_id, startDate, endDate }: Vendor) => {
-        const query = await client.query(`SELECT tax_amount FROM ${TABLE.EXPENSES} WHERE 
+        const query = await client.query(`SELECT 
+         IFNULL(sum(tax_amount), 0) tax_amount
+         FROM ${TABLE.EXPENSES} WHERE 
         client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
         return query;
     },
@@ -605,6 +638,66 @@ export default {
     },
 
 
+
+    getLiability: async ({ client_id, startDate, endDate }: Vendor) => {
+        const query = await client.query(`SELECT 
+
+          t.amount
+        
+        FROM (
+
+            (SELECT 
+              IFNULL(sum(amount), 0) amount from ${TABLE.EXPENSES} WHERE
+            ( expense_account = "Short term loan") AND
+            client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}
+            )
+            UNION  ALL
+
+             ( SELECT
+             IFNULL(sum(amount), 0) amount from ${TABLE.EXPENSES} WHERE
+            (expense_account = "Long term loan") AND
+            client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}
+            )
+
+            UNION ALL
+
+            ( SELECT
+             IFNULL(sum(amount), 0) amount from ${TABLE.EXPENSES} WHERE
+            ( expense_account = "Short term related parties") AND
+            client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}
+            )
+            
+            UNION ALL
+
+            ( SELECT
+             IFNULL(sum(amount), 0) amount from ${TABLE.EXPENSES} WHERE
+            ( expense_account = "Long term related parties") AND
+            client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}
+            )
+
+            UNION ALL
+
+            ( SELECT
+             IFNULL(sum(amount), 0) amount from ${TABLE.EXPENSES} WHERE
+            ( expense_account = "Other current liability") AND
+            client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}
+            )
+            
+            UNION ALL
+
+            ( SELECT
+             IFNULL(sum(amount), 0) amount from ${TABLE.EXPENSES} WHERE
+            ( expense_account = "Other non-current liability") AND
+            client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}
+            )
+
+            ) t
+            
+            `);
+        return query;
+    },
+
+
     getInvestmentReport: async ({ client_id, startDate, endDate }: Vendor) => {
         const query = await client.query(`SELECT 
 
@@ -661,7 +754,7 @@ export default {
 
     getVendorBalance: async ({ client_id, startDate, endDate }: Vendor) => {
         const result = await client.query(
-            `SELECT opening_balance FROM  ${TABLE.VENDORS}  WHERE
+            `SELECT SUM(opening_balance) opening_balance  FROM  ${TABLE.VENDORS}  WHERE
              client_id = ${client_id} AND 
              created_at BETWEEN ${startDate} AND ${endDate}`);
         return result;
