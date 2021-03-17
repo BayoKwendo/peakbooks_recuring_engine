@@ -18,6 +18,10 @@ export default interface Bet {
   amount?: string,
   due_amount?: string,
   tax_amount?: string,
+
+  sales_person?: string,
+
+
   discount_amount?: string,
   sub_total?: string,
   estimate_no?: string,
@@ -31,6 +35,7 @@ export default interface Bet {
   recurring?: string,
   frequency_type?: string,
   bill_no?: string,
+  sales_person_id?: string,
   bill_date?: string,
   notes?: string,
   vendor_id?: string,

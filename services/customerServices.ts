@@ -171,9 +171,21 @@ export default {
 
   getCustomerBalance: async ({ client_id, startDate, endDate }: Customers) => {
     const result = await client.query(
-      `SELECT  SUM(IFNULL(out_of_balance, 0)) out_of_balance FROM  ${TABLE.CUSTOMER} b LEFT JOIN ${TABLE.CUSTOMER_MORE} c ON b.id = c.customer_id WHERE
+      `SELECT  IFNULL(SUM(IFNULL(out_of_balance, 0)), 0) out_of_balance FROM  ${TABLE.CUSTOMER} b LEFT JOIN ${TABLE.CUSTOMER_MORE} c ON b.id = c.customer_id WHERE
              b.client_id = ${client_id} AND 
              b.created_at BETWEEN ${startDate} AND ${endDate}`
+    );
+    return result;
+  },
+
+
+  getCustomerBalanceRatio: async ({ client_id, startDate, endDate }: Customers) => {
+    const result = await client.query(
+      `SELECT MONTH(b.created_at),b.created_at, 
+      IFNULL(SUM(IFNULL(out_of_balance, 0)), 0) out_of_balance FROM
+      ${TABLE.CUSTOMER} b LEFT JOIN ${TABLE.CUSTOMER_MORE} c ON b.id = c.customer_id WHERE
+             b.client_id = ${client_id} AND  b.client_id >= date_sub(NOW(), INTERVAL 6 MONTH) AND
+             b.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY MONTH(b.created_at) `
     );
     return result;
   },

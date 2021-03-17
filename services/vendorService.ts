@@ -538,7 +538,7 @@ export default {
     },
 
     getTaxpayablePaid: async ({ client_id, startDate, endDate }: Vendor) => {
-        const query = await client.query(`SELECT amount FROM ${TABLE.EXPENSES} WHERE 
+        const query = await client.query(`SELECT IFNULL(sum(amount), 0) amount FROM ${TABLE.EXPENSES} WHERE 
         paid_through = "Tax Payable" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);
         return query;
     },

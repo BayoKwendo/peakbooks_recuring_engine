@@ -33,9 +33,15 @@ router
 
   .get("/credittaxamount", authorize, InvoicesController.getInvoicesCreditNoteTax)
 
+  .get("/salesperson", authorize, InvoicesController.getSalesPerson)
+
+  .post("/salesperson", authorize, InvoicesController.createSalesPerson)
 
   .get("/creditvendortaxamount", authorize, InvoicesController.getInvoicesCreditNoteVendorTax)
 
 
+  .get("/salespersonreport", authorize, InvoicesController.getSalesPersonReport)
+  
+  .get("/invoiceamountratio", authorize, InvoicesController.getInvoicesAmountRatio)
 
 export default router;

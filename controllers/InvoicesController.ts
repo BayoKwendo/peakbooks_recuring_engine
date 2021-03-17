@@ -45,7 +45,7 @@ export default {
         statement_invoice: values.statement_invoice,
         amount: values.amount,
         tax_exclusive: values.tax_exclusive,
-
+        sales_person_id: values.sales_person_id,
         estimate: values.estimate,
         due_amount: values.due_amount,
         discount_amount: values.discount_amount,
@@ -96,6 +96,78 @@ export default {
       };
     }
   },
+
+
+
+  createSalesPerson: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
+    const body = await request.body();
+    const values = await body.value;
+    if (!request.hasBody) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      //
+      const body222 = await invoiceService.createSalesPerson({
+        sales_person: values.sales_person,
+        created_by: values.created_by
+      });
+      if (body222) {
+        response.body = {
+          status: true,
+          status_code: 200,
+          message: "Successfully",
+        };
+      }
+
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        status: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+  /**
+  * @description Get all Invoices List
+  */
+  getSalesPerson: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      // console.log("bayo", kw)
+      let { created_by } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      const data = await invoiceService.getSalesPerson({
+        created_by: Number(created_by),
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
   /**
    * @description Add a new invoice
    */
@@ -455,6 +527,71 @@ export default {
     }
   },
 
+
+
+  getSalesPersonReport: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      let {
+        page_number,
+        page_size,
+        startDate,
+        endDate,
+        created_by,
+      } = getQuery(ctx, { mergeParams: true });
+
+      const total = "0"
+      // await invoiceService.getCustomerBalanceInvoiceSize({
+      //   created_by: Number(created_by),
+      //   startDate: startDate,
+      //   endDate: endDate,
+      // });
+
+      // console.log(total)
+      if (page_number == null) {
+        page_number = "1";
+        page_size = "100";
+
+        const offset = (Number(page_number) - 1) * Number(page_size);
+        const data = await invoiceService.getSalesPersonReport({
+          offset: Number(offset),
+          created_by: Number(created_by),
+          startDate: startDate,
+          endDate: endDate,
+          page_size: Number(page_size),
+        });
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          total: total,
+          data: data,
+        };
+      } else {
+        const offset = (Number(page_number) - 1) * Number(page_size);
+        const data = await invoiceService.getSalesPersonReport({
+          offset: Number(offset),
+          created_by: Number(created_by),
+          startDate: startDate,
+          endDate: endDate,
+          page_size: Number(page_size),
+        });
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          total: total,
+          data: data,
+        };
+      }
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
   //Customer  Salves Report Controller
   getCustomerSales: async (ctx: any) => {
     try {
@@ -651,6 +788,39 @@ export default {
         mergeParams: true,
       });
       const data = await invoiceService.getInvoicesAmount({
+        startDate: startDate,
+        endDate: endDate,
+        created_by: Number(created_by),
+      });
+
+      console.log(created_by);
+
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
+
+  /**
+ * @description Get all Invoices List
+ */
+  getInvoicesAmountRatio: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      let { created_by, startDate, endDate } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      const data = await invoiceService.getInvoicesAmountRatio({
         startDate: startDate,
         endDate: endDate,
         created_by: Number(created_by),

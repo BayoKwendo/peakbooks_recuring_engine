@@ -18,6 +18,7 @@ router2
   .get("/custom_balance", authorize, customerController.getAllCustomerBalance)
 
   .get("/customermore",authorize, customerController.getAllCustomersInfo)
+  .get("/custom_balanceratio", authorize, customerController.getCustomerBalanceRatio)
 
-  
+
 export default router2;

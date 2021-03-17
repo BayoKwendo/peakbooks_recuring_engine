@@ -3,11 +3,13 @@ import { TABLE } from "../db/config.ts";
 import Item from "../interfaces/items.ts";
 
 export default {
-    createITEM: async ({ item_name, client_id }: Item) => {
+    createITEM: async ({ item_name, quantity, client_id }: Item) => {
         const result = await client.query(`INSERT INTO ${TABLE.ITEMS} SET
              item_name =?,
+             quantity = ?,
              client_id=?`, [
             item_name,
+            quantity,
             client_id
         ]);
         return result;
@@ -70,10 +72,10 @@ export default {
         return query;
     },
 
-    itemExist: async ({ item_name }: Item) => {
+    itemExist: async ({ item_name, client_id }: Item) => {
         const [result] = await client.query(
-            `SELECT * FROM  ${TABLE.ITEMS} WHERE item_name = ?`,
-            [item_name],
+            `SELECT * FROM  ${TABLE.ITEMS} WHERE item_name = ? and client_id = ?`,
+            [item_name, client_id],
         );
         return result;
     },

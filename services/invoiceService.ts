@@ -4,7 +4,7 @@ import Invoices from "../interfaces/Invoices.ts";
 
 export default {
     createInvoice: async ({ customer_id, invoice_no, terms, due_date, invoice_date, message_invoice, sub_total, statement_invoice, amount,
-        due_amount, tax_amount, discount_amount, recurring, created_by, estimate, tax_exclusive }: Invoices) => {
+        due_amount, tax_amount, discount_amount, recurring, created_by, estimate, tax_exclusive, sales_person_id }: Invoices) => {
         const result = await client.query(`INSERT INTO ${TABLE.INVOICES}  SET
         customer_id=?,terms=?, due_date =?, invoice_date =?, message_invoice=?,sub_total=?, 
         statement_invoice=?, 
@@ -15,7 +15,8 @@ export default {
         recurring=?,
         created_by=?,
         estimate=?,
-        tax_exclusive=?`, [
+        tax_exclusive=?,
+        sales_person_id=?`, [
             customer_id,
             terms,
             due_date,
@@ -30,7 +31,8 @@ export default {
             recurring,
             created_by,
             estimate,
-            tax_exclusive
+            tax_exclusive,
+            sales_person_id
         ]);
         return result;
     },
@@ -58,6 +60,26 @@ export default {
         ]);
         return result;
     },
+
+
+    createSalesPerson: async ({ sales_person, created_by }: Invoices) => {
+        const result = await client.query(`INSERT INTO ${TABLE.SALES_PERSON}  SET
+        sales_person=?, 
+        created_by=?`, [
+            sales_person,
+            created_by
+        ]);
+        return result;
+    },
+
+    getSalesPerson: async ({ created_by }: Invoices,) => {
+        const query = await client.query(`SELECT sales_person, id FROM  ${TABLE.SALES_PERSON}
+        WHERE created_by = ? LIMIT 10`, [created_by]);
+        return query;
+    },
+
+
+
     updateInvoice: async ({ customer_id, invoice_no, terms, due_date, invoice_date, message_invoice, sub_total, statement_invoice, amount,
         due_amount, tax_amount, discount_amount, created_by, tax_exclusive }: Invoices,) => {
         const query = await client.query(`UPDATE ${TABLE.INVOICES} 
@@ -236,6 +258,49 @@ export default {
     },
 
 
+
+    //sales person sales report
+
+    getSalesPersonReport: async ({ offset, created_by, page_size, estimate, startDate, endDate }: Invoices) => {
+        const result = await client.query(
+            `SELECT 
+            sales_person, IFNULL(count, 0) invoice_counts, IFNULL(counts, 0) credit_note_counts,
+            (IFNULL(invoice_amount, 0) - IFNULL(credit_amount, 0)) sales_with_tax, 
+            IFNULL(invoice_amount, 0)-(IFNULL(credit_tax, 0)+IFNULL(invoice_tax, 0)+IFNULL(credit_amount, 0)) sales
+            
+             FROM (
+
+             (SELECT  c.sales_person,
+             IFNULL(COUNt(i.id), 0) count,
+             i.sales_person_id,
+             sum( CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2))) invoice_amount, 
+             sum( CAST(SUBSTRING(replace(i.tax_amount, ',', ''),5) AS DECIMAL(10,2))) invoice_tax 
+             from
+             ${TABLE.SALES_PERSON} c
+             left join  ${TABLE.INVOICES} i on c.id = i.sales_person_id
+             WHERE i.created_by = ${created_by} AND  i.estimate = '0' 
+             AND i.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY c.sales_person) a
+
+             left join
+
+             ( SELECT  
+             d.sales_person customer,
+             IFNULL(COUNt(n.id), 0) counts,
+              n.sales_person_id,
+             sum( CAST(SUBSTRING(replace(n.tax_amount, ',', ''),5) AS DECIMAL(10,2))) credit_tax, 
+             sum( CAST(SUBSTRING(replace(n.amount, ',', ''),5) AS DECIMAL(10,2))) credit_amount
+             from
+             ${TABLE.SALES_PERSON} d
+             left join  ${TABLE.CREDIT_NOTE} n on n.sales_person_id = d.id
+             WHERE n.created_by = ${created_by} 
+             AND n.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY d.sales_person) b
+             
+             on a.sales_person_id = b.sales_person_id
+             ) 
+              LIMIT ${offset},${page_size}`);
+        return result;
+    },
+
     //customer sales report
 
     getCustomerSales: async ({ offset, created_by, page_size, estimate, startDate, endDate }: Invoices) => {
@@ -255,7 +320,7 @@ export default {
              from
              ${TABLE.CUSTOMER} c 
              left join  ${TABLE.INVOICES} i on c.id = i.customer_id 
-             WHERE i.created_by = ${created_by} AND i.status = "0" AND i.estimate = '0' 
+             WHERE i.created_by = ${created_by} AND i.estimate = '0' 
              AND i.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY c.customer_display_name) a
 
              left join
@@ -277,6 +342,9 @@ export default {
               LIMIT ${offset},${page_size}`);
         return result;
     },
+
+
+
 
 
     //aging summary
@@ -339,14 +407,26 @@ export default {
             `SELECT  IFNULL(sum( CAST(SUBSTRING(replace(amount, ',', ''),5) AS DECIMAL(10,2))), 0) amount
             FROM
             ${TABLE.INVOICES}  
-            WHERE created_by = ${created_by} AND created_at BETWEEN ${startDate} AND ${endDate} `);
+            WHERE created_by = ${created_by} AND created_at BETWEEN ${startDate} AND ${endDate}`);
         console.log(endDate)
 
         return result;
     },
 
 
-   
+
+    getInvoicesAmountRatio: async ({ created_by, startDate, endDate }: Invoices) => {
+        const result = await client.query(
+            `SELECT MONTH(created_at),created_at, IFNULL(sum( CAST(SUBSTRING(replace(amount, ',', ''),5) AS DECIMAL(10,2))), 0) amount
+            FROM
+            ${TABLE.INVOICES}  
+            WHERE created_at >= date_sub(NOW(), INTERVAL 6 MONTH) AND created_by = ${created_by} AND created_at BETWEEN ${startDate} AND ${endDate} GROUP BY MONTH(created_at)`);
+        console.log(endDate)
+
+        return result;
+    },
+
+
     getInvoicesTaxAmount: async ({ created_by, startDate, endDate }: Invoices) => {
         const result = await client.query(
             `SELECT IFNULL(sum( CAST(SUBSTRING(replace(tax_amount, ',', ''),5) AS DECIMAL(10,2))), 0) tax_amount  FROM

@@ -21,7 +21,10 @@ export default {
     try {
       const values = await body.value;
       const isAvailable = await itemService.itemExist(
-        { item_name: values.item_name },
+        {
+          item_name: values.item_name,
+          client_id: values.client_id
+        },
       );
       if (isAvailable) {
         response.status = 404;
@@ -38,6 +41,7 @@ export default {
           {
             item_name: values.item_name,
             client_id: values.client_id,
+            quantity: values.quantity
 
           }
         );
