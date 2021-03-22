@@ -6,6 +6,7 @@ import { create, getNumericDate } from "https://deno.land/x/djwt@v2.0/mod.ts";
 // import { makeJwt, setExpiration, Jose, Payload } from "https://deno.land/x/djwt@v0.9.0/create.ts";
 import clientemail from "../db/clientemail.ts";
 import * as bcrypt from "https://deno.land/x/bcrypt@v0.2.4/mod.ts";
+import { connect } from "https://deno.land/x/redis/mod.ts";
 
 // const header: Jose = ;
 
@@ -66,7 +67,9 @@ export default {
               company_name: isAvailable.company_name,
               postal_address: isAvailable.postal_address,
             };
-            const oneHour = 3600;
+
+            //3600 one hour
+            const oneHour =  1223600;
             const jwt = await create(
               { alg: "HS512", typ: "JWT" },
               { iss: isAvailable.email, exp: getNumericDate(oneHour) },
@@ -233,6 +236,8 @@ export default {
     }
   },
 
+
+  
   activateAccount: async ({
     params,
     response,
@@ -437,4 +442,110 @@ export default {
       };
     }
   },
+
+
+
+  /**
+  * @description Get all Generate opt and send
+  */
+  optSave: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
+    const body = await request.body();
+    const values = await body.value;
+    if (!request.hasBody) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      const otpSave = await userService.optsave({
+        code: values.code,
+        msisdn: values.msisdn,
+        expired: values.expired
+      });
+      
+      if (otpSave) {
+        // console.log(data3)
+        const postRequest = await fetch('https://api.vaspro.co.ke/v3/BulkSMS/api/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(
+            {
+              "apiKey": "8f15430edfeb253fb0961c36e0fee0cc",
+              "shortCode": "PEAKBOOKS",
+              "message": values.code.toString(),
+              "recipient": values.msisdn.toString(),
+              "callbackURL": "https://api.vaspro.co.ke",
+              "enqueue": 0
+            }),
+        })
+
+        console.log(postRequest)
+
+        if (postRequest) {
+          response.body = {
+            status: true,
+            status_code: 200,
+            message: "Success! code has been send",
+          };
+        }
+      }
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+
+  verifyCode: async (ctx: any) => {
+    try {
+      const body = await ctx.request.body();
+      const values = await body.value;
+
+      const total = await userService.getOTP({
+        code: values.code,
+        msisdn: values.msisdn
+      });
+
+      if(total > 0){
+        const data = await userService.updateVerify({
+          code: values.code,
+          msisdn: values.msisdn
+        });
+        console.log(total)
+        ctx.response.body = {
+          status: true,
+          message: "Verified! Redirecting",
+          status_code: 200,
+        };
+      }else{
+        ctx.response.body = {
+          status: false,
+          message: "Invalid code",
+          status_code: 200,
+        };
+      }
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
 };

@@ -126,6 +126,50 @@ export default {
     }
   },
 
+
+
+
+  //update credit status
+  updatedCreditStatus: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
+    const body = await request.body();
+    if (!request.hasBody) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      //
+      const body222 = await creditService.updatedCreditStatus({
+        credit_no: values.credit_no,
+        due_amount: values.due_amount
+      });
+
+      if (body222) {
+        response.body = {
+          status: true,
+          status_code: 200,
+          message: "Successfully",
+        };
+      }
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        status: false,
+        message: `${error}`,
+      };
+    }
+  },
+
   updateCreditNote: async ({
     request,
     response,

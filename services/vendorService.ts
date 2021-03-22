@@ -754,7 +754,7 @@ export default {
 
     getVendorBalance: async ({ client_id, startDate, endDate }: Vendor) => {
         const result = await client.query(
-            `SELECT SUM(opening_balance) opening_balance  FROM  ${TABLE.VENDORS}  WHERE
+            `SELECT IFNULL(SUM(opening_balance),0) opening_balance  FROM  ${TABLE.VENDORS}  WHERE
              client_id = ${client_id} AND 
              created_at BETWEEN ${startDate} AND ${endDate}`);
         return result;

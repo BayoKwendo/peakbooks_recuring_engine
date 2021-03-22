@@ -20,6 +20,7 @@ export const TABLE = {
   BILL_ITEMS: "bill_items",
   SALES_PERSON: "sales_person",
   INVESTMENT: "investments",
+  VERIFICATION: "verification",
   CREDIT_ITEMS: "credit_items",
   VENDORS: "vendors",
   EXPENSES: "expenses",

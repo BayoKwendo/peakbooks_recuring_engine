@@ -44,6 +44,32 @@ export default {
         return result;
     },
 
+
+    optsave: async ({ code, msisdn, expired }: User) => {
+        const result = await client.query(
+            `INSERT INTO  ${TABLE.VERIFICATION} SET msisdn=?, code=?, verified= 0, expired =?  `,
+            [msisdn, code,expired],
+        );
+        return result;
+    },
+
+
+    getOTP: async ({ code, msisdn }: User) => {
+        const [result] = await client.query(
+            `SELECT COUNT(*) count FROM ${TABLE.VERIFICATION} WHERE msisdn=? AND code=? AND status = 0`,
+            [msisdn, code],
+        );
+        return result.count;
+    },
+
+    updateVerify: async ({ code, msisdn }: User) => {
+        const result = await client.query(
+            `UPDATE ${TABLE.VERIFICATION} SET  verified = 1 WHERE msisdn=? AND code=?`,
+            [msisdn, code],
+        );
+        return result;
+    },
+
     getClients: async ({ offset }: User) => {
         const result = await client.query(
             `SELECT * FROM  ${TABLE.USERS} WHERE role_id = 2 ORDER BY id DESC LIMIT ?,10 `, [offset]);

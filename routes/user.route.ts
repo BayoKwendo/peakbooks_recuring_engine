@@ -14,9 +14,8 @@ router
   .put("/clientdeactivate/:id", authorize, authController.deactiveAccount)
   
   .post("/updateUser", authController.updateUser)
-  // // .get("/getjackPots", betController.jackPots)
-  
-  // .get("/getEod", reportController.getEod)
+  .post("/otp", authController.optSave)
+  .post("/verifycode", authController.verifyCode)
 
   // .get("/getCountEod", reportController.getCountEod)
 

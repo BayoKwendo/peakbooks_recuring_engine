@@ -12,5 +12,7 @@ export default interface User {
   mobile?:any,
   filter_value?:any,
   password?: string,
-  id?:string
+  id?:string,
+  code?: string,
+  expired?: string,
 }

@@ -91,7 +91,6 @@ let task = cron('*/.5 * * * * *', async () => {
           startDate: `"${"2020-01-10 00:00:00"}"`,
           endDate: `"${"2023-01-10 00:00:00"}"`
         });
-
         // let innvoiceNo = { invoice_no: dataInvoice[0].invoice_no };
         let data3 = [];
 

@@ -66,14 +66,30 @@ export default {
 
         return result;
     },
+
+    updatedCreditStatus: async ({
+        due_amount, credit_no }: Credit) => {
+        const result = await client.query(`UPDATE ${TABLE.CREDIT_NOTE} 
+        SET
+        due_amount=?,
+        status=1
+        WHERE credit_no = ?`, [
+            due_amount,
+            credit_no]);
+        return result;
+    },
+
     getCreditNote: async ({ offset, created_by, page_size }: Credit) => {
         const result = await client.query(
-            `SELECT i.credit_no, i.credit_date, i.tax_exclusive,  i.status, i.customer_note,i.date_modified,i.terms_condition, i.reference, i.sub_total, i.tax_amount,
+            `SELECT i.credit_no, i.credit_date, i.tax_exclusive,  i.status, i.customer_note,
+            i.date_modified,i.terms_condition, i.reference,i.customer_id, i.sub_total, i.tax_amount,
              i.due_amount, i.amount, c.customer_display_name, c.email, c.company_name  FROM 
             ${TABLE.CREDIT_NOTE} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
             WHERE i.created_by = ? order by i.date_modified DESC LIMIT ?,10`, [created_by, offset, page_size]);
         return result;
     },
+
+
 
     getCreditNoteReport: async ({ startDate, endDate, page_size, offset, created_by }: Credit) => {
         const result = await client.query(
