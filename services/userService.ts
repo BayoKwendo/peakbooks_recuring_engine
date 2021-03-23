@@ -6,7 +6,7 @@ export default {
     createUser: async ({ first_name, last_name, msisdn, industry, role_id, email, password, company_name, postal_address }: User,) => {
         const result = await client.query(`INSERT INTO ${TABLE.USERS} SET
              first_name =?,
-             last_name =?, msisdn=?, email =?, industry=?, company_name=?, postal_address =?, role_id=?, password=?`, [
+             last_name =?, msisdn=?, email =?, industry=?, company_name=?, postal_address =?, role_id=?, password=?, status=1`, [
             first_name,
             last_name,
             msisdn,
