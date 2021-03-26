@@ -147,6 +147,37 @@ export default {
         ]);
         return result;
     },
+//updatevendor credit
+    updatedCreditVendor: async ({ vendor_id, credit_date, credit_no, sub_total, notes, amount,
+        due_amount, tax_amount, discount_amount, created_by, tax_exclusive }: Credit) => {
+        const result = await client.query(`UPDATE ${TABLE.CREDIT_NOTE_VENDOR} 
+        SET
+        vendor_id=?, 
+        credit_date =?, 
+        sub_total=?, 
+        notes=?,
+        amount=?, 
+        due_amount=?,
+        tax_amount=?, 
+        discount_amount=?,
+        created_by=?,
+        tax_exclusive = ?,
+        status=1
+        WHERE credit_no = ?`, [
+            vendor_id,
+            credit_date,
+            sub_total,
+            notes,
+            amount,
+            due_amount,
+            tax_amount,
+            discount_amount,
+            created_by,
+            tax_exclusive,
+            credit_no]);
+
+        return result;
+    },
 
     // getOneInvoices: async ({ offset, created_by, estimate }: Invoices) => {
     //     const result = await client.query(
@@ -187,7 +218,7 @@ export default {
 
     getCreditVendorNote: async ({ offset, created_by }: Credit) => {
         const result = await client.query(
-            `SELECT i.credit_no, i.credit_date,i.tax_exclusive, i.status, i.notes,i.date_modified, i.reference, i.sub_total, i.tax_amount,
+            `SELECT i.credit_no, i.vendor_id, i.credit_date,i.tax_exclusive, i.status, i.notes,i.date_modified, i.reference, i.sub_total, i.tax_amount,
              i.due_amount, i.amount, c.vendor_display_name, c.email, c.company_name  FROM 
             ${TABLE.CREDIT_NOTE_VENDOR} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id 
             WHERE i.created_by = ? order by i.date_modified DESC LIMIT ?,10`, [created_by, offset]);

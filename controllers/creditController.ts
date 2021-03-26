@@ -219,6 +219,57 @@ export default {
       };
     }
   },
+
+
+  updateCreditNoteVendor: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
+    const body = await request.body();
+    if (!request.hasBody) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      //
+      const body222 = await creditService.updatedCreditVendor({
+        vendor_id: values.vendor_id,
+        credit_no: values.credit_no,
+        credit_date: values.credit_date,
+        notes: values.notes,
+        amount: values.amount,
+        due_amount: values.due_amount,
+        tax_exclusive: values.tax_exclusive,
+        discount_amount: values.discount_amount,
+        sub_total: values.sub_total,
+        tax_amount: values.tax_amount,
+        created_by: values.created_by,
+      });
+
+      if (body222) {
+        response.body = {
+          status: true,
+          status_code: 200,
+          message: "Credit Note added successfully",
+        };
+      }
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        status: false,
+        message: `${error}`,
+      };
+    }
+  },
+  
   //   /**
   //  * @description Get all Invoices List
   //  */

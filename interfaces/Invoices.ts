@@ -36,6 +36,7 @@ export default interface Bet {
   frequency_type?: string,
   bill_no?: string,
   sales_person_id?: string,
+  
   bill_date?: string,
   notes?: string,
   vendor_id?: string,

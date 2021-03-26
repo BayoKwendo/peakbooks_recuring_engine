@@ -8,6 +8,8 @@ router
   .post('/credit', authorize, CreditController.createCreditNote)
   .post('/creditvendor', authorize, CreditController.createCreditNoteVendor)
   .get('/creditvendor', authorize, CreditController.getCreditNoteVendor)
+  .put('/creditvendor', authorize, CreditController.updateCreditNoteVendor)
+
   .put('/credit', authorize, CreditController.updateCreditNote)
   .get('/credit', authorize, CreditController.getCreditNote)
   .get('/creditItem', authorize, CreditController.getCreditItem)

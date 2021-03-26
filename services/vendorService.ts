@@ -867,7 +867,7 @@ export default {
 
     getVendorFilter: async ({ filter_value }: Vendor) => {
         const result = await client.query(
-            `SELECT * FROM  ${TABLE.VENDORS} WHERE email LIKE ? or msisdn LIKE ? or customer_display_name LIKE ?`, [filter_value, filter_value, filter_value]);
+            `SELECT * FROM  ${TABLE.VENDORS} WHERE email LIKE ? or msisdn LIKE ? or vendor_display_name LIKE ?`, [filter_value, filter_value, filter_value]);
         return result;
     },
     getPageSizeVendor: async ({ client_id }: Vendor) => {

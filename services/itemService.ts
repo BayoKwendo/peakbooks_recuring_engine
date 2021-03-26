@@ -44,7 +44,7 @@ export default {
 
     getItems: async ({ offset, client_id, page_size }: Item) => {
         const result = await client.query(
-            `SELECT * FROM ${TABLE.ITEMS} WHERE client_id = ? order by id DESC LIMIT ?,?`, [client_id, offset, page_size]);
+            `SELECT * FROM ${TABLE.ITEMS} WHERE client_id = ? order by modified DESC LIMIT ?,?`, [client_id, offset, page_size]);
         return result;
     },
 

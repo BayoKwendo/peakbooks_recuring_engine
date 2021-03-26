@@ -99,7 +99,7 @@ let task = cron('*/.5 * * * * *', async () => {
           data3.push(Object.assign(innvoiceNo, itemData[i]));
         }
         // console.log(data3)
-        const postRequest = await fetch('http://localhost:8000/recurring_invoice.php', {
+        const postRequest = await fetch('http://157.230.229.119/insightphp/recurring_invoice.php', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

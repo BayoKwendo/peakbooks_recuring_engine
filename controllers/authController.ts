@@ -64,12 +64,15 @@ export default {
               industry: isAvailable.industry,
               role_id: isAvailable.role_id,
               user_id: isAvailable.id,
+              paid: isAvailable.paid,
+              first_time: isAvailable.first_time,
+              our_client: isAvailable.our_client,
               company_name: isAvailable.company_name,
               postal_address: isAvailable.postal_address,
             };
 
             //3600 one hour
-            const oneHour =  1223600;
+            const oneHour = 1223600;
             const jwt = await create(
               { alg: "HS512", typ: "JWT" },
               { iss: isAvailable.email, exp: getNumericDate(oneHour) },
@@ -201,12 +204,18 @@ export default {
           last_name: values.last_name,
           msisdn: values.msisdn,
           role_id: values.role_id,
+          our_client: values.our_client,
           email: values.email,
+          first_time: values.first_time,
           industry: values.industry,
+          paid: values.paid,
+          subscription: values.subscription,
           password: hashedPassword,
           company_name: values.company_name,
           postal_address: values.postal_address,
         });
+
+        // console.log(addUserData)
 
         if (addUserData) {
           // if (clientemail) {
@@ -237,7 +246,7 @@ export default {
   },
 
 
-  
+
   activateAccount: async ({
     params,
     response,
@@ -472,7 +481,7 @@ export default {
         msisdn: values.msisdn,
         expired: values.expired
       });
-      
+
       if (otpSave) {
         // console.log(data3)
         const postRequest = await fetch('https://api.vaspro.co.ke/v3/BulkSMS/api/create', {
@@ -521,7 +530,7 @@ export default {
         msisdn: values.msisdn
       });
 
-      if(total > 0){
+      if (total > 0) {
         const data = await userService.updateVerify({
           code: values.code,
           msisdn: values.msisdn
@@ -532,7 +541,7 @@ export default {
           message: "Verified! Redirecting",
           status_code: 200,
         };
-      }else{
+      } else {
         ctx.response.body = {
           status: false,
           message: "Invalid code",

@@ -3,10 +3,12 @@ import { TABLE } from "../db/config.ts";
 import User from "../interfaces/User.ts";
 
 export default {
-    createUser: async ({ first_name, last_name, msisdn, industry, role_id, email, password, company_name, postal_address }: User,) => {
+    createUser: async ({ first_name, last_name, msisdn, industry, role_id, email, password,
+        company_name, postal_address, first_time, our_client, paid, subscription }: User,) => {
         const result = await client.query(`INSERT INTO ${TABLE.USERS} SET
              first_name =?,
-             last_name =?, msisdn=?, email =?, industry=?, company_name=?, postal_address =?, role_id=?, password=?, status=1`, [
+             last_name =?, msisdn=?, email =?, industry=?, company_name=?, postal_address =?, 
+             role_id=?, password=?, first_time=?, our_client=?, paid=?,subscription=?, status=1`, [
             first_name,
             last_name,
             msisdn,
@@ -15,7 +17,11 @@ export default {
             company_name,
             postal_address,
             role_id,
-            password
+            password,
+            first_time,
+            our_client,
+            paid,
+            subscription
         ]);
         return result;
     },
@@ -48,7 +54,7 @@ export default {
     optsave: async ({ code, msisdn, expired }: User) => {
         const result = await client.query(
             `INSERT INTO  ${TABLE.VERIFICATION} SET msisdn=?, code=?, verified= 0, expired =?  `,
-            [msisdn, code,expired],
+            [msisdn, code, expired],
         );
         return result;
     },
@@ -88,13 +94,13 @@ export default {
         return result;
     },
 
-        updatePassword: async ({ password, email }: User,) => {
-            const query = await client.query(`UPDATE ${TABLE.USERS} SET 
+    updatePassword: async ({ password, email }: User,) => {
+        const query = await client.query(`UPDATE ${TABLE.USERS} SET 
             account_status = 1,
             password = ? 
             WHERE email = ? `, [password, email]);
-            return query;
-        },
+        return query;
+    },
 
 
     activateAccount: async ({ id }: User,) => {
