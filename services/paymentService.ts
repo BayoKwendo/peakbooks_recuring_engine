@@ -14,6 +14,52 @@ export default {
         return result;
     },
 
+
+
+    createBankCash: async ({ account_name, account_balance, client_id }: Payment) => {
+        const result = await client.query(`INSERT INTO ${TABLE.CASH_BANK} SET
+             account_name =?,
+             account_balance=?,
+             created_by=?`, [
+            account_name,
+            account_balance,
+            client_id
+        ]);
+        return result;
+    },
+
+
+    createBank: async ({ account_name, account_balance, account_type, account_code, currency, account_number, bank_name, description, client_id }: Payment) => {
+        const result = await client.query(`INSERT INTO ${TABLE.BANK} SET
+             account_name =?,
+             account_balance=?,
+             account_type =?,
+             account_code =?,
+             currency =?,
+             account_number=?,
+             bank_name =?,
+             description =?,
+             created_by=?`, [
+            account_name,
+            account_balance,
+            account_type,
+            account_code,
+            currency,
+            account_number,
+            bank_name,
+            description,
+            client_id
+        ]);
+        return result;
+    },
+
+    getBanks: async ({ account_type, created_by }: Payment) => {
+        const result = await client.query(
+            `SELECT * FROM ${TABLE.BANK} WHERE account_type =? AND created_by =?`, [account_type, created_by]);
+        return result;
+    },
+
+
     getPayment: async ({ offset, page_size }: Payment) => {
         const result = await client.query(
             `SELECT name FROM ${TABLE.PAYMENT_RECEIVED} WHERE created_by order by id LIMIT ?,?`, [offset, page_size]);
@@ -288,6 +334,10 @@ export default {
         return result;
     },
 
+
+
+
+
     getPaymentUndeposited: async ({ startDate, endDate, created_by }: Payment) => {
         const result = await client.query(
             `SELECT IFNULL(SUM(i.amount_received), 0) amount_received  FROM 
@@ -424,6 +474,173 @@ export default {
             status = 1
             WHERE bill_no = ?`,
             [bill_no]);
+        return result;
+    },
+
+
+    //banking report
+
+    getBanking: async ({ startDate, endDate, created_by }: Payment) => {
+        const result = await client.query(
+        `SELECT f.total, f.peak_amount , f.account_balance, f.account_type
+          FROM
+          
+      (
+         (   
+           SELECT  
+           IFNULL(SUM(t.amount_received), 0) total,
+           t.amount_received2 - (IFNULL(SUM(t.amount_received), 0) - t.amount_received2) peak_amount, t.account_balance, t.account_type
+           FROM
+          (
+           ( 
+            SELECT 
+            IFNULL(SUM(i.amount_received), 0) amount_received,
+            IFNULL(SUM(i.amount_received), 0) amount_received2,
+            IFNULL((b.account_balance), 0) account_balance,            
+            IFNULL((i.deposit_to), "Banks") account_type
+            FROM ${TABLE.PAYMENT_RECEIVED_PAY} i 
+            inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id
+            inner join ${TABLE.BANK} b on c.client_id = b.created_by
+            WHERE
+            c.client_id = ${created_by} AND i.deposit_to in (b.account_name) AND
+             b.account_name in (b.account_name) AND i.created BETWEEN ${startDate} AND ${endDate} GROUP BY i.deposit_to
+            )
+         
+            UNION ALL
+           (
+             SELECT IFNULL(SUM(i.amount_received), 0) amount_received,
+             IFNULL(NULL, 0) amount_received2,
+             IFNULL((b.account_balance), 0) account_balance, 
+             IFNULL((i.deposit_to), "Banks") account_type  
+             
+             FROM
+             ${TABLE.PAYMENT_RECEIVED_PAY_BILL} i 
+             left join ${TABLE.VENDORS} c on c.id = i.vendor_id 
+             left join ${TABLE.BANK} b on c.client_id = b.created_by
+             WHERE 
+             c.client_id = ${created_by} AND i.deposit_to in (b.account_name)
+             AND b.account_name in (b.account_name)
+             AND i.created BETWEEN ${startDate} AND ${endDate} GROUP BY i.deposit_to
+            ) 
+            
+            UNION ALL
+
+           ( SELECT 
+            IFNULL(SUM(c.amount), 0) amount_received, 
+            IFNULL((b.account_balance), 0) account_balance,
+            IFNULL(NULL, 0) amount_received2,
+            IFNULL((c.paid_through), "Banks") account_type FROM ${TABLE.EXPENSES} c
+            left join ${TABLE.BANK} b on c.client_id = b.created_by
+            WHERE
+              c.paid_through in (b.account_name) AND c.client_id= ${created_by} AND
+              b.account_name in (b.account_name) AND c.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY c.paid_through 
+          )
+          ) AS t
+          GROUP BY t.account_type
+
+        )
+
+          UNION ALL
+
+           (
+               SELECT IFNULL(SUM(g.amount_received), 0) total,
+            g.amount_received2 - (IFNULL(SUM(g.amount_received), 0) - g.amount_received2) peak_amount, g.account_balance, g.account_type
+             FROM
+           (
+           (
+            SELECT
+            IFNULL(SUM(i.amount_received), 0) amount_received,
+
+            IFNULL(SUM(i.amount_received), 0) amount_received2,
+
+            IFNULL((b.account_balance), 0) account_balance, IFNULL((i.deposit_to), "Petty Cash") account_type
+            FROM ${TABLE.PAYMENT_RECEIVED_PAY} i 
+            left join ${TABLE.CUSTOMER} c on c.id = i.customer_id
+            left join ${TABLE.CASH_BANK} b on c.client_id = b.created_by
+            WHERE
+            c.client_id = ${created_by} AND i.deposit_to = "Petty Cash" AND
+             b.account_name = "Petty Cash" AND i.created BETWEEN ${startDate} AND ${endDate}
+            )
+               UNION ALL
+           ( 
+             SELECT IFNULL(SUM(i.amount_received), 0) amount_received,
+             IFNULL(NULL, 0) amount_received2,
+
+             IFNULL((b.account_balance), 0) account_balance, IFNULL((i.deposit_to), "Petty Cash") account_type  FROM
+             ${TABLE.PAYMENT_RECEIVED_PAY_BILL} i 
+             left join ${TABLE.VENDORS} c on c.id = i.vendor_id 
+             left join ${TABLE.CASH_BANK} b on c.client_id = b.created_by
+             WHERE
+             c.client_id = ${created_by} AND i.deposit_to = "Petty Cash" AND  b.account_name = "Petty Cash"
+             AND b.account_name= "Petty Cash" AND i.created BETWEEN ${startDate} AND ${endDate} )
+
+             UNION ALL
+
+           ( SELECT IFNULL(SUM(c.amount), 0) amount_received, IFNULL((b.account_balance), 0) account_balance,
+                       IFNULL(NULL, 0) amount_received2,
+
+            IFNULL((c.paid_through), "Petty Cash") account_type FROM ${TABLE.EXPENSES} c
+              left join ${TABLE.CASH_BANK} b on c.client_id = b.created_by
+              WHERE
+              c.paid_through = "Petty Cash" AND c.client_id= ${created_by} AND
+              b.account_name = "Petty Cash" AND c.created_at BETWEEN ${startDate} AND ${endDate}
+           )
+          ) AS g
+          )
+          UNION ALL
+
+          (
+              SELECT IFNULL(SUM(r.amount_received), 0) total,
+               r.amount_received2 - (IFNULL(SUM(r.amount_received), 0) - r.amount_received2) peak_amount, r.account_balance, r.account_type
+             FROM
+          (
+           (
+            SELECT
+            IFNULL(SUM(i.amount_received), 0) amount_received,
+
+            IFNULL(SUM(i.amount_received), 0) amount_received2,
+
+            IFNULL((b.account_balance), 0) account_balance, IFNULL((i.deposit_to), "Undeposited Funds") account_type
+            FROM ${TABLE.PAYMENT_RECEIVED_PAY} i 
+            left join ${TABLE.CUSTOMER} c on c.id = i.customer_id
+            left join ${TABLE.CASH_BANK} b on c.client_id = b.created_by
+            WHERE
+            c.client_id = ${created_by} AND i.deposit_to = "Undeposited Funds" AND
+             b.account_name = "Undeposited Funds" AND i.created BETWEEN ${startDate} AND ${endDate}
+            )
+               UNION ALL
+           ( 
+             SELECT IFNULL(SUM(i.amount_received), 0) amount_received,
+             IFNULL(NULL, 0) amount_received2,
+
+             IFNULL((b.account_balance), 0) account_balance, IFNULL((i.deposit_to), "Undeposited Funds") account_type  FROM
+             ${TABLE.PAYMENT_RECEIVED_PAY_BILL} i 
+             left join ${TABLE.VENDORS} c on c.id = i.vendor_id 
+             left join ${TABLE.CASH_BANK} b on c.client_id = b.created_by
+             WHERE
+             c.client_id = ${created_by} AND i.deposit_to = "Undeposited Funds" AND  b.account_name = "Undeposited Funds"
+             AND b.account_name= "Undeposited Funds" AND i.created BETWEEN ${startDate} AND ${endDate} )
+
+             UNION ALL
+
+           ( SELECT IFNULL(SUM(c.amount), 0) amount_received, IFNULL((b.account_balance), 0) account_balance,
+                       IFNULL(NULL, 0) amount_received2,
+
+            IFNULL((c.paid_through), "Undeposited Funds") account_type FROM ${TABLE.EXPENSES} c
+              left join ${TABLE.CASH_BANK} b on c.client_id = b.created_by
+              WHERE
+              c.paid_through = "Undeposited Funds" AND c.client_id= ${created_by} AND 
+              b.account_name = "Undeposited Funds" AND c.created_at BETWEEN ${startDate} AND ${endDate}
+           )
+
+          ) AS r
+          )
+        ) AS f
+        `);
+
+
+
+
         return result;
     },
 };

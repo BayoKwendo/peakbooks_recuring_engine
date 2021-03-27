@@ -10,6 +10,8 @@ export const TABLE = {
   ITEMS: "items",
   INCOME: "Uscers",
   PAYMENT_RECEIVED: "payment_method",
+  CASH_BANK: "cash_bank",
+  BANK: "bank",
   DEPOSIT_TO: "deposit_to",
   PAYMENT_RECEIVED_PAY: "payment_received",
   PAYMENT_RECEIVED_PAY_BILL: "payment_received_bills",

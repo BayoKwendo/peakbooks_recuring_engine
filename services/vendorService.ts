@@ -441,6 +441,10 @@ export default {
 
 
 
+
+
+
+
     getUndepositedFunds: async ({ client_id, startDate, endDate }: Vendor) => {
         const query = await client.query(`SELECT IFNULL(SUM(amount), 0) amount FROM ${TABLE.EXPENSES} WHERE 
         paid_through = "Undeposited Funds" AND client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}`);

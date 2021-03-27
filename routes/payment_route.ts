@@ -23,6 +23,7 @@ router
   .put("/recurebill", authorize, paymentController.getFrequencyBills)
 
 
+
   .put("/recurringbill", authorize, paymentController.updatefrequencystatus)
   .put("/recurringbill2", authorize, paymentController.updatefrequencystatus2)
 
@@ -43,6 +44,10 @@ router
   .get("/billpaid", authorize, paymentController.getBillPaidReceipt)
   .get("/paymentamountmade", authorize, paymentController.getPaymentMadeReportAmount)
 
+  .post("/cashbank", paymentController.createCashBank)
+  .post("/bank", paymentController.createBank)
+  .get("/bank", paymentController.getBanks)
+  .get("/banking", paymentController.getBankings)
 
 
 

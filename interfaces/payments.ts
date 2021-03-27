@@ -13,6 +13,14 @@ export default interface Payment {
   payment_mode?: string,
   reference?: string,
   vendor_id?: string,
+  account_name?: string,
+  account_balance?: string,
+  account_type?: string,
+  account_code?: string,
+  bank_name?: string,
+  description?: string,
+  currency?: string,
+  account_number?: string,
   bill_no?: string,
   order_no?: string,
   notes?: string,
@@ -21,5 +29,4 @@ export default interface Payment {
   endDate?: any,
   amount_inexcess?: string,
   deposit_to?: string
-
 }

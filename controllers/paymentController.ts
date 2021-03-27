@@ -42,6 +42,96 @@ export default {
     }
   },
 
+
+
+  /**
+ * @description Add a new Item
+ */
+  createCashBank: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
+    const body = await request.body();
+    if (!request.hasBody) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      await paymentService.createBankCash({
+        account_name: values.account_name,
+        account_balance: values.account_balance,
+        client_id: values.client_id,
+      });
+      response.body = {
+        status: true,
+        status_code: 200,
+        message: `${values.account_name} added successfully to the List`,
+      };
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        status: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+
+
+  /**
+ * @description Add a new Item
+ */
+  createBank: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
+    const body = await request.body();
+    if (!request.hasBody) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+
+      const values = await body.value;
+      await paymentService.createBank({
+        account_name: values.account_name,
+        account_type: values.account_type,
+        account_code: values.account_code,
+        currency: values.currency,
+        account_number: values.account_number,
+        bank_name: values.bank_name,
+        description: values.description,
+        account_balance: values.account_balance,
+        client_id: values.created_by
+      });
+      response.body = {
+        status: true,
+        status_code: 200,
+        message: `${values.account_name} added successfully to the List`,
+      };
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        status: false,
+        message: `${error}`,
+      };
+    }
+  },
   /**
    * @description Get all Items List
    */
@@ -222,6 +312,73 @@ export default {
       };
     }
   },
+
+
+
+
+  getBankings: async (ctx: any) => {
+    try {
+      let { client_id, startDate, endDate } = getQuery(ctx, {
+        mergeParams: true,
+      });
+
+      const data = await paymentService.getBanking({
+        created_by: Number(client_id),
+        startDate: startDate,
+        endDate: endDate
+
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data,
+      };
+
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+  /* let {
+        page_number,
+        page_size,
+        startDate,
+        endDate,
+        created_by,
+      } = getQuery(ctx, { mergeParams: true });
+*
+  * @description Bankings
+  */
+  getBanks: async (ctx: any) => {
+    try {
+      let { client_id, account_type } = getQuery(ctx, {
+        mergeParams: true,
+      });
+
+      console.log(account_type)
+
+      const data = await paymentService.getBanks({
+        created_by: Number(client_id),
+        account_type: account_type
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data,
+      };
+
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
 
   /**
    * @description Add a new payment received
