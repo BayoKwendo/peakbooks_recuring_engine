@@ -7,4 +7,4 @@ services:
     # command: ["run", "--allow-env", "--allow-net", "--unstable", "server.ts"]
     container_name: PeakInsights_apis
     ports:
-      - "8090:8090"
+      - "80:80"

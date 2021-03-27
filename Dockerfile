@@ -1,6 +1,6 @@
 FROM hayd/deno:latest
 
-EXPOSE 8090
+EXPOSE 80
 
 WORKDIR /app
 
