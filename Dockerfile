@@ -6,7 +6,6 @@ WORKDIR /app
 
 ADD . /app
 
-RUN deno cache server.ts
+ENTRYPOINT deno cache server.ts
 
-CMD ["run", "--allow-net", "server.ts"]
-    
+CMD [ "-c", "tsconfig.json", "--allow-env", "--allow-net", "--unstable", "server.ts"]
