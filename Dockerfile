@@ -4,8 +4,9 @@ EXPOSE 8090
 
 WORKDIR /app
 
+
 ADD . /app
 
-ENTRYPOINT deno cache server.ts
+# ENTRYPOINT deno cache server.ts
 
-CMD [ "-c", "tsconfig.json", "--allow-env", "--allow-net", "--unstable", "server.ts"]
+CMD ["deno", "run", "--allow-env",  "--allow-net", "--allow-write", "--allow-read", "--allow-plugin", "--unstable", "server.ts"] 

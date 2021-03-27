@@ -4,7 +4,7 @@ services:
   web:
     restart: always
     build: .
-    # command: ["-c", "tsconfig.json", "--allow-env", "--allow-net", "--unstable", "server.ts"]
+    # command: ["run", "--allow-env", "--allow-net", "--unstable", "server.ts"]
     container_name: PeakInsights_apis
     ports:
       - "8090:8090"
