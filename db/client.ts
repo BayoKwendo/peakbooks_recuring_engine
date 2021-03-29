@@ -8,7 +8,7 @@ import { SmtpClient } from "https://deno.land/x/smtp/mod.ts";
 const config: ClientConfig = {
   hostname: "157.230.229.119",
   username: "root",
-  password: "Z6$&_V*F3ax6geGdfg32d",
+  password: "Z6$V*F3ax6geGdfg32d",
   db: "Insight",
   port: 10330,
 
