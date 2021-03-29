@@ -10,7 +10,7 @@ import { connect } from "https://deno.land/x/redis/mod.ts";
 
 // const header: Jose = ;
 
-const key = "dkdjdddhdhhdhwheruncdfhfhfhdd";
+const key = "peakinsghts2030+";
 export default {
   /**
    * @description Get all Employee List
@@ -72,7 +72,7 @@ export default {
             };
 
             //3600 one hour
-            const oneHour = 1223600;
+            const oneHour = 86400;
             const jwt = await create(
               { alg: "HS512", typ: "JWT" },
               { iss: isAvailable.email, exp: getNumericDate(oneHour) },

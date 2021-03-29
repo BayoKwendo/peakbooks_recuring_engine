@@ -1,4 +1,4 @@
-export const DATABASE: string = "Insight";
+export const DATABASE: string = "peakbooks";
 export const TABLE = {
   CUSTOMER: "customers",
   CUSTOMER_MORE: "customers_more",

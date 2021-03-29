@@ -8,8 +8,8 @@ import { SmtpClient } from "https://deno.land/x/smtp/mod.ts";
 const config: ClientConfig = {
   hostname: "157.230.229.119",
   username: "root",
-  password: "Z6$V*F3ax6geGdfg32d",
-  db: "Insight",
+  password: "VF3ax6geGdfg32dufgf8",
+  db: "peakbooks",
   port: 10330,
 
   debug: true

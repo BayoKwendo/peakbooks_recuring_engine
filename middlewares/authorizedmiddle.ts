@@ -15,7 +15,7 @@ export default async (ctx: any, next: any) => {
         };
     } else {
         try {
-            const key = "dkdjdddhdhhdhwheruncdfhfhfhdd"
+            const key = "peakinsghts2030+"
             const data: any = await verify(jwt, key, "HS512");
             ctx.cookies.delete('jwt');
             ctx.response.body = data
