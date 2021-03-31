@@ -16,6 +16,10 @@ router
   .post("/updateUser", authController.updateUser)
   .post("/otp", authController.optSave)
   .post("/verifycode", authController.verifyCode)
+  .post("/reset-password-request", authController.getPasswordReset)
+  .post("/reset-password-save", authController.savePasswordReset)
+  .post("/confirm-reset-code", authController.confirmResetCode)
+  // .post("/reset", authController.resetPassword)
 
   // .get("/getCountEod", reportController.getCountEod)
 

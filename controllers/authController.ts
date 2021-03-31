@@ -245,8 +245,6 @@ export default {
     }
   },
 
-
-
   activateAccount: async ({
     params,
     response,
@@ -452,18 +450,10 @@ export default {
     }
   },
 
-
-
   /**
-  * @description Get all Generate opt and send
-  */
-  optSave: async ({
-    request,
-    response,
-  }: {
-    request: any;
-    response: any;
-  }) => {
+   * @description Get all Generate opt and send
+   */
+  optSave: async ({ request, response }: { request: any; response: any }) => {
     const body = await request.body();
     const values = await body.value;
     if (!request.hasBody) {
@@ -479,28 +469,30 @@ export default {
       const otpSave = await userService.optsave({
         code: values.code,
         msisdn: values.msisdn,
-        expired: values.expired
+        expired: values.expired,
       });
 
       if (otpSave) {
         // console.log(data3)
-        const postRequest = await fetch('https://api.vaspro.co.ke/v3/BulkSMS/api/create', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(
-            {
-              "apiKey": "8f15430edfeb253fb0961c36e0fee0cc",
-              "shortCode": "PEAKBOOKS",
-              "message": values.code.toString(),
-              "recipient": values.msisdn.toString(),
-              "callbackURL": "https://api.vaspro.co.ke",
-              "enqueue": 0
+        const postRequest = await fetch(
+          "https://api.vaspro.co.ke/v3/BulkSMS/api/create",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              apiKey: "8f15430edfeb253fb0961c36e0fee0cc",
+              shortCode: "PEAKBOOKS",
+              message: values.code.toString(),
+              recipient: values.msisdn.toString(),
+              callbackURL: "https://api.vaspro.co.ke",
+              enqueue: 0,
             }),
-        })
+          }
+        );
 
-        console.log(postRequest)
+        console.log(postRequest);
 
         if (postRequest) {
           response.body = {
@@ -519,7 +511,6 @@ export default {
     }
   },
 
-
   verifyCode: async (ctx: any) => {
     try {
       const body = await ctx.request.body();
@@ -527,15 +518,15 @@ export default {
 
       const total = await userService.getOTP({
         code: values.code,
-        msisdn: values.msisdn
+        msisdn: values.msisdn,
       });
 
       if (total > 0) {
         const data = await userService.updateVerify({
           code: values.code,
-          msisdn: values.msisdn
+          msisdn: values.msisdn,
         });
-        console.log(total)
+        console.log(total);
         ctx.response.body = {
           status: true,
           message: "Verified! Redirecting",
@@ -557,4 +548,137 @@ export default {
     }
   },
 
+  /**
+   * @description Get all Generate opt and send
+   */
+  getPasswordReset: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
+    const body = await request.body();
+    const values = await body.value;
+    if (!request.hasBody) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      const isAvailable = await userService.loginUser({ email: values.email });
+      if (!isAvailable) {
+        response.status = 404;
+        response.body = {
+          status: false,
+          status_code: 400,
+          message: "Email not found",
+        };
+        return;
+      } else {
+        const resetSave = await userService.savePasswordResetCode({
+          code: values.code,
+          email: values.email,
+          expired: values.expired,
+        });
+        if (resetSave) {
+          response.body = {
+            status: true,
+            status_code: 200,
+            message: "Reset code has been sent",
+          };
+        }
+      }
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+  confirmResetCode: async (ctx: any) => {
+    try {
+      const body = await ctx.request.body();
+      const values = await body.value;
+
+      const total = await userService.getResetOTP({
+        code: values.code,
+        email: values.email,
+      });
+
+      if (total > 0) {
+        const data = await userService.updatePasswordReset({
+          code: values.code,
+          email: values.email,
+        });
+        console.log(total);
+        ctx.response.body = {
+          status: true,
+          message: "Verified! Redirecting",
+          status_code: 200,
+        };
+      } else {
+        ctx.response.body = {
+          status: false,
+          message: "Invalid code",
+          status_code: 200,
+        };
+      }
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+  /**
+   * @description save new password
+   */
+  savePasswordReset: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
+    const body = await request.body();
+    const values = await body.value;
+    if (!request.hasBody) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      const hashedPassword = await bcrypt.hash(values.password);
+
+      await userService.resetUserPassword({
+        email: values.email,
+        password: hashedPassword,
+        // activation_key: values.activation_key
+      });
+      response.body = {
+        status: true,
+        status_code: 200,
+        message: "Password updated Successfully",
+      };
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: `${error}`,
+      };
+    }
+  },
 };

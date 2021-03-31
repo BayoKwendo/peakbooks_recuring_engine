@@ -28,7 +28,8 @@ export const TABLE = {
   EXPENSES: "expenses",
   RECURRING_EXPENSE: "recurring_expenses",
   BILLS: "billings",
-  RECURRING_BILLS: 'recurring_bills'
+  RECURRING_BILLS: 'recurring_bills',
+  PASSWORD_RESET: 'password_reset'
 
 
 
