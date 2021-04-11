@@ -8,18 +8,15 @@ router
   .post("/user", authController.createUser)
   .post("/login", authController.loginUser)
   .post("/userupdatepassword", authController.updateUserPssword)
-
   .get("/client", authorize, authController.getClients)
   .put("/clientactivate/:id", authorize, authController.activateAccount)
   .put("/clientdeactivate/:id", authorize, authController.deactiveAccount)
-  
   .post("/updateUser", authController.updateUser)
   .post("/otp", authController.optSave)
   .post("/verifycode", authController.verifyCode)
+  .put("/profile", authController.updateUserProfile)
 
-  // .get("/getCountEod", reportController.getCountEod)
+// // .get("/betPerHourCount", betController.countBetsPerHour);
 
-  // // .get("/betPerHourCount", betController.countBetsPerHour);
 
-  
 export default router;

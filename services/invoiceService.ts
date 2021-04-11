@@ -62,6 +62,33 @@ export default {
     },
 
 
+    //sales person
+    //Tax Rates
+    createTaxRate: async ({ tax_name, tax_value, created_by }: Invoices) => {
+        const result = await client.query(`INSERT INTO ${TABLE.TAX_RATES}  SET
+        tax_name=?, 
+        tax_value=?,
+        created_by=?`, [
+            tax_name,
+            tax_value,
+            created_by
+        ]);
+        return result;
+    },
+
+    getTaxRates: async ({ created_by }: Invoices,) => {
+        const query = await client.query(`SELECT tax_name, tax_value, date_created, id FROM  ${TABLE.TAX_RATES}
+        WHERE created_by = ? LIMIT 10000`, [created_by]);
+        return query;
+    },
+
+    deleteTaxRates: async ({ id }: Invoices,) => {
+        const query = await client.query(`DELETE FROM  ${TABLE.TAX_RATES}
+        WHERE id = ?`, [id]);
+        return query;
+    },
+
+
     createSalesPerson: async ({ sales_person, created_by }: Invoices) => {
         const result = await client.query(`INSERT INTO ${TABLE.SALES_PERSON}  SET
         sales_person=?, 
@@ -73,8 +100,15 @@ export default {
     },
 
     getSalesPerson: async ({ created_by }: Invoices,) => {
-        const query = await client.query(`SELECT sales_person, id FROM  ${TABLE.SALES_PERSON}
-        WHERE created_by = ? LIMIT 10`, [created_by]);
+        const query = await client.query(`SELECT sales_person, date_created, id FROM  ${TABLE.SALES_PERSON}
+        WHERE created_by = ? LIMIT 10000`, [created_by]);
+        return query;
+    },
+
+
+    deleteSalesPerson: async ({ id }: Invoices,) => {
+        const query = await client.query(`DELETE FROM  ${TABLE.SALES_PERSON}
+        WHERE id = ?`, [id]);
         return query;
     },
 

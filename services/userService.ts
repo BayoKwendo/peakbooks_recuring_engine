@@ -4,11 +4,11 @@ import User from "../interfaces/User.ts";
 
 export default {
     createUser: async ({ first_name, last_name, msisdn, industry, role_id, email, password,
-        company_name, postal_address, first_time, our_client, paid, subscription }: User,) => {
+        company_name, postal_address, first_time, our_client, paid, subscription, currency, currency_against_kenya, admin_role }: User,) => {
         const result = await client.query(`INSERT INTO ${TABLE.USERS} SET
              first_name =?,
              last_name =?, msisdn=?, email =?, industry=?, company_name=?, postal_address =?, 
-             role_id=?, password=?, first_time=?, our_client=?, paid=?,subscription=?, status=1`, [
+             role_id=?, password=?, first_time=?, our_client=?, paid=?,subscription=?, status=1,currency=?,currency_against_kenya=?, admin_role = ?`, [
             first_name,
             last_name,
             msisdn,
@@ -21,7 +21,10 @@ export default {
             first_time,
             our_client,
             paid,
-            subscription
+            subscription,
+            currency,
+            currency_against_kenya,
+            admin_role
         ]);
         return result;
     },
@@ -90,7 +93,7 @@ export default {
 
     getClientFilter: async ({ filter_value }: User) => {
         const result = await client.query(
-            `SELECT * FROM  ${TABLE.USERS} WHERE email LIKE ? or msisdn LIKE ?`, [filter_value, filter_value]);
+            `SELECT * FROM  ${TABLE.USERS} WHERE email LIKE ? or msisdn LIKE ? or id = ?`, [filter_value, filter_value, filter_value]);
         return result;
     },
 
@@ -115,6 +118,13 @@ export default {
 
     updateUser: async ({ password, email }: User,) => {
         const query = await client.query(`UPDATE  ${TABLE.USERS} SET password = ? WHERE email = ? `, [password, email]);
+        return query;
+    },
+
+    //update organization profile
+    updateUserCurrency: async ({ currency, company_name, business_pin, financial_year, msisdn, id }: User,) => {
+        const query = await client.query(`UPDATE  ${TABLE.USERS} SET currency = ?, company_name = ?, business_pin=?,financial_year = ?,msisdn=?
+         WHERE id = ? `, [currency, company_name, business_pin, financial_year, msisdn, id]);
         return query;
     },
 

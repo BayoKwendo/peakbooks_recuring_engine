@@ -18,5 +18,11 @@ export default interface User {
   paid?: string,
   subscription?: string,
   code?: string,
+  currency?: string,
+  admin_role?: string,
+  url?: string,
+  business_pin?: string,
+  financial_year?: string,
+  currency_against_kenya?: string,
   expired?: string
 }

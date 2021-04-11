@@ -28,7 +28,9 @@ export const TABLE = {
   EXPENSES: "expenses",
   RECURRING_EXPENSE: "recurring_expenses",
   BILLS: "billings",
-  RECURRING_BILLS: 'recurring_bills'
+  RECURRING_BILLS: 'recurring_bills',
+  TAX_RATES: 'tax_rates'
+
 
 
 

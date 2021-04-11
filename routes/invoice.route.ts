@@ -35,7 +35,15 @@ router
 
   .get("/salesperson", authorize, InvoicesController.getSalesPerson)
 
+  .delete("/salesperson", authorize, InvoicesController.deleteSalesPerson)
+
   .post("/salesperson", authorize, InvoicesController.createSalesPerson)
+
+  .post("/tax", authorize, InvoicesController.createTax)
+
+  .delete("/tax", authorize, InvoicesController.deleteTaxRates)
+  
+  .get("/tax", authorize, InvoicesController.getTaxRates)
 
   .get("/creditvendortaxamount", authorize, InvoicesController.getInvoicesCreditNoteVendorTax)
 
