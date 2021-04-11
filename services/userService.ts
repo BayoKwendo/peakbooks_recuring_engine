@@ -3,6 +3,7 @@ import { TABLE } from "../db/config.ts";
 import User from "../interfaces/User.ts";
 
 export default {
+<<<<<<< HEAD
     createUser: async ({ first_name, last_name, msisdn, industry, role_id, email, password,
         company_name, postal_address, first_time, our_client, paid, subscription, currency, currency_against_kenya, admin_role }: User,) => {
         const result = await client.query(`INSERT INTO ${TABLE.USERS} SET
@@ -129,4 +130,188 @@ export default {
     },
 
 
+=======
+  createUser: async ({
+    first_name,
+    last_name,
+    msisdn,
+    industry,
+    role_id,
+    email,
+    password,
+    company_name,
+    postal_address,
+    first_time,
+    our_client,
+    paid,
+    subscription,
+  }: User) => {
+    const result = await client.query(
+      `INSERT INTO ${TABLE.USERS} SET
+             first_name =?,
+             last_name =?, msisdn=?, email =?, industry=?, company_name=?, postal_address =?, 
+             role_id=?, password=?, first_time=?, our_client=?, paid=?,subscription=?, status=1`,
+      [
+        first_name,
+        last_name,
+        msisdn,
+        email,
+        industry,
+        company_name,
+        postal_address,
+        role_id,
+        password,
+        first_time,
+        our_client,
+        paid,
+        subscription,
+      ]
+    );
+    return result;
+  },
+  loginUser: async ({ email }: User) => {
+    const [result] = await client.query(`SELECT * FROM users WHERE email = ?`, [
+      email,
+    ]);
+    return result;
+  },
+
+  checkActive: async ({ email }: User) => {
+    const [
+      result,
+    ] = await client.query(
+      `SELECT * FROM  ${TABLE.USERS} WHERE email = ? AND status = 1`,
+      [email]
+    );
+    return result;
+  },
+
+  userExist: async ({ email, msisdn }: User) => {
+    const [
+      result,
+    ] = await client.query(`SELECT * FROM  ${TABLE.USERS} WHERE msisdn = ?`, [
+      email,
+      msisdn,
+    ]);
+    return result;
+  },
+
+  optsave: async ({ code, msisdn, expired }: User) => {
+    const result = await client.query(
+      `INSERT INTO  ${TABLE.VERIFICATION} SET msisdn=?, code=?, verified= 0, expired =?  `,
+      [msisdn, code, expired]
+    );
+    return result;
+  },
+
+  getOTP: async ({ code, msisdn }: User) => {
+    const [
+      result,
+    ] = await client.query(
+      `SELECT COUNT(*) count FROM ${TABLE.VERIFICATION} WHERE msisdn=? AND code=? AND status = 0`,
+      [msisdn, code]
+    );
+    return result.count;
+  },
+
+  updateVerify: async ({ code, msisdn }: User) => {
+    const result = await client.query(
+      `UPDATE ${TABLE.VERIFICATION} SET  verified = 1 WHERE msisdn=? AND code=?`,
+      [msisdn, code]
+    );
+    return result;
+  },
+
+  getClients: async ({ offset }: User) => {
+    const result = await client.query(
+      `SELECT * FROM  ${TABLE.USERS} WHERE role_id = 2 ORDER BY id DESC LIMIT ?,10 `,
+      [offset]
+    );
+    return result;
+  },
+
+  getPageSizeCLient: async () => {
+    const [result] = await client.query(
+      `SELECT COUNT(id) count FROM  ${TABLE.USERS} WHERE role_id = 2`
+    );
+    return result.count;
+  },
+
+  getClientFilter: async ({ filter_value }: User) => {
+    const result = await client.query(
+      `SELECT * FROM  ${TABLE.USERS} WHERE email LIKE ? or msisdn LIKE ?`,
+      [filter_value, filter_value]
+    );
+    return result;
+  },
+
+  updatePassword: async ({ password, email }: User) => {
+    const query = await client.query(
+      `UPDATE ${TABLE.USERS} SET 
+            account_status = 1,
+            password = ? 
+            WHERE email = ? `,
+      [password, email]
+    );
+    return query;
+  },
+
+  activateAccount: async ({ id }: User) => {
+    const query = await client.query(
+      `UPDATE ${TABLE.USERS} SET status = 1 WHERE id = ? `,
+      [id]
+    );
+    return query;
+  },
+
+  deactiveAccount: async ({ id }: User) => {
+    const query = await client.query(
+      `UPDATE  ${TABLE.USERS} SET status = 0 WHERE id = ? `,
+      [id]
+    );
+    return query;
+  },
+
+  updateUser: async ({ password, email }: User) => {
+    const query = await client.query(
+      `UPDATE  ${TABLE.USERS} SET password = ? WHERE email = ? `,
+      [password, email]
+    );
+    return query;
+  },
+
+  savePasswordResetCode: async ({ code, email, expired }: User) => {
+    const result = await client.query(
+      `INSERT INTO  ${TABLE.PASSWORD_RESET} SET email=?, code=?, verified= 0, expired =?  `,
+      [email, code, expired]
+    );
+    return result;
+  },
+
+  updatePasswordReset: async ({ code, email }: User) => {
+    const result = await client.query(
+      `UPDATE ${TABLE.PASSWORD_RESET} SET  verified = 1 WHERE email=? AND code=?`,
+      [email, code]
+    );
+    return result;
+  },
+
+  resetUserPassword: async ({ email, password }: User) => {
+    const result = await client.query(
+      `UPDATE ${TABLE.USERS} SET  password = ? WHERE email=?`,
+      [password, email]
+    );
+    return result;
+  },
+
+  getResetOTP: async ({ code, email }: User) => {
+    const [
+      result,
+    ] = await client.query(
+      `SELECT COUNT(*) count FROM ${TABLE.PASSWORD_RESET} WHERE email=? AND code=? AND status = 0`,
+      [email, code]
+    );
+    return result.count;
+  },
+>>>>>>> d5c62eaa886c0bfedf6facb799a944c85fba427a
 };

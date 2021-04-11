@@ -29,8 +29,12 @@ export const TABLE = {
   RECURRING_EXPENSE: "recurring_expenses",
   BILLS: "billings",
   RECURRING_BILLS: 'recurring_bills',
+<<<<<<< HEAD
   TAX_RATES: 'tax_rates'
 
+=======
+  PASSWORD_RESET: 'password_reset'
+>>>>>>> d5c62eaa886c0bfedf6facb799a944c85fba427a
 
 
 
