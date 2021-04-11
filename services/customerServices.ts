@@ -201,7 +201,7 @@ export default {
   },
   updateCustomer: async ({ customer_id }: Customers) => {
     const query = await client.query(
-      `UPDATE ${TABLE.CUSTOMER} SET status = 1 WHERE id = ? `,
+      `UPDATE ${TABLE.CUSTOMER} SET status_more = 1 WHERE id = ? `,
       [customer_id]
     );
     return query;

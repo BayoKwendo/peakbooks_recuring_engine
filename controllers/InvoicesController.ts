@@ -141,7 +141,7 @@ export default {
   },
 
   /**
-  * @description Get all Invoices List
+  * @description Get all Sales Person
   */
   getSalesPerson: async (ctx: any) => {
     try {
@@ -156,6 +156,139 @@ export default {
       ctx.response.body = {
         status: true,
         status_code: 200,
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
+  /**
+  * @description Get all Invoices List
+  */
+  deleteSalesPerson: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      // console.log("bayo", kw)
+      let { id } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      const data = await invoiceService.deleteSalesPerson({
+        id: Number(id),
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        message: "Delete successfully",
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
+
+  //TAX RATES
+
+
+
+  createTax: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
+    const body = await request.body();
+    const values = await body.value;
+    if (!request.hasBody) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      //
+      const body222 = await invoiceService.createTaxRate({
+        tax_name: values.tax_name,
+        tax_value: values.tax_value,
+        created_by: values.created_by
+      });
+      if (body222) {
+        response.body = {
+          status: true,
+          status_code: 200,
+          message: "Successfully",
+        };
+      }
+
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        status: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+  /**
+  * @description Get all Taxra
+  */
+  getTaxRates: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      // console.log("bayo", kw)
+      let { created_by } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      const data = await invoiceService.getTaxRates({
+        created_by: Number(created_by),
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
+  /**
+  * @description Get all Invoices List
+  */
+  deleteTaxRates: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      // console.log("bayo", kw)
+      let { id } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      const data = await invoiceService.deleteTaxRates({
+        id: Number(id),
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        message: "Delete successfully",
         data: data,
       };
     } catch (error) {
@@ -206,7 +339,7 @@ export default {
       response.body = {
         status: true,
         status_code: 200,
-        message: "Estimate added successfully",
+        message: "Quatation added successfully",
       };
     } catch (error) {
       response.status = 400;
@@ -370,7 +503,7 @@ export default {
       response.body = {
         status: true,
         status_code: 200,
-        message: "Estimate Updated Successfully",
+        message: "Quatation Updated Successfully",
       };
     } catch (error) {
       response.status = 400;

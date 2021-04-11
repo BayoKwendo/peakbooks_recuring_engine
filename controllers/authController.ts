@@ -62,10 +62,17 @@ export default {
               msisdn: isAvailable.msisdn,
               email: isAvailable.email,
               industry: isAvailable.industry,
+              currency: isAvailable.currency,
+              agnaist_ksh: isAvailable.currency_against_kenya,
               role_id: isAvailable.role_id,
               user_id: isAvailable.id,
               paid: isAvailable.paid,
+              admin_role: Number(isAvailable.admin_role),
+              client_id: Number(isAvailable.client_id),
               first_time: isAvailable.first_time,
+              url: isAvailable.url,
+              business_pin: isAvailable.business_pin,
+              financial_year: isAvailable.financial_year,
               our_client: isAvailable.our_client,
               company_name: isAvailable.company_name,
               postal_address: isAvailable.postal_address,
@@ -156,6 +163,15 @@ export default {
       };
       return;
     }
+
+    if (!values.currency) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "Please slect your currency",
+      };
+      return;
+    }
     if (!values.company_name) {
       response.status = 400;
       response.body = {
@@ -212,6 +228,9 @@ export default {
           subscription: values.subscription,
           password: hashedPassword,
           company_name: values.company_name,
+          currency: values.currency,
+          admin_role: values.admin_role,
+          currency_against_kenya: values.currency_against_kenya,
           postal_address: values.postal_address,
         });
 
@@ -350,6 +369,52 @@ export default {
     }
   },
 
+
+
+
+  //update organization profile
+  updateUserProfile: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
+    const body = await request.body();
+    if (!request.hasBody) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+
+      await userService.updateUserCurrency({
+        currency: values.currency,
+        company_name: values.company_name,
+        business_pin: values.business_pin,
+        financial_year: values.financial_year,
+        msisdn: values.msisdn,
+        id: values.client_id
+      });
+      response.body = {
+        status: true,
+        status_code: 200,
+        message: "Currency Updated Successfully",
+      };
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+  //update password
   updateUser: async ({
     request,
     response,
