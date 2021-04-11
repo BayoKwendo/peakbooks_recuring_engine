@@ -14,14 +14,11 @@ router
   .post("/updateUser", authController.updateUser)
   .post("/otp", authController.optSave)
   .post("/verifycode", authController.verifyCode)
-<<<<<<< HEAD
   .put("/profile", authController.updateUserProfile)
-=======
   .post("/reset-password-request", authController.getPasswordReset)
   .post("/reset-password-save", authController.savePasswordReset)
   .post("/confirm-reset-code", authController.confirmResetCode)
   // .post("/reset", authController.resetPassword)
->>>>>>> d5c62eaa886c0bfedf6facb799a944c85fba427a
 
 // // .get("/betPerHourCount", betController.countBetsPerHour);
 
