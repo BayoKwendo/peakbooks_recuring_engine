@@ -3,20 +3,22 @@ import { TABLE } from "../db/config.ts";
 import Item from "../interfaces/items.ts";
 
 export default {
-    createITEM: async ({ item_name, quantity, client_id }: Item) => {
+    createITEM: async ({ item_name, rate, quantity, client_id }: Item) => {
         const result = await client.query(`INSERT INTO ${TABLE.ITEMS} SET
              item_name =?,
              quantity = ?,
+             rate = ?,
              client_id=?`, [
             item_name,
             quantity,
+            rate,
             client_id
         ]);
         return result;
     },
 
 
-    createInvestment: async ({ investment_type,amount, client_id }: Item) => {
+    createInvestment: async ({ investment_type, amount, client_id }: Item) => {
         const result = await client.query(`INSERT INTO ${TABLE.INVESTMENT} SET
              investment_type =?,
              amount= ?,
@@ -59,10 +61,10 @@ export default {
         return result.count;
     },
 
-    updateItem: async ({ id, item_name }: Item,) => {
+    updateItem: async ({ id, item_name, rate }: Item,) => {
         const query = await client.query(`UPDATE ${TABLE.ITEMS} SET 
-        item_name = ? 
-        WHERE id = ? `, [item_name, id]);
+        item_name = ?, rate = ? 
+        WHERE id = ? `, [item_name, rate, id]);
         return query;
     },
 

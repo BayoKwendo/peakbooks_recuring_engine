@@ -41,6 +41,7 @@ export default {
           {
             item_name: values.item_name,
             client_id: values.client_id,
+            rate: values.rate,
             quantity: values.quantity
 
           }
@@ -272,6 +273,8 @@ export default {
         {
           id: values.item_id,
           item_name: values.item_name,
+          rate: values.rate,
+
           // activation_key: values.activation_key
         },
       );

@@ -269,7 +269,7 @@ export default {
       };
     }
   },
-  
+
   //   /**
   //  * @description Get all Invoices List
   //  */
@@ -523,9 +523,12 @@ export default {
   getCreditItem: async (ctx: any) => {
     try {
       let { filter_value } = getQuery(ctx, { mergeParams: true });
+      console.log("hello", filter_value)
+
       const data = await creditService.getCreditItems({
         filter_value: filter_value,
       });
+
       ctx.response.body = {
         status: true,
         status_code: 200,

@@ -10,7 +10,7 @@ export default interface Item {
   investment_type?: string,
   amount?: string,
   vendor_id?: string,
-
+  rate?: string,
   quantity?: string,
   startDate?: any,
   endDate?: any,

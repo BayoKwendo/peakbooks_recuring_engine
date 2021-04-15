@@ -67,6 +67,8 @@ export default {
               role_id: isAvailable.role_id,
               user_id: isAvailable.id,
               paid: isAvailable.paid,
+              payment_plan: isAvailable.payment_plan,
+              login_status: isAvailable.login_status,
               admin_role: Number(isAvailable.admin_role),
               client_id: Number(isAvailable.client_id),
               first_time: isAvailable.first_time,
@@ -76,6 +78,15 @@ export default {
               our_client: isAvailable.our_client,
               company_name: isAvailable.company_name,
               postal_address: isAvailable.postal_address,
+              inventory: isAvailable.inventory,
+              bank: isAvailable.bank,
+              sales: isAvailable.sales,
+              purchase: isAvailable.purchase,
+              investment: isAvailable.investment,
+              accountant: isAvailable.accountant,
+              reports: isAvailable.reports,
+              documents: isAvailable.documents,
+              subscription: isAvailable.subscription
             };
 
             //3600 one hour
@@ -126,7 +137,7 @@ export default {
     if (!request.hasBody) {
       response.status = 400;
       response.body = {
-        success: false,
+        status: false,
         message: "No data provided",
       };
       return;
@@ -134,7 +145,7 @@ export default {
     if (!values.first_name) {
       response.status = 400;
       response.body = {
-        success: false,
+        status: false,
         message: "Please enter your first name",
       };
       return;
@@ -142,7 +153,7 @@ export default {
     if (!values.last_name) {
       response.status = 400;
       response.body = {
-        success: false,
+        status: false,
         message: "Please enter your last name",
       };
       return;
@@ -158,7 +169,7 @@ export default {
     if (!values.email) {
       response.status = 400;
       response.body = {
-        success: false,
+        status: false,
         message: "Please enter your email",
       };
       return;
@@ -167,7 +178,7 @@ export default {
     if (!values.currency) {
       response.status = 400;
       response.body = {
-        success: false,
+        status: false,
         message: "Please slect your currency",
       };
       return;
@@ -175,7 +186,7 @@ export default {
     if (!values.company_name) {
       response.status = 400;
       response.body = {
-        success: false,
+        status: false,
         message: "Please enter company name",
       };
       return;
@@ -183,12 +194,13 @@ export default {
     if (!values.industry) {
       response.status = 400;
       response.body = {
-        success: false,
+        status: false,
         message: "Please select industry",
       };
       return;
     }
     try {
+
       const values = await body.value;
       const isAvailable1 = await userService.loginUser({ email: values.email });
 
@@ -198,7 +210,7 @@ export default {
       if (isAvailable1) {
         response.status = 404;
         response.body = {
-          Status: false,
+          status: false,
           status_code: 400,
           message: "Error! Email Exists",
         };
@@ -207,7 +219,7 @@ export default {
       if (phoneIsAvailable) {
         response.status = 404;
         response.body = {
-          Status: false,
+          status: false,
           status_code: 400,
           message: "Error! Phone Exists",
         };
@@ -227,11 +239,21 @@ export default {
           paid: values.paid,
           subscription: values.subscription,
           password: hashedPassword,
+          url: values.url,
           company_name: values.company_name,
           currency: values.currency,
           admin_role: values.admin_role,
           currency_against_kenya: values.currency_against_kenya,
           postal_address: values.postal_address,
+          inventory: values.inventory,
+          bank: values.bank,
+          sales: values.sales,
+          client_id: values.client_id,
+          purchase: values.purchase,
+          investment: values.investment,
+          accountant: values.accountant,
+          reports: values.reports,
+          documents: values.documents
         });
 
         // console.log(addUserData)
@@ -258,11 +280,72 @@ export default {
     } catch (error) {
       response.status = 400;
       response.body = {
-        success: false,
+        status: false,
         message: `${error}`,
       };
     }
   },
+
+
+
+  /**
+  * @description Get all Employee List
+  */
+  updateClientUser: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
+    const body = await request.body();
+    const values = await body.value;
+    try {
+      const values = await body.value;
+
+
+      const updateUserData = await userService.updateCLientUser({
+        first_name: values.first_name,
+        last_name: values.last_name,
+        msisdn: values.msisdn,
+        email: values.email,
+        first_time: values.first_time,
+        url: values.url,
+        industry: values.industry,
+        subscription: values.subscription,
+        company_name: values.company_name,
+        currency: values.currency,
+        admin_role: values.admin_role,
+        currency_against_kenya: values.currency_against_kenya,
+        inventory: values.inventory,
+        bank: values.bank,
+        sales: values.sales,
+        purchase: values.purchase,
+        investment: values.investment,
+        accountant: values.accountant,
+        reports: values.reports,
+        documents: values.documents
+      });
+
+      if (updateUserData) {
+
+        response.body = {
+          status: true,
+          status_code: 200,
+          message: "User has been updated Successfully!",
+        };
+      }
+
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        status: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+
 
   activateAccount: async ({
     params,
@@ -272,21 +355,21 @@ export default {
     response: any;
   }) => {
     try {
-      const isAvailable = await userService.activateAccount({ id: params.id });
-      if (!isAvailable) {
-        response.status = 404;
-        response.body = {
-          status: false,
-          message: "User Not found!!",
-        };
-      } else {
-        const data = await userService.activateAccount({ id: params.id });
-        response.status = 200;
-        response.body = {
-          status: true,
-          status_code: 200,
-          message: "Client Account has been activated",
-        };
+      const isAvailable = await userService.activateAccountsize({ id: params.id });
+      if (isAvailable > 0) {
+        for (let i = 0; i < isAvailable; i++) {
+          if (isAvailable) {
+            const data = await userService.activateAccount({ id: params.id });
+            if (data) {
+              response.status = 200;
+              response.body = {
+                status: true,
+                status_code: 200,
+                message: "Client Account has been activated",
+              };
+            }
+          }
+        }
       }
     } catch (error) {
       response.status = 400;
@@ -297,6 +380,66 @@ export default {
     }
   },
 
+
+
+  activateAccountUser: async ({
+    params,
+    response,
+  }: {
+    params: { id: string };
+    response: any;
+  }) => {
+    try {
+      const data = await userService.activateAccountUser({ id: params.id });
+      if (data) {
+        response.status = 200;
+        response.body = {
+          status: true,
+          status_code: 200,
+          message: "User Account has been activated",
+        };
+      }
+
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+
+  deactiveAccountUser: async ({
+    params,
+    response,
+  }: {
+    params: { id: string };
+    response: any;
+  }) => {
+    try {
+      const data = await userService.deactiveAccountUser({ id: params.id });
+      if (data) {
+        response.status = 200;
+        response.body = {
+          status: true,
+          status_code: 200,
+          message: "User Account has been deactivated",
+        };
+      }
+
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+
+
+
   deactiveAccount: async ({
     params,
     response,
@@ -305,21 +448,21 @@ export default {
     response: any;
   }) => {
     try {
-      const isAvailable = await userService.deactiveAccount({ id: params.id });
-      if (!isAvailable) {
-        response.status = 404;
-        response.body = {
-          status: false,
-          message: "User Not found!!",
-        };
-      } else {
-        const data = await userService.deactiveAccount({ id: params.id });
-        response.status = 200;
-        response.body = {
-          status: true,
-          status_code: 200,
-          message: "Client Account has been deactivated",
-        };
+      const isAvailable = await userService.deactiveAccountsize({ id: params.id });
+      if (isAvailable > 0) {
+        for (let i = 0; i < isAvailable; i++) {
+          if (isAvailable) {
+            const data = await userService.deactiveAccount({ id: params.id });
+            if (data) {
+              response.status = 200;
+              response.body = {
+                status: true,
+                status_code: 200,
+                message: "Client Account has been deactivated",
+              };
+            }
+          }
+        }
       }
     } catch (error) {
       response.status = 400;
@@ -454,16 +597,19 @@ export default {
     }
   },
 
+
+
   /**
    * @description Get all Clients List
    */
   getClients: async (ctx: any) => {
     try {
-      // let kw = request.url.searchParams.get('page_number');
-      // console.log("bayo", kw)
-      let { page_number, filter_value } = getQuery(ctx, { mergeParams: true });
-      const total = await userService.getPageSizeCLient();
+      let { page_number, filter_value, status } = getQuery(ctx, { mergeParams: true });
       if (filter_value == null || filter_value == "") {
+        const total = await userService.getPageSizeCLient({
+          status: status
+        });
+
         console.log(page_number, "||| params");
 
         if (page_number == null) {
@@ -472,6 +618,7 @@ export default {
           const offset = (Number(page_number) - 1) * 10;
           const data = await userService.getClients({
             offset: Number(offset),
+            status: status,
           });
           ctx.response.body = {
             status: true,
@@ -483,6 +630,7 @@ export default {
           const offset = (Number(page_number) - 1) * 10;
           const data = await userService.getClients({
             offset: Number(offset),
+            status: status,
           });
 
           ctx.response.body = {
@@ -502,7 +650,69 @@ export default {
         ctx.response.body = {
           status: true,
           status_code: 200,
-          total: total,
+          // total: total,
+          data: data,
+        };
+      }
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+  /**
+   * @description Get all Clients Documents List
+   */
+  getDocumets: async (ctx: any) => {
+    try {
+      let { page_number, filter_value, id } = getQuery(ctx, { mergeParams: true });
+      if (filter_value == null || filter_value == "") {
+        const total = await userService.getPageSizeDocument({
+          id: id
+        });
+        if (page_number == null) {
+          page_number = "1";
+
+          const offset = (Number(page_number) - 1) * 10;
+          const data = await userService.getDocument({
+            offset: Number(offset),
+            id: id,
+          });
+          ctx.response.body = {
+            status: true,
+            status_code: 200,
+            total: total,
+            data: data,
+          };
+        } else {
+          const offset = (Number(page_number) - 1) * 10;
+          const data = await userService.getDocument({
+            offset: Number(offset),
+            id: id,
+          });
+
+          ctx.response.body = {
+            status: true,
+            status_code: 200,
+            total: total,
+            data: data,
+          };
+        }
+      } else {
+        console.log(filter_value, "||| params");
+
+        const data = await userService.getDocumentFilter({
+          filter_value: filter_value,
+          id: id
+        });
+
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          // total: total,
           data: data,
         };
       }
@@ -549,7 +759,7 @@ export default {
             body: JSON.stringify({
               apiKey: "8f15430edfeb253fb0961c36e0fee0cc",
               shortCode: "PEAKBOOKS",
-              message: values.code.toString(),
+              message: "Your verification code is \n\n" + values.code.toString() + "\n\n Expire in 2 minutes time",
               recipient: values.msisdn.toString(),
               callbackURL: "https://api.vaspro.co.ke",
               enqueue: 0,
@@ -567,6 +777,7 @@ export default {
           };
         }
       }
+
     } catch (error) {
       response.status = 400;
       response.body = {
@@ -576,6 +787,130 @@ export default {
     }
   },
 
+
+
+  /**
+   * @description Get all Generate opt and send
+   */
+  optSaveOthernumbers: async ({ request, response }: { request: any; response: any }) => {
+    const body = await request.body();
+    const values = await body.value;
+    if (!request.hasBody) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      const otpSave = await userService.optsave({
+        code: values.code,
+        msisdn: "+" + values.msisdn,
+        expired: values.expired,
+      });
+
+      if (otpSave) {
+
+        const postRequest = await fetch(
+          "http://bulksms.mobitechtechnologies.com/api/sendsms",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+
+              api_key: "606586cd2d772",
+              username: "peak",
+              sender_id: "22136",
+              message: "Your verification code is \n\n" + values.code.toString() + "\n\nExpire in 2 minutes time",
+              phone: values.msisdn.toString(),
+            }),
+          }
+        );
+
+        console.log(postRequest);
+
+        if (postRequest) {
+          response.body = {
+            status: true,
+            status_code: 200,
+            message: "Success! code has been send"
+          };
+        }
+      }
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+
+
+  /**
+   * @description Get all Generate opt and send VIA EMAIL
+   */
+  optSaveEmail: async ({ request, response }: { request: any; response: any }) => {
+    const body = await request.body();
+    const values = await body.value;
+    if (!request.hasBody) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      const otpSave = await userService.optsave({
+        code: values.code,
+        msisdn: values.msisdn,
+        expired: values.expired,
+      });
+
+      if (otpSave) {
+        // console.log(data3)
+        const postRequest = await fetch(
+          "https://www.peakbooks.biz:9000/insightphp/sendotp.php",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              mreference: values.code.toString(),
+              email: values.email.toString()
+            }),
+          }
+        );
+
+        console.log(postRequest);
+
+        if (postRequest) {
+          response.body = {
+            status: true,
+            status_code: 200,
+            message: "Success! code has been send",
+          };
+        }
+      }
+
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+
   verifyCode: async (ctx: any) => {
     try {
       const body = await ctx.request.body();
@@ -583,13 +918,16 @@ export default {
 
       const total = await userService.getOTP({
         code: values.code,
-        msisdn: values.msisdn,
+        msisdn: values.msisdn
       });
 
       if (total > 0) {
         const data = await userService.updateVerify({
           code: values.code,
           msisdn: values.msisdn,
+          client_id: values.client_id,
+          login_expiry: values.login_expiry
+
         });
         console.log(total);
         ctx.response.body = {
@@ -612,6 +950,138 @@ export default {
       };
     }
   },
+
+
+  mpesaUpdate: async (ctx: any) => {
+    try {
+      const body = await ctx.request.body();
+      const values = await body.value;
+
+      const data = await userService.updateMPESA({
+        payment_status: values.payment_status,
+        subscription: values.subscription,
+        client_id: values.client_id,
+        amount_paid: Number(values.amount),
+        mpesa_code: values.mpesa_code
+      });
+
+      console.log({
+        payment_status: values.payment_status,
+        subscription: values.subscription,
+        client_id: values.client_id,
+        amount_paid: Number(values.amount),
+        mpesa_code: values.mpesa_code
+      })
+
+      if (data.affectedRows > 0) {
+        const postRequest = await fetch(
+          "https://api.vaspro.co.ke/v3/BulkSMS/api/create",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              apiKey: "8f15430edfeb253fb0961c36e0fee0cc",
+              shortCode: "PEAKBOOKS",
+              message: "Dear " + values.name + "\n\nThis is to confirm that your subscription to " + values.plan_type + " plan was succesfully. \n\nYour plan is due on " + values.subscription,
+              recipient: values.msisdn.toString(),
+              callbackURL: "https://api.vaspro.co.ke",
+              enqueue: 0,
+            }),
+          }
+        );
+        if (postRequest) {
+          ctx.response.body = {
+            status: true,
+            status_code: 200,
+            message: "SUCCESS!!",
+          };
+        }
+      } else {
+        ctx.response.body = {
+          status: false,
+          message: "Something went wrong. Try Again",
+          status_code: 200,
+        };
+      }
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
+
+  mpesaUpdateOtherNo: async (ctx: any) => {
+    try {
+      const body = await ctx.request.body();
+      const values = await body.value;
+
+      const data = await userService.updateMPESA({
+        payment_status: values.payment_status,
+        subscription: values.subscription,
+        client_id: values.client_id,
+        amount_paid: Number(values.amount),
+        mpesa_code: values.mpesa_code
+      });
+
+      console.log({
+        payment_status: values.payment_status,
+        subscription: values.subscription,
+        client_id: values.client_id,
+        amount_paid: Number(values.amount),
+        mpesa_code: values.mpesa_code
+      })
+
+      if (data.affectedRows > 0) {
+
+        const postRequest = await fetch(
+          "http://bulksms.mobitechtechnologies.com/api/sendsms",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              api_key: "606586cd2d772",
+              username: "peak",
+              sender_id: "22136",
+              message: "Dear " + values.name + "\n\nThis is to confirm that your subscription to " + values.plan_type + " plan was succesfully. \n\nYour plan is due on " + values.subscription,
+              phone: values.msisdn.toString(),
+            }),
+          }
+        );
+        if (postRequest) {
+          ctx.response.body = {
+            status: true,
+            status_code: 200,
+            message: "SUCCESS!!",
+          };
+        }
+      } else {
+        ctx.response.body = {
+          status: false,
+          message: "Something went wrong. Try Again",
+          status_code: 200,
+        };
+      }
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
+
+
+
 
   /**
    * @description Get all Generate opt and send

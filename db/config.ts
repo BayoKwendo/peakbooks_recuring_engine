@@ -30,10 +30,8 @@ export const TABLE = {
   BILLS: "billings",
   RECURRING_BILLS: 'recurring_bills',
   TAX_RATES: 'tax_rates',
-  PASSWORD_RESET: 'password_reset'
-
-
-
-
+  PASSWORD_RESET: 'password_reset',
+  DOCUMENTS: 'documents',
+  MPESA_PAYMENT: 'mpesa_payments'
 
 };
