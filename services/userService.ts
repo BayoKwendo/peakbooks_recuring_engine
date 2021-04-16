@@ -302,6 +302,28 @@ export default {
 
 
 
+  getMpesaTransaction: async ({ offset }: User) => {
+    const result = await client.query(
+      `SELECT * FROM  ${TABLE.MPESA_PAYMENT} WHERE TransID <> "" ORDER BY id DESC LIMIT ?,100 `, [offset]);
+    return result;
+  },
+
+  getPageSizeMpesa: async () => {
+    const [result] = await client.query(
+      `SELECT COUNT(id) count FROM  ${TABLE.MPESA_PAYMENT} WHERE TransID <> ""`);
+    return result.count;
+  },
+
+
+  getMpesaTransactionFilter: async ({ filter_value}: User) => {
+    const result = await client.query(
+      `SELECT * FROM  ${TABLE.MPESA_PAYMENT} WHERE TransID LIKE ? `, [filter_value]);
+    return result;
+  },
+
+
+
+// get document
   getDocument: async ({ offset, id }: User) => {
     const result = await client.query(
       `SELECT * FROM  ${TABLE.DOCUMENTS} WHERE  client_id = ?  LIMIT ?,10 `, [id, offset]);
@@ -317,7 +339,7 @@ export default {
 
   getDocumentFilter: async ({ filter_value, id }: User) => {
     const result = await client.query(
-      `SELECT * FROM  ${TABLE.USERS} WHERE document_name LIKE ? AND client_id = ?`, [filter_value, id]);
+      `SELECT * FROM  ${TABLE.DOCUMENTS} WHERE document_name LIKE ? AND client_id = ?`, [filter_value, id]);
     return result;
   },
 

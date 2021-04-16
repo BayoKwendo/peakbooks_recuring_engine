@@ -23,6 +23,7 @@ router
   .post("/mpesa_update_other_no", authController.mpesaUpdateOtherNo)
 
 
+
   .post("/verifycode", authController.verifyCode)
   .put("/profile", authController.updateUserProfile)
   .post("/reset-password-request", authController.getPasswordReset)
@@ -30,6 +31,10 @@ router
   .post("/confirm-reset-code", authController.confirmResetCode)
 
   .get("/document", authorize, authController.getDocumets)
+
+  .get("/transactions", authorize, authController.getMPESATransaction)
+
+
 
 
 

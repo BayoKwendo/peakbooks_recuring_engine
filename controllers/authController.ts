@@ -725,6 +725,64 @@ export default {
     }
   },
 
+
+  /**
+ * @description Get all mpesa transactions List
+ */
+  getMPESATransaction: async (ctx: any) => {
+    try {
+      let { page_number, filter_value, id } = getQuery(ctx, { mergeParams: true });
+      if (filter_value == null || filter_value == "") {
+        const total = await userService.getPageSizeMpesa();
+        if (page_number == null) {
+          page_number = "1";
+
+          const offset = (Number(page_number) - 1) * 100;
+          const data = await userService.getMpesaTransaction({
+            offset: Number(offset)
+          });
+          ctx.response.body = {
+            status: true,
+            status_code: 200,
+            total: total,
+            data: data,
+          };
+        } else {
+          const offset = (Number(page_number) - 1) * 100;
+          const data = await userService.getMpesaTransaction({
+            offset: Number(offset)
+          });
+
+          ctx.response.body = {
+            status: true,
+            status_code: 200,
+            total: total,
+            data: data,
+          };
+        }
+      } else {
+        console.log(filter_value, "||| params");
+
+        const data = await userService.getMpesaTransactionFilter({
+          filter_value: filter_value
+        });
+
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          // total: total,
+          data: data,
+        };
+      }
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
   /**
    * @description Get all Generate opt and send
    */
