@@ -152,6 +152,14 @@ export default {
     return result;
   },
 
+  usermpesacode: async ({ client_id }: User) => {
+    const result = await client.query(
+      `SELECT * FROM  ${TABLE.MPESA_PAYMENT} WHERE userid = ? AND TransID <> "" LIMIT 1`,
+      [client_id],
+    );
+    return result;
+  },
+
 
   optsave: async ({ code, msisdn, expired }: User) => {
     const result = await client.query(

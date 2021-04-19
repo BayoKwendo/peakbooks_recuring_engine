@@ -725,7 +725,33 @@ export default {
     }
   },
 
+  
 
+ /**
+ * @description Get mpesa code transactions List
+ */
+  usermpesacode: async (ctx: any) => {
+    try {
+      let { client_id} = getQuery(ctx, { mergeParams: true });
+
+      const data = await userService.usermpesacode({
+            client_id: Number(client_id)
+          });
+
+          ctx.response.body = {
+            status: true,
+            status_code: 200,
+            data: data,
+          };
+       
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
   /**
  * @description Get all mpesa transactions List
  */
@@ -1008,6 +1034,9 @@ export default {
       };
     }
   },
+
+
+
 
 
   mpesaUpdate: async (ctx: any) => {
