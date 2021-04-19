@@ -1028,8 +1028,10 @@ export default {
         subscription: values.subscription,
         client_id: values.client_id,
         amount_paid: Number(values.amount),
-        mpesa_code: values.mpesa_code
+        mpesa_code: values.mpesa_code,
       })
+
+      console.log(data.affectedRows)
 
       if (data.affectedRows > 0) {
         const postRequest = await fetch(
@@ -1059,7 +1061,7 @@ export default {
       } else {
         ctx.response.body = {
           status: false,
-          message: "Something went wrong. Try Again",
+          message: "Error! contact the administrator!",
           status_code: 200,
         };
       }
@@ -1067,7 +1069,7 @@ export default {
       ctx.response.status = 400;
       ctx.response.body = {
         success: false,
-        message: `Error: ${error}`,
+        message: `${error}`,
       };
     }
   },
