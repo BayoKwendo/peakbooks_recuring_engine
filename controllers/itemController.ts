@@ -273,6 +273,7 @@ export default {
         {
           id: values.item_id,
           item_name: values.item_name,
+          quantity: values.quantity,
           rate: values.rate,
 
           // activation_key: values.activation_key

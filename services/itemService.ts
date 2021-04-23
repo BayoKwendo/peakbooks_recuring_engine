@@ -61,10 +61,10 @@ export default {
         return result.count;
     },
 
-    updateItem: async ({ id, item_name, rate }: Item,) => {
+    updateItem: async ({ id, item_name, quantity, rate }: Item,) => {
         const query = await client.query(`UPDATE ${TABLE.ITEMS} SET 
-        item_name = ?, rate = ? 
-        WHERE id = ? `, [item_name, rate, id]);
+        item_name = ?, quantity = ?, rate = ? 
+        WHERE id = ? `, [item_name, quantity, rate, id]);
         return query;
     },
 
