@@ -1090,6 +1090,31 @@ export default {
       };
     }
   },
+  /**
+   * @description Get all Expenses for journal
+   */
+  getExpensesJournal: async (ctx: any) => {
+    try {
+      let { client_id } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      const data = await vendorService.getExpensesJournal({
+        client_id: client_id,
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data,
+      };
+
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
 
   /**
    * @description Get all Expenses List

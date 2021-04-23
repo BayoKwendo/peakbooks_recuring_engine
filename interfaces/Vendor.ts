@@ -14,7 +14,7 @@ export default interface Vendor {
   offset?: number,
   mobile?: any,
   tax_info?: any,
-  filter_value?: any,
+  filter_value?: string,
   street?: string,
   customer_id?: string,
   city_town?: string,

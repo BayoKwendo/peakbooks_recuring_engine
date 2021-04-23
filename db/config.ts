@@ -32,6 +32,8 @@ export const TABLE = {
   TAX_RATES: 'tax_rates',
   PASSWORD_RESET: 'password_reset',
   DOCUMENTS: 'documents',
+  JOURNAL_ITEMS: 'journal_items',
+  JOURNALS: 'journals',
   MPESA_PAYMENT: 'mpesa_payments'
 
 };

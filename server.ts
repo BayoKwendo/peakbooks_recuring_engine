@@ -11,6 +11,11 @@ import creditRouter from "./routes/credit.route.ts";
 import testRouter from "./routes/connect.route.ts";
 import userRouter from "./routes/user.route.ts";
 import itemRouter from "./routes/item.route.ts";
+
+
+import accoutantRouter from "./routes/accountant.route.ts";
+
+
 import paymentRouter from "./routes/payment_route.ts";
 import itemService from "./services/itemService.ts ";
 import invoiceService from "./services/invoiceService.ts ";
@@ -56,7 +61,7 @@ let task = cron('*/.5 * * * * *', async () => {
       filter_value: invoice_no.invoice_no,
 
     });
-    // console.log(data)
+    console.log(data)
 
     try {
       const body222 = await invoiceService.createInvoice(
@@ -204,9 +209,9 @@ let task = cron('*/.5 * * * * *', async () => {
     const recur_expense = await expenseService.getfrequencyExpense();
     if (recur_expense) {
       const data = await expenseService.getRecurringExpeFilter({
-        filter_value: recur_expense.expense_ref
+        filter_value: recur_expense.expense_ref,
       });
-      // console.log(data)
+      console.log(data)
       try {
         const submitedexpense = await expenseService.createExpense(
           {
@@ -218,6 +223,7 @@ let task = cron('*/.5 * * * * *', async () => {
             vendor_id: data[0].vendor_id,
             notes: data[0].notes,
             billable: data[0].billable,
+            tax_amount: data[0].tax_amount,
             product_name: data[0].product_name,
             customer_id: data[0].customer_id,
 
@@ -320,6 +326,8 @@ let task = cron('*/.5 * * * * *', async () => {
 
   }
 });
+
+
 app.use(creditRouter.routes());
 app.use(creditRouter.allowedMethods());
 app.use(router.routes());
@@ -345,6 +353,8 @@ app.use(invoiceRouter.allowedMethods());
 app.use(depositRouter.routes());
 app.use(depositRouter.allowedMethods());
 
+app.use(accoutantRouter.routes());
+app.use(accoutantRouter.allowedMethods());
 // 404 page
 app.use(notFound);
 app.addEventListener("error", (evt) => {
@@ -359,4 +369,4 @@ app.addEventListener("listen", ({ secure, hostname, port }) => {
   const url = `${protocol}${hostname ?? "localhost"}:${port}`;
   console.log(`${yellow("Listening on:")} ${green(url)}`,);
 });
-await app.listen({ port });   
+await app.listen({ port });

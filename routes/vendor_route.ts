@@ -10,6 +10,7 @@ router
   .post("/expense", authorize, vendorController.createExpense)
   .get("/expense", authorize, vendorController.getAllExpenses)
 
+  .get("/expensejournal", authorize, vendorController.getExpensesJournal)
   .get("/vendor", authorize, vendorController.getAllVendors)
   .get("/expense_recurring", authorize, vendorController.getAllExpensesRecuring)
 
@@ -38,7 +39,7 @@ router
   .get("/intangibleasset", authorize, vendorController.intangibleasset)
   .get("/othernoncurrent", authorize, vendorController.othernoncurrent)
 
-  
+
   .get("/rembursementcredit", authorize, vendorController.getReimbursementsCredit)
   .get("/taxamountexpense", authorize, vendorController.getTaxAmountTaxExpense)
 
