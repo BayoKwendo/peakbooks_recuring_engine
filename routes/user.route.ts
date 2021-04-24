@@ -36,6 +36,8 @@ router
   .get("/transactions", authorize, authController.getMPESATransaction)
 
 
+  .get("/audit_user", authorize, authController.getAuditTrail)
+
 
 
 

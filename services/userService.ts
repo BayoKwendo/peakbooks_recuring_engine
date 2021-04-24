@@ -154,7 +154,7 @@ export default {
 
   usermpesacode: async ({ client_id }: User) => {
     const result = await client.query(
-      `SELECT * FROM  ${TABLE.MPESA_PAYMENT} WHERE userid = ? AND TransID <> "" LIMIT 1`,
+      `SELECT * FROM  ${TABLE.MPESA_PAYMENT} WHERE userid = ? AND Status = 0 AND TransID <> "" LIMIT 1`,
       [client_id],
     );
     return result;
@@ -185,6 +185,13 @@ export default {
     );
     return result;
   },
+  //Audit trail
+  getAudit: async ({ client_id }: User) => {
+    const result = await client.query(
+      `SELECT modified FROM  ${TABLE.VERIFICATION} WHERE verified = 1 AND status = 1 AND client_id = ? ORDER BY id DESC LIMIT 100 `, [client_id]);
+    return result;
+  },
+
 
 
   updateMPESA: async ({ mpesa_code, payment_status, amount_paid, client_id, subscription }: User) => {
@@ -199,6 +206,8 @@ export default {
     );
     return result;
   },
+
+
 
   getClients: async ({ offset, status }: User) => {
     const result = await client.query(
@@ -323,7 +332,7 @@ export default {
   },
 
 
-  getMpesaTransactionFilter: async ({ filter_value}: User) => {
+  getMpesaTransactionFilter: async ({ filter_value }: User) => {
     const result = await client.query(
       `SELECT * FROM  ${TABLE.MPESA_PAYMENT} WHERE TransID LIKE ? `, [filter_value]);
     return result;
@@ -331,7 +340,7 @@ export default {
 
 
 
-// get document
+  // get document
   getDocument: async ({ offset, id }: User) => {
     const result = await client.query(
       `SELECT * FROM  ${TABLE.DOCUMENTS} WHERE  client_id = ?  LIMIT ?,10 `, [id, offset]);

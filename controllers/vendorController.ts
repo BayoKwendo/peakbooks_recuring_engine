@@ -196,19 +196,23 @@ export default {
    */
   getAllVendors: async (ctx: any) => {
     try {
-      let { page_number, filter_value, client_id } = getQuery(ctx, {
+      let { page_number, filter_value, client_id, page_size } = getQuery(ctx, {
         mergeParams: true,
       });
       const total = await vendorService.getPageSizeVendor({
         client_id: client_id,
       });
+
+      console.log(page_size)
       if (filter_value == null || filter_value == "") {
         if (page_number == null) {
           page_number = "1";
-          const offset = (Number(page_number) - 1) * 10;
+          page_size = "10";
+          const offset = (Number(page_number) - 1) * Number(page_size);
           const data = await vendorService.getAll({
             client_id: client_id,
             offset: Number(offset),
+            page_size: Number(page_size)
           });
           ctx.response.body = {
             status: true,
@@ -217,11 +221,12 @@ export default {
             data: data,
           };
         } else {
-          const offset = (Number(page_number) - 1) * 10;
+          const offset = (Number(page_number) - 1) * Number(page_size);
 
           const data = await vendorService.getAll({
             client_id: client_id,
             offset: Number(offset),
+            page_size: Number(page_size)
           });
 
           ctx.response.body = {

@@ -809,6 +809,32 @@ export default {
     }
   },
 
+
+
+  /**
+* @description Get all sign in audit trail
+*/
+  getAuditTrail: async (ctx: any) => {
+    try {
+      let { client_id } = getQuery(ctx, { mergeParams: true });
+      const data = await userService.getAudit({
+        client_id: Number(client_id)
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
   /**
    * @description Get all Generate opt and send
    */

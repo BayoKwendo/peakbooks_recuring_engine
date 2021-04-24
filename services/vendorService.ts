@@ -378,8 +378,8 @@ export default {
 
 
 
-    getAll: async ({ offset, client_id }: Vendor) => {
-        const query = await client.query(`SELECT * FROM ${TABLE.VENDORS} WHERE client_id = ? LIMIT ?,10`, [client_id, offset]);
+    getAll: async ({ offset, client_id, page_size }: Vendor) => {
+        const query = await client.query(`SELECT * FROM ${TABLE.VENDORS} WHERE client_id = ? ORDER BY id DESC LIMIT ?,?`, [client_id, offset, page_size]);
         return query;
     },
 

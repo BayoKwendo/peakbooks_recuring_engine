@@ -46,9 +46,8 @@ export default interface Vendor {
   startDate?: any,
   endDate?: any,
   tax_amount?: any,
-  page_size?: any,
-
+  page_size?: number,
   product_name?: string
 
-  
-}  
+
+}

@@ -441,7 +441,7 @@ export default {
             `SELECT  IFNULL(sum( CAST(SUBSTRING(replace(amount, ',', ''),5) AS DECIMAL(10,2))), 0) amount
             FROM
             ${TABLE.INVOICES}  
-            WHERE created_by = ${created_by} AND created_at BETWEEN ${startDate} AND ${endDate}`);
+            WHERE created_by = ${created_by} AND estimate=0 AND created_at BETWEEN ${startDate} AND ${endDate}`);
         console.log(endDate)
 
         return result;
@@ -454,7 +454,7 @@ export default {
             `SELECT MONTH(created_at),created_at, IFNULL(sum( CAST(SUBSTRING(replace(amount, ',', ''),5) AS DECIMAL(10,2))), 0) amount
             FROM
             ${TABLE.INVOICES}  
-            WHERE created_at >= date_sub(NOW(), INTERVAL 6 MONTH) AND created_by = ${created_by} AND created_at BETWEEN ${startDate} AND ${endDate} GROUP BY MONTH(created_at)`);
+            WHERE created_at >= date_sub(NOW(), INTERVAL 6 MONTH) AND estimate=0 AND  created_by = ${created_by} AND created_at BETWEEN ${startDate} AND ${endDate} GROUP BY MONTH(created_at)`);
         console.log(endDate)
 
         return result;
@@ -465,7 +465,7 @@ export default {
         const result = await client.query(
             `SELECT IFNULL(sum( CAST(SUBSTRING(replace(tax_amount, ',', ''),5) AS DECIMAL(10,2))), 0) tax_amount  FROM
             ${TABLE.INVOICES}  
-            WHERE created_by = ${created_by} AND created_at BETWEEN ${startDate} AND ${endDate} `);
+            WHERE created_by = ${created_by} AND estimate=0 AND created_at BETWEEN ${startDate} AND ${endDate} `);
         console.log(endDate)
 
         return result;
