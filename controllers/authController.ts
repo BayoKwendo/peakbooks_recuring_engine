@@ -1222,7 +1222,7 @@ export default {
           response.body = {
             status: true,
             status_code: 200,
-            message: "Success! code has been send",
+            message: "Success! check your email. Password reset link sent",
           };
         }
       }
