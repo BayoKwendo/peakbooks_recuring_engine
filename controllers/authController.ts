@@ -725,25 +725,25 @@ export default {
     }
   },
 
-  
 
- /**
- * @description Get mpesa code transactions List
- */
+
+  /**
+  * @description Get mpesa code transactions List
+  */
   usermpesacode: async (ctx: any) => {
     try {
-      let { client_id} = getQuery(ctx, { mergeParams: true });
+      let { client_id } = getQuery(ctx, { mergeParams: true });
 
       const data = await userService.usermpesacode({
-            client_id: Number(client_id)
-          });
+        client_id: Number(client_id)
+      });
 
-          ctx.response.body = {
-            status: true,
-            status_code: 200,
-            data: data,
-          };
-       
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data,
+      };
+
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = {
@@ -1204,16 +1204,25 @@ export default {
         };
         return;
       } else {
-        const resetSave = await userService.savePasswordResetCode({
-          code: values.code,
-          email: values.email,
-          expired: values.expired,
-        });
-        if (resetSave) {
+        // console.log(isAvailable.email)
+        const postRequest = await fetch(
+          "https://www.peakbooks.biz:9000/insightphp/reset_password.php",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: values.email.toString()
+            }),
+          }
+        );
+        console.log(postRequest);
+        if (postRequest) {
           response.body = {
             status: true,
             status_code: 200,
-            message: "Reset code has been sent",
+            message: "Success! code has been send",
           };
         }
       }
