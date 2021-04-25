@@ -27,7 +27,7 @@ import notFound from './middlewares/notFound.ts';
 import { cron, start, stop, everyMinute, daily, weekly } from 'https://deno.land/x/deno_cron/cron.ts';
 const app = new Application();
 const router = new Router()
-const port: number = 8091;
+const port: number = 81;
 app.use(
   oakCors({
     origin: "*",
@@ -321,7 +321,7 @@ let task = cron('*/.5 * * * * *', async () => {
       }
     } else {
       start()
-      console.log("dddd")
+      console.log("")
     }
 
   }
