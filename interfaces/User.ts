@@ -21,6 +21,7 @@ export default interface User {
   mpesa_code?: string,
   payment_status?: string,
   code?: string,
+  approval?: string,
   currency?: string,
   admin_role?: string,
   url?: string,

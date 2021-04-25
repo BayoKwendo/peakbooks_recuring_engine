@@ -27,7 +27,7 @@ import notFound from './middlewares/notFound.ts';
 import { cron, start, stop, everyMinute, daily, weekly } from 'https://deno.land/x/deno_cron/cron.ts';
 const app = new Application();
 const router = new Router()
-const port: number = 81;
+const port: number = 8091;
 app.use(
   oakCors({
     origin: "*",
@@ -53,15 +53,19 @@ let task = cron('*/.5 * * * * *', async () => {
   const invoice_no = await invoiceService.getfrequency();
 
   if (invoice_no) {
+    
     const data = await invoiceService.getInvoiceFilter({
       filter_value: invoice_no.invoice_no,
+      startDate: "2019-03-03 00:00:00",
+      endDate: "2011-04-25 23:59:59",
       created_by: invoice_no.created_by
     });
     const itemData = await invoiceService.getInvoiceItems({
       filter_value: invoice_no.invoice_no,
 
     });
-    console.log(data)
+    console.log(invoice_no.created_by)
+    console.log(invoice_no.invoice_no)
 
     try {
       const body222 = await invoiceService.createInvoice(

@@ -4,7 +4,7 @@ import Invoices from "../interfaces/Invoices.ts";
 
 export default {
     createInvoice: async ({ customer_id, invoice_no, terms, due_date, invoice_date, message_invoice, sub_total, statement_invoice, amount,
-        due_amount, tax_amount, discount_amount, recurring, created_by, estimate, tax_exclusive, sales_person_id }: Invoices) => {
+        due_amount, tax_amount, discount_amount, recurring, created_by, estimate, tax_exclusive, sales_person_id, approved }: Invoices) => {
         const result = await client.query(`INSERT INTO ${TABLE.INVOICES}  SET
         customer_id=?,terms=?, due_date =?, invoice_date =?, message_invoice=?,sub_total=?, 
         statement_invoice=?, 
@@ -16,7 +16,8 @@ export default {
         created_by=?,
         estimate=?,
         tax_exclusive=?,
-        sales_person_id=?`, [
+        sales_person_id=?,
+        approved=?`, [
             customer_id,
             terms,
             due_date,
@@ -32,7 +33,8 @@ export default {
             created_by,
             estimate,
             tax_exclusive,
-            sales_person_id
+            sales_person_id,
+            approved
         ]);
         return result;
     },
@@ -155,7 +157,7 @@ export default {
 
     getInvoices: async ({ offset, startDate, endDate, created_by, estimate, page_size }: Invoices) => {
         const result = await client.query(
-            `SELECT i.invoice_no,i.tax_exclusive, i.terms,
+            `SELECT i.invoice_no,i.tax_exclusive, i.terms, i.approved,
             CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)) amount_invoice,
            
             DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) period,
@@ -554,17 +556,18 @@ export default {
 
     getOneInvoices: async ({ offset, created_by, estimate }: Invoices) => {
         const result = await client.query(
-            `SELECT i.invoice_no, i.terms, i.due_date, i.status, i.invoice_date, i.discount_amount, i.sub_total, i.tax_amount, i.message_invoice,i.statement_invoice,
+            `SELECT i.invoice_no, i.terms, i.due_date, i.status, i.invoice_date, i.approved, i.discount_amount, i.sub_total, i.tax_amount, i.message_invoice,i.statement_invoice,
              i.due_amount, i.amount, c.customer_display_name,c.email, c.company_name  FROM 
             ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
-            WHERE i.created_by = ? AND i.estimate = ?  AND i.email_sent = 0 order by i.date_modified LIMIT 1`, [created_by, estimate, offset]);
+            WHERE i.created_by = ? AND i.estimate = ?  AND i.email_sent = 0 AND i.approved = 1  order by i.date_modified LIMIT 1`, [created_by, estimate, offset]);
         return result;
     },
 
     getInvoiceFilter: async ({ created_by, filter_value }: Invoices) => {
         const result = await client.query(
             `SELECT * FROM 
-           ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE i.created_by = ? AND i.invoice_no = ?`, [created_by, filter_value]);
+           ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
+           WHERE i.created_by = ? AND i.invoice_no = ?`, [created_by, filter_value]);
         return result;
     },
 

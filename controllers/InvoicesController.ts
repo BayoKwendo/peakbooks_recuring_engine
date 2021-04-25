@@ -48,6 +48,7 @@ export default {
         sales_person_id: values.sales_person_id,
         estimate: values.estimate,
         due_amount: values.due_amount,
+        approved: values.approved,
         discount_amount: values.discount_amount,
         sub_total: values.sub_total,
         tax_amount: values.tax_amount,
@@ -55,6 +56,8 @@ export default {
         recurring: values.recurring,
       });
 
+
+      console.log(values.approved);
       if (body222) {
         if (values.frequecy == null) {
           response.body = {
@@ -1070,15 +1073,15 @@ export default {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
       let {
+
+        filter_value,
+        estimate,
+        created_by,
         page_number,
         page_size,
         startDate,
         endDate,
-        filter_value,
-        estimate,
-        created_by,
       } = getQuery(ctx, { mergeParams: true });
-      console.log(filter_value, "||| params");
 
       const total = await invoiceService.getPageSizeInvoice({
         created_by: Number(created_by),
@@ -1086,8 +1089,7 @@ export default {
         endDate: endDate,
         estimate: estimate,
       });
-
-      if (filter_value == null || filter_value == "") {
+      if (filter_value == null || filter_value === "") {
         console.log(page_number, "||| params");
 
         if (page_number == null) {
@@ -1127,6 +1129,9 @@ export default {
           };
         }
       } else {
+        console.log(filter_value, "||| params");
+
+        console.log("bayo")
         const data = await invoiceService.getInvoiceFilter({
           filter_value: filter_value,
           created_by: Number(created_by),

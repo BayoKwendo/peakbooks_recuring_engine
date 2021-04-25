@@ -43,5 +43,6 @@ export default interface Bet {
   vendor_id?: string,
   startDate?: any,
   endDate?: any,
+  approved?: string,
   tax_inclusive?: string
 }

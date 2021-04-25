@@ -3,7 +3,7 @@ import { TABLE } from "../db/config.ts";
 import User from "../interfaces/User.ts";
 
 export default {
-  createUser: async ({ first_name, last_name, msisdn, client_id, industry, role_id, email, password,
+  createUser: async ({ approval, first_name, last_name, msisdn, client_id, industry, role_id, email, password,
     company_name,
     postal_address,
     first_time,
@@ -23,11 +23,13 @@ export default {
     url,
     documents }: User,) => {
     const result = await client.query(`INSERT INTO ${TABLE.USERS} SET
+             approval = ?,
              first_name =?,
              last_name =?, msisdn=?, email =?, industry=?, company_name=?, postal_address =?, 
              role_id=?, password=?, first_time=?, our_client=?, paid=?,subscription=?, 
              currency=?,currency_against_kenya=?, 
              admin_role = ?, inventory = ?, bank =?, sales = ?, purchase =?, investment = ?, accountant = ?,reports = ?, documents = ?,url= ?,client_id = ?, status=1`, [
+      approval,
       first_name,
       last_name,
       msisdn,
@@ -70,6 +72,7 @@ export default {
     admin_role,
     inventory,
     bank,
+    approval,
     sales,
     purchase,
     investment,
@@ -77,6 +80,7 @@ export default {
     reports,
     documents }: User,) => {
     const result = await client.query(`UPDATE ${TABLE.USERS} SET
+             approval =?,
              first_name =?,
              last_name =?, 
              msisdn=?,
@@ -100,6 +104,7 @@ export default {
              url=?, 
              status=1 WHERE
              email = ?`, [
+      approval,
       first_name,
       last_name,
       msisdn,
