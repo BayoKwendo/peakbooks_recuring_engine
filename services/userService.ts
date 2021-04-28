@@ -321,14 +321,12 @@ export default {
   },
 
 
-
-
-
   getMpesaTransaction: async ({ offset }: User) => {
     const result = await client.query(
       `SELECT * FROM  ${TABLE.MPESA_PAYMENT} WHERE TransID <> "" ORDER BY id DESC LIMIT ?,100 `, [offset]);
     return result;
   },
+
 
   getPageSizeMpesa: async () => {
     const [result] = await client.query(
