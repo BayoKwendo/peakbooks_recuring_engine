@@ -342,7 +342,7 @@ export default {
       response.body = {
         status: true,
         status_code: 200,
-        message: "Quatation added successfully",
+        message: "Quotation added successfully",
       };
     } catch (error) {
       response.status = 400;
@@ -506,7 +506,7 @@ export default {
       response.body = {
         status: true,
         status_code: 200,
-        message: "Quatation Updated Successfully",
+        message: "Quotation Updated Successfully",
       };
     } catch (error) {
       response.status = 400;
