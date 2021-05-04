@@ -970,6 +970,70 @@ export default {
     }
   },
 
+
+  //Vendor Aging Report Controller
+  getAgingSummaryBills: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      let {
+        page_number,
+        page_size,
+        startDate,
+        endDate,
+        created_by,
+      } = getQuery(ctx, { mergeParams: true });
+
+      const total = await paymentService.getAgingSummarySizeVendor({
+        created_by: Number(created_by),
+        startDate: startDate,
+        endDate: endDate,
+      });
+
+      console.log(total);
+      if (page_number == null) {
+        page_number = "1";
+        page_size = "1000";
+
+        const offset = (Number(page_number) - 1) * Number(page_size);
+        const data = await paymentService.getAgingSummaryBills({
+          offset: Number(offset),
+          created_by: Number(created_by),
+          startDate: startDate,
+          endDate: endDate,
+          page_size: Number(page_size),
+        });
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          total: total,
+          data: data,
+        };
+      } else {
+        const offset = (Number(page_number) - 1) * Number(page_size);
+        const data = await paymentService.getAgingSummaryBills({
+          offset: Number(offset),
+          created_by: Number(created_by),
+          startDate: startDate,
+          endDate: endDate,
+          page_size: Number(page_size),
+        });
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          total: total,
+          data: data,
+        };
+      }
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
   /**
    * @description Get all bill item list
    */

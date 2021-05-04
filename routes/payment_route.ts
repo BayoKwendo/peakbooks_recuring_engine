@@ -49,6 +49,10 @@ router
   .get("/bank", paymentController.getBanks)
   .get("/banking", paymentController.getBankings)
 
+  .get("/agingsummarybill", paymentController.getAgingSummaryBills)
+
+
+
 
 
 

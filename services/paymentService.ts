@@ -240,12 +240,81 @@ export default {
 
     getBill: async ({ offset, created_by, page_size }: Invoices) => {
         const result = await client.query(
-            `SELECT i.bill_no, i.order_no, i.terms, i.due_date,i.due_amount, i.status, i.bill_date, i.date_modified, i.discount_amount, i.sub_total, i.tax_amount, i.notes,
-              i.amount, c.vendor_display_name,c.email, c.company_name  FROM 
+            `SELECT 
+            i.bill_no, 
+            i.order_no, 
+            i.terms, 
+            i.due_date,
+            i.due_amount,
+            i.status, 
+            i.bill_date, 
+            i.date_modified, 
+            i.discount_amount, 
+            i.sub_total, 
+            i.tax_amount, 
+            i.notes,
+            i.amount, 
+            c.vendor_display_name,
+            c.email, 
+            c.company_name  FROM 
             ${TABLE.BILLS} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id 
             WHERE i.created_by = ? order by i.date_modified DESC LIMIT ?,?`, [created_by, offset, page_size]);
         return result;
     },
+
+
+    //aging summary
+
+    getAgingSummaryBills: async ({ offset, created_by, page_size, estimate, startDate, endDate }: Invoices) => {
+        const result = await client.query(
+            `SELECT c.vendor_display_name, 
+            
+             sum(CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2))) total_amount,
+
+             sum( if ( DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) = 0,
+             CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)),0)) as current_amount,
+
+             sum( if ( (DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) < 16  
+             AND
+             DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) > 0),
+             CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)),0)) as overdue_15,
+
+             sum( if ( (DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) < 31  
+             AND
+             DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) > 15),
+             CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)),0)) as overdue_15_30,
+
+             sum( if ( (DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) < 46  
+             AND
+             DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) > 30),
+             CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)),0)) as overdue_30_45,
+
+
+             sum( if ( (DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) > 45 ),
+             CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)),0)) as overdue_45
+
+             FROM 
+            ${TABLE.BILLS} i
+            inner join ${TABLE.VENDORS} c on c.id = i.vendor_id 
+            WHERE i.created_by = ${created_by} AND i.status = "0"
+            AND i.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY c.vendor_display_name 
+            order by i.date_modified DESC LIMIT ${offset},${page_size}`);
+        return result;
+    },
+
+
+    getAgingSummarySizeVendor: async ({ created_by, startDate, endDate }: Invoices) => {
+        const [result] = await client.query(
+            `SELECT COUNT(DISTINCT c.id) count
+            FROM 
+            ${TABLE.VENDORS} c 
+            left join ${TABLE.BILLS} i on c.id = i.vendor_id 
+            left join ${TABLE.CREDIT_NOTE_VENDOR} n on n.vendor_id = c.id
+            WHERE i.created_by = ${created_by} AND i.status = "0" AND i.created_at BETWEEN ${startDate} AND ${endDate} `);
+        return result.count;
+    },
+
+
     getBillItems: async ({ filter_value }: Invoices) => {
         const result = await client.query(
             `SELECT * FROM  ${TABLE.BILL_ITEMS} WHERE bill_no = ?`, [filter_value]);
