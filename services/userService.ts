@@ -222,7 +222,7 @@ export default {
 
   getPageSizeCLient: async ({ offset, status }: User) => {
     const [result] = await client.query(
-      `SELECT COUNT(id) count FROM  ${TABLE.USERS} WHERE role_id = 2 AND status = ? GROUP BY client_id`, [status]);
+      `SELECT COUNT(client_id) count FROM  ${TABLE.USERS} WHERE role_id = 2 AND status = ? `, [status]);
     return result.count;
   },
 
