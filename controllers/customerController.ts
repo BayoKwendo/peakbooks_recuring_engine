@@ -25,22 +25,22 @@ export default {
       };
       return;
     }
-    if (!values.customer_type) {
-      response.status = 400;
-      response.body = {
-        success: false,
-        message: "Please select customer type",
-      };
-      return;
-    }
-    if (!values.title) {
-      response.status = 400;
-      response.body = {
-        success: false,
-        message: "Please select title",
-      };
-      return;
-    }
+    // if (!values.customer_type) {
+    //   response.status = 400;
+    //   response.body = {
+    //     success: false,
+    //     message: "Please select customer type",
+    //   };
+    //   return;
+    // }
+    // if (!values.title) {
+    //   response.status = 400;
+    //   response.body = {
+    //     success: false,
+    //     message: "Please select title",
+    //   };
+    //   return;
+    // }
     try {
       const values = await body.value;
 
@@ -52,6 +52,8 @@ export default {
         other_name: values.other_name,
         email: values.email,
         msisdn: values.msisdn,
+        out_of_balance: values.out_of_balance,
+        tax_info: values.tax_info,
         company_name: values.company_name,
         customer_display_name: values.customer_display_name,
         website: values.website,

@@ -4,7 +4,7 @@ import Invoices from "../interfaces/Invoices.ts";
 
 export default {
     createInvoice: async ({ customer_id, invoice_no, terms, due_date, invoice_date, message_invoice, sub_total, statement_invoice, amount,
-        due_amount, tax_amount, discount_amount, recurring, created_by, estimate, tax_exclusive, sales_person_id, approved }: Invoices) => {
+        due_amount, tax_amount, discount_amount, recurring, created_by, estimate, reference, tax_exclusive, sales_person_id, approved }: Invoices) => {
         const result = await client.query(`INSERT INTO ${TABLE.INVOICES}  SET
         customer_id=?,terms=?, due_date =?, invoice_date =?, message_invoice=?,sub_total=?, 
         statement_invoice=?, 
@@ -17,7 +17,8 @@ export default {
         estimate=?,
         tax_exclusive=?,
         sales_person_id=?,
-        approved=?`, [
+        approved=?,
+        reference=?`, [
             customer_id,
             terms,
             due_date,
@@ -34,7 +35,8 @@ export default {
             estimate,
             tax_exclusive,
             sales_person_id,
-            approved
+            approved,
+            reference
         ]);
         return result;
     },

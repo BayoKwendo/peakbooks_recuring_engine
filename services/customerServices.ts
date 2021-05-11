@@ -10,6 +10,8 @@ export default {
     title,
     first_name,
     other_name,
+    tax_info,
+    out_of_balance,
     msisdn,
     email,
     company_name,
@@ -18,7 +20,12 @@ export default {
   }: Customers) => {
     const result = await client.query(
       `INSERT INTO ${TABLE.CUSTOMER}  SET
-             client_id=?, customer_type=?, title=?, first_name =?, other_name =?, msisdn=?, email =?, company_name=?, customer_display_name=?, website=?`,
+             client_id=?, customer_type=?, title=?, first_name =?, other_name =?, msisdn=?, email =?, company_name=?,
+              customer_display_name=?, 
+              website=?,
+              out_of_balance=?,
+              tax_info=?
+              `,
       [
         client_id,
         customer_type,
@@ -30,6 +37,8 @@ export default {
         company_name,
         customer_display_name,
         website,
+        out_of_balance,
+        tax_info
       ]
     );
     return result;

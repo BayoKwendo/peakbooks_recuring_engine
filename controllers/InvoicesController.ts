@@ -44,6 +44,7 @@ export default {
         message_invoice: values.message_invoice,
         statement_invoice: values.statement_invoice,
         amount: values.amount,
+        reference: values.reference,
         tax_exclusive: values.tax_exclusive,
         sales_person_id: values.sales_person_id,
         estimate: values.estimate,

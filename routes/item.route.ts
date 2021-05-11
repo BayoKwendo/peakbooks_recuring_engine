@@ -6,10 +6,8 @@ const router = new Router();
 
 router
   .post("/item",authorize, ItemController.createITEM)
-
   .put("/item",authorize, ItemController.updateItem)
   .delete("/item/:id",authorize, ItemController.deleteItem)
-
   .get("/item",authorize, ItemController.getItems)
   .get("/salesbyitem", authorize, ItemController.getItemSales)
   .get("/purchasebyitem", authorize, ItemController.getItemPurchase)
