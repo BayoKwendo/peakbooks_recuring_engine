@@ -42,6 +42,9 @@ router
   .post("/tax", authorize, InvoicesController.createTax)
 
   .delete("/tax", authorize, InvoicesController.deleteTaxRates)
+
+  .delete("/invoice", authorize, InvoicesController.deleteInvoices)
+
   
   .get("/tax", authorize, InvoicesController.getTaxRates)
 

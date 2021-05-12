@@ -306,6 +306,35 @@ export default {
 
 
   /**
+  * @description Get all Invoices List
+  */
+  deleteInvoices: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      // console.log("bayo", kw)
+      let { id } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      const data = await invoiceService.deleteInvoices({
+        id: Number(id),
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        message: "Delete successfully",
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
+  /**
    * @description Add a new invoice
    */
   createEstimates: async ({

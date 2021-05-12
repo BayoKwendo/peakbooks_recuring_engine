@@ -93,6 +93,13 @@ export default {
     },
 
 
+    deleteInvoices: async ({ id }: Invoices,) => {
+        const query = await client.query(`DELETE FROM  ${TABLE.INVOICES}
+        WHERE id = ?`, [id]);
+        return query;
+    },
+
+
     createSalesPerson: async ({ sales_person, created_by }: Invoices) => {
         const result = await client.query(`INSERT INTO ${TABLE.SALES_PERSON}  SET
         sales_person=?, 
@@ -159,7 +166,7 @@ export default {
 
     getInvoices: async ({ offset, startDate, endDate, created_by, estimate, page_size }: Invoices) => {
         const result = await client.query(
-            `SELECT i.invoice_no,i.tax_exclusive, i.terms, i.approved,
+            `SELECT i.invoice_no,i.id,i.tax_exclusive, i.terms, i.approved,
             CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)) amount_invoice,
            
             DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) period,
