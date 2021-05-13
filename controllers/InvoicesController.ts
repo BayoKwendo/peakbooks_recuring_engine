@@ -1391,9 +1391,10 @@ export default {
    */
   getInvoiceItem: async (ctx: any) => {
     try {
-      let { filter_value } = getQuery(ctx, { mergeParams: true });
+      let { filter_value, client_id } = getQuery(ctx, { mergeParams: true });
       const data = await invoiceService.getInvoiceItems({
         filter_value: filter_value,
+        created_by: Number(client_id),
       });
       ctx.response.body = {
         status: true,

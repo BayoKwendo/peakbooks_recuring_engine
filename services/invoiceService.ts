@@ -178,7 +178,7 @@ export default {
             
             WHERE i.created_by = ${created_by} AND i.estimate = ${estimate} 
               AND i.created_at BETWEEN ${startDate} AND ${endDate}
-            order by i.date_modified DESC LIMIT ${offset},${page_size}`);
+            order by i.invoice_no DESC LIMIT ${offset},${page_size}`);
         return result;
     },
 
@@ -690,9 +690,9 @@ export default {
         return result.count;
     },
 
-    getInvoiceItems: async ({ filter_value }: Invoices) => {
+    getInvoiceItems: async ({ filter_value, created_by }: Invoices) => {
         const result = await client.query(
-            `SELECT * FROM  ${TABLE.INVOICE_ITEMS} WHERE invoice_no = ?`, [filter_value]);
+            `SELECT * FROM  ${TABLE.INVOICE_ITEMS} WHERE invoice_no = ? AND client_id = ?`, [filter_value, created_by]);
         return result;
     },
 
