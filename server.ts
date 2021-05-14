@@ -53,7 +53,7 @@ let task = cron('*/.5 * * * * *', async () => {
   const invoice_no = await invoiceService.getfrequency();
 
   if (invoice_no) {
-    
+
     const data = await invoiceService.getInvoiceFilter({
       filter_value: invoice_no.invoice_no,
       startDate: "2019-03-03 00:00:00",
@@ -61,11 +61,15 @@ let task = cron('*/.5 * * * * *', async () => {
       created_by: invoice_no.created_by
     });
     const itemData = await invoiceService.getInvoiceItems({
+
       filter_value: invoice_no.invoice_no,
+      created_by: invoice_no.created_by
 
     });
-    console.log(invoice_no.created_by)
-    console.log(invoice_no.invoice_no)
+
+    // console.log(data)
+
+    // console.log(invoice_no.invoice_no)
 
     try {
       const body222 = await invoiceService.createInvoice(
@@ -107,6 +111,8 @@ let task = cron('*/.5 * * * * *', async () => {
 
         for (let i = 0; i < itemData.length; i++) {
           let innvoiceNo = { invoice_no2: dataInvoice[0].invoice_no };
+          // let innvoiceNo = { invoice_no2: dataInvoice[0].invoice_no };
+          
           data3.push(Object.assign(innvoiceNo, itemData[i]));
         }
         // console.log(data3)

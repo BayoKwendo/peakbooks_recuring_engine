@@ -45,7 +45,9 @@ router
 
   .delete("/invoice", authorize, InvoicesController.deleteInvoices)
 
-  
+  .delete("/recurringinvoice", authorize, InvoicesController.deleteRecurringInvoices)
+
+
   .get("/tax", authorize, InvoicesController.getTaxRates)
 
   .get("/creditvendortaxamount", authorize, InvoicesController.getInvoicesCreditNoteVendorTax)

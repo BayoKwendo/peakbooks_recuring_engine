@@ -93,6 +93,13 @@ export default {
     },
 
 
+    deleteRecurringInvoices: async ({ id }: Invoices,) => {
+        const query = await client.query(`DELETE FROM  ${TABLE.RECURRING_INVOICE}
+        WHERE id = ?`, [id]);
+        return query;
+    },
+
+
     deleteInvoices: async ({ id }: Invoices,) => {
         const query = await client.query(`DELETE FROM  ${TABLE.INVOICES}
         WHERE id = ?`, [id]);
@@ -129,7 +136,13 @@ export default {
         due_amount, tax_amount, discount_amount, created_by, tax_exclusive }: Invoices,) => {
         const query = await client.query(`UPDATE ${TABLE.INVOICES} 
         SET
-        customer_id=?, invoice_no=?, terms=?, due_date =?, invoice_date =?, message_invoice=?,sub_total=?, 
+        customer_id=?, 
+        invoice_no=?, 
+        terms=?, 
+        due_date =?, 
+        invoice_date =?, 
+        message_invoice=?,
+        sub_total=?, 
         statement_invoice=?, 
         amount=?, 
         due_amount=?,
@@ -137,7 +150,7 @@ export default {
         discount_amount=?,
         created_by=?,
         tax_exclusive=?
-        WHERE invoice_no = ?`, [
+        WHERE invoice_no = ? AND created_by=? `, [
             customer_id,
             invoice_no,
             terms,
@@ -152,7 +165,8 @@ export default {
             discount_amount,
             created_by,
             tax_exclusive,
-            invoice_no]);
+            invoice_no,
+            created_by]);
         return query;
     },
 
@@ -507,11 +521,14 @@ export default {
 
     getFrequencyInvoices: async ({ offset, created_by, estimate, page_size }: Invoices) => {
         const result = await client.query(
-            `SELECT i.invoice_no, i.start_time, i.end_time,i.due_amount, i.modified, i.status, i.frequecy, i.frequency_type, c.customer_display_name,c.email, c.company_name  FROM 
+            `SELECT i.invoice_no, i.start_time, i.end_time, i.id, i.due_amount, i.modified, i.status, i.frequecy, i.frequency_type, c.customer_display_name,c.email, c.company_name  FROM
             ${TABLE.RECURRING_INVOICE} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
-            WHERE i.created_by = ? order by i.modified DESC LIMIT ?,?`, [created_by, offset, page_size]);
+            WHERE i.created_by = ? order by i.id DESC LIMIT ?,?`, [created_by, offset, page_size]);
         return result;
     },
+
+
+
 
     getPageSizeFrequencyInvoice: async ({ created_by }: Invoices) => {
         const [result] = await client.query(
