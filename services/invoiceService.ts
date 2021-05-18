@@ -180,7 +180,7 @@ export default {
 
     getInvoices: async ({ offset, startDate, endDate, created_by, estimate, page_size }: Invoices) => {
         const result = await client.query(
-            `SELECT i.invoice_no,i.id,i.tax_exclusive, i.terms, i.approved,
+            `SELECT i.invoice_no,i.id, i.tax_exclusive, i.terms, i.approved,i.estimate_no,
             CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)) amount_invoice,
            
             DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) period,
@@ -192,7 +192,7 @@ export default {
             
             WHERE i.created_by = ${created_by} AND i.estimate = ${estimate} 
               AND i.created_at BETWEEN ${startDate} AND ${endDate}
-            order by i.invoice_no DESC LIMIT ${offset},${page_size}`);
+            order by i.created_at DESC LIMIT ${offset},${page_size}`);
         return result;
     },
 
@@ -564,12 +564,14 @@ export default {
     },
 
 
-    updatefrequencystatus2: async ({ invoice_no }: Invoices) => {
+    updatefrequencystatus2: async ({ invoice_no, frequecy, frequency_type }: Invoices) => {
         const result = await client.query(
             `UPDATE ${TABLE.RECURRING_INVOICE} SET 
-            status = 1
+            status = 1,
+            frequecy = ?,
+            frequency_type = ?
             WHERE invoice_no = ?`,
-            [invoice_no]);
+            [frequecy, frequency_type, invoice_no]);
         return result;
     },
 
@@ -582,7 +584,7 @@ export default {
 
     getOneInvoices: async ({ offset, created_by, estimate }: Invoices) => {
         const result = await client.query(
-            `SELECT i.invoice_no, i.terms, i.due_date, i.status, i.invoice_date, i.approved, i.discount_amount, i.sub_total, i.tax_amount, i.message_invoice,i.statement_invoice,
+            `SELECT i.invoice_no, i.terms, i.due_date, i.status,i.id, i.invoice_date, i.approved, i.discount_amount, i.sub_total, i.tax_amount, i.message_invoice,i.statement_invoice,
              i.due_amount, i.amount, c.customer_display_name,c.email, c.company_name  FROM 
             ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
             WHERE i.created_by = ? AND i.estimate = ?  AND i.email_sent = 0 AND i.approved = 1  order by i.date_modified LIMIT 1`, [created_by, estimate, offset]);
@@ -593,7 +595,15 @@ export default {
         const result = await client.query(
             `SELECT * FROM 
            ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
-           WHERE i.created_by = ? AND i.invoice_no = ?`, [created_by, filter_value]);
+           WHERE i.estimate=0 and i.created_by = ? AND i.invoice_no = ?`, [created_by, filter_value]);
+        return result;
+    },
+
+    getInvoiceFilterEstimate: async ({ created_by, filter_value }: Invoices) => {
+        const result = await client.query(
+            `SELECT * FROM 
+           ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
+           WHERE i.estimate=1 and i.created_by = ? AND i.estimate_no = ?`, [created_by, filter_value]);
         return result;
     },
 

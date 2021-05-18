@@ -21,6 +21,9 @@ router
   .put("/recurringinvoice", authorize, InvoicesController.updatefrequencystatus)
   .put("/recurringinvoice2", authorize, InvoicesController.updatefrequencystatus2)
 
+  .get("/estimateupdate", authorize, InvoicesController.getInvoiceFilterEstimate)
+
+
   //reports invoices
   .get("/invoiceamount", authorize, InvoicesController.getInvoicesAmount)
   .get("/invoicetaxamount", authorize, InvoicesController.getInvoicesTaxAmount)
@@ -54,7 +57,7 @@ router
 
 
   .get("/salespersonreport", authorize, InvoicesController.getSalesPersonReport)
-  
+
   .get("/invoiceamountratio", authorize, InvoicesController.getInvoicesAmountRatio)
 
 export default router;

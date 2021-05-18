@@ -67,7 +67,7 @@ export default {
             message:
               values.estimate == 0
                 ? "Invoice added successfully"
-                : "Estimate added successfully",
+                : "Quatation added successfully",
           };
         } else {
           const recurring_invoices = await invoiceService.createRecurringInvoice(
@@ -436,6 +436,8 @@ export default {
       const values = await body.value;
       await invoiceService.updatefrequencystatus2({
         invoice_no: values.invoice_no,
+        frequecy: values.frequecy,
+        frequency_type: values.frequency_type
       });
       response.body = {
         status: true,
@@ -1183,6 +1185,46 @@ export default {
     }
   },
 
+
+  getInvoiceFilterEstimate: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      // console.log("bayo", kw)
+      let {
+
+        filter_value,
+        estimate,
+        created_by,
+        page_number,
+        page_size,
+        startDate,
+        endDate,
+      } = getQuery(ctx, { mergeParams: true });
+
+      console.log(filter_value, "||| params");
+
+      console.log("bayo")
+      const data = await invoiceService.getInvoiceFilterEstimate({
+        filter_value: filter_value,
+        created_by: Number(created_by),
+      });
+
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data,
+      };
+
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
   // receivable report
 
   /**
@@ -1387,7 +1429,7 @@ export default {
   },
 
 
-  
+
 
 
   /**

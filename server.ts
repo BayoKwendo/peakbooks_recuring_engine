@@ -88,7 +88,7 @@ let task = cron('*/.5 * * * * *', async () => {
           sub_total: data[0].sub_total,
           tax_amount: data[0].tax_amount,
           tax_exclusive: data[0].tax_exclusive,
-          approved: "1",
+          approved: data[0].approved,
           created_by: data[0].created_by,
           recurring: data[0].recurring
         }
@@ -112,7 +112,7 @@ let task = cron('*/.5 * * * * *', async () => {
         for (let i = 0; i < itemData.length; i++) {
           let innvoiceNo = { invoice_no2: dataInvoice[0].invoice_no };
           // let innvoiceNo = { invoice_no2: dataInvoice[0].invoice_no };
-          
+
           data3.push(Object.assign(innvoiceNo, itemData[i]));
         }
         // console.log(data3)
