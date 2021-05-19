@@ -312,18 +312,44 @@ export default {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
-      let { id } = getQuery(ctx, {
+      let { id, filter_value, created_by } = getQuery(ctx, {
         mergeParams: true,
       });
       const data = await invoiceService.deleteInvoices({
         id: Number(id),
       });
-      ctx.response.body = {
-        status: true,
-        status_code: 200,
-        message: "Delete successfully",
-        data: data,
-      };
+
+
+      if (data) {
+        const total = await invoiceService.getInvoiceItemDelete({
+          created_by: Number(created_by),
+          filter_value: filter_value,
+        });
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          message: "Delete successfully",
+        };
+
+        if (total > 0) {
+          for (let i = 0; i < total; i++) {
+            if (total) {
+              const data = await invoiceService.getInvoiceDeleteItems({
+                created_by: Number(created_by),
+                filter_value: filter_value
+              });
+              if (data) {
+                // response.status = 200;
+                // response.body = {
+                //   status: true,
+                //   status_code: 200,
+                //   // message: "Client Account has been activated",
+              };
+            }
+          }
+        }
+      }
+
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = {
@@ -480,6 +506,7 @@ export default {
         message_invoice: values.message_invoice,
         statement_invoice: values.statement_invoice,
         amount: values.amount,
+        approved: values.approved,
         due_amount: values.due_amount,
         discount_amount: values.discount_amount,
         sub_total: values.sub_total,
@@ -522,15 +549,18 @@ export default {
       const values = await body.value;
       await invoiceService.updateEstimate({
         customer_id: values.customer_id,
-        estimate_no: values.estimate_no,
-        expiry_date: values.expiry_date,
-        estimate_date: values.estimate_date,
-        estimate_message: values.estimate_message,
-        statement_message: values.statement_message,
+        invoice_no: values.invoice_no,
+        terms: values.terms,
+        due_date: values.due_date,
+        invoice_date: values.invoice_date,
+        message_invoice: values.message_invoice,
+        statement_invoice: values.statement_invoice,
         amount: values.amount,
+        approved: values.approved,
         due_amount: values.due_amount,
         discount_amount: values.discount_amount,
         sub_total: values.sub_total,
+        tax_exclusive: values.tax_exclusive,
         tax_amount: values.tax_amount,
         created_by: values.created_by,
         // activation_key: values.activation_key
@@ -567,14 +597,49 @@ export default {
     }
     try {
       const values = await body.value;
-      await invoiceService.convertEstimate({
-        invoice_no: values.invoice_no,
+
+      // const total = await invoiceService.getInvoiceItemDelete({
+      //   created_by: Number(values.created_by),
+      //   filter_value: values.estimate_no,
+      // });
+     
+      // console.log(total)
+
+      // // if (total > 0) {
+      // //   for (let i = 0; i < total; i++) {
+      // //     if (total) {
+      // //       // const data = await invoiceService.getInvoiceDeleteItems({
+      // //       //   created_by: Number(created_by),
+      // //       //   filter_value: filter_value
+      // //       // });
+      // //       // if (data) {
+      // //       //   // response.status = 200;
+      // //       //   // response.body = {
+      // //       //   //   status: true,
+      // //       //   //   status_code: 200,
+      // //       //   //   // message: "Client Account has been activated",
+      // //       // };
+      // //     }
+      // //   }
+
+
+
+         const total = await invoiceService.getMaxmumInvoiceNo({
+        created_by: values.created_by
       });
-      response.body = {
-        status: true,
-        status_code: 200,
-        message: ` Success! Estimate#${values.invoice_no} has been converted to invoice`,
-      };
+
+      console.log(total);
+      if (total) {
+        await invoiceService.convertEstimate({
+          invoice_no: values.invoice_no,
+          id: total
+        });
+        response.body = {
+          status: true,
+          status_code: 200,
+          message: ` Success! Quotation#${values.invoice_no} has been converted to invoice`,
+        };
+      }
     } catch (error) {
       response.status = 400;
       response.body = {

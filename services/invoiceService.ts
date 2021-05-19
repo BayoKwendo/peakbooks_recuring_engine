@@ -132,7 +132,7 @@ export default {
 
 
 
-    updateInvoice: async ({ customer_id, invoice_no, terms, due_date, invoice_date, message_invoice, sub_total, statement_invoice, amount,
+    updateInvoice: async ({ customer_id, invoice_no, terms, approved, due_date, invoice_date, message_invoice, sub_total, statement_invoice, amount,
         due_amount, tax_amount, discount_amount, created_by, tax_exclusive }: Invoices,) => {
         const query = await client.query(`UPDATE ${TABLE.INVOICES} 
         SET
@@ -149,7 +149,8 @@ export default {
         tax_amount=?, 
         discount_amount=?,
         created_by=?,
-        tax_exclusive=?
+        tax_exclusive=?,
+        approved= ?
         WHERE invoice_no = ? AND created_by=? `, [
             customer_id,
             invoice_no,
@@ -165,15 +166,28 @@ export default {
             discount_amount,
             created_by,
             tax_exclusive,
+            approved,
             invoice_no,
             created_by]);
         return query;
     },
 
-    convertEstimate: async ({ invoice_no }: Invoices,) => {
+
+    getMaxmumInvoiceNo: async ({ created_by }: Invoices,) => {
+        const [query] = await client.query(`
+        select 
+        IFNULL(max(invoice_no), 0)+1 count
+        from ${TABLE.INVOICES} 
+        where created_by = ? `, [created_by]);
+        return query.count;
+    },
+
+    convertEstimate: async ({ invoice_no, id }: Invoices,) => {
         const query = await client.query(`UPDATE ${TABLE.INVOICES} SET 
-        estimate = 0
-        WHERE invoice_no = ? `, [invoice_no]);
+        estimate = 0,
+        approved= 0,
+        invoice_no= ?
+        WHERE id = ? `, [id, invoice_no]);
         return query;
     },
 
@@ -673,28 +687,70 @@ export default {
     },
 
 
-    updateEstimate: async ({ customer_id, estimate_no, expiry_date, estimate_date, estimate_message,
-        statement_message, sub_total, amount, due_amount, tax_amount,
-        discount_amount, created_by }: Invoices,) => {
-        const query = await client.query(`UPDATE ${TABLE.ESTIMATES} SET 
-        pdf = ? T
-        customer_id=?, estimate_no=?, expiry_date =?, estimate_date =?, estimate_message=?, statement_message=?, sub_total=?,
-        amount=?, due_amount=?,
+    // : async ({ customer_id, estimate_no, expiry_date, estimate_date, estimate_message,
+    //     statement_message, sub_total, amount, due_amount, tax_amount,
+    //     discount_amount, created_by }: Invoices,) => {
+    //     const query = await client.query(`UPDATE ${TABLE.ESTIMATES} SET 
+    //     pdf = ? T
+    //     customer_id=?, estimate_no=?, expiry_date =?, estimate_date =?, estimate_message=?, statement_message=?, sub_total=?,
+    //     amount=?, due_amount=?,
+    //     tax_amount=?, 
+    //     discount_amount=?,
+    //      created_by=?
+    //     WHERE estimate_no = ? `, [customer_id,
+    //         estimate_no,
+    //         expiry_date,
+    //         estimate_date,
+    //         estimate_message,
+    //         statement_message,
+    //         sub_total,
+    //         amount,
+    //         due_amount,
+    //         tax_amount,
+    //         discount_amount,
+    //         created_by, estimate_no]);
+    //     return query;
+    // },
+
+
+
+    updateEstimate: async ({ customer_id, invoice_no, terms, approved, due_date, invoice_date, message_invoice, sub_total, statement_invoice, amount,
+        due_amount, tax_amount, discount_amount, created_by, tax_exclusive }: Invoices,) => {
+        const query = await client.query(`UPDATE ${TABLE.INVOICES} 
+        SET
+        customer_id=?, 
+        estimate_no=?, 
+        terms=?, 
+        due_date =?, 
+        invoice_date =?, 
+        message_invoice=?,
+        sub_total=?, 
+        statement_invoice=?, 
+        amount=?, 
+        due_amount=?,
         tax_amount=?, 
         discount_amount=?,
-         created_by=?
-        WHERE estimate_no = ? `, [customer_id,
-            estimate_no,
-            expiry_date,
-            estimate_date,
-            estimate_message,
-            statement_message,
+        created_by=?,
+        tax_exclusive=?,
+        approved=?
+        WHERE estimate_no = ? AND created_by=? `, [
+            customer_id,
+            invoice_no,
+            terms,
+            due_date,
+            invoice_date,
+            message_invoice,
             sub_total,
+            statement_invoice,
             amount,
             due_amount,
             tax_amount,
             discount_amount,
-            created_by, estimate_no]);
+            created_by,
+            tax_exclusive,
+            approved,
+            invoice_no,
+            created_by]);
         return query;
     },
 
@@ -722,6 +778,21 @@ export default {
             `SELECT * FROM  ${TABLE.INVOICE_ITEMS} WHERE invoice_no = ? AND client_id = ?`, [filter_value, created_by]);
         return result;
     },
+
+    getInvoiceDeleteItems: async ({ filter_value, created_by }: Invoices) => {
+        const result = await client.query(
+            `DELETE FROM ${TABLE.INVOICE_ITEMS} WHERE invoice_no = ? AND client_id = ?`, [filter_value, created_by]);
+        return result;
+    },
+
+
+    getInvoiceItemDelete: async ({ filter_value, created_by }: Invoices) => {
+        const [result] = await client.query(
+            `SELECT COUNT(*) count FROM  ${TABLE.INVOICE_ITEMS} WHERE invoice_no = ? AND client_id = ?`, [filter_value, created_by]);
+        return result.count;
+    },
+
+
 
     geteEstimateItems: async ({ filter_value }: Invoices) => {
         const result = await client.query(
