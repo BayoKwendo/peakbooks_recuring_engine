@@ -23,6 +23,9 @@ router
 
   .get("/estimateupdate", authorize, InvoicesController.getInvoiceFilterEstimate)
 
+  .get("/newinvoice", authorize, InvoicesController.getInvoiceNo)
+
+
 
   //reports invoices
   .get("/invoiceamount", authorize, InvoicesController.getInvoicesAmount)

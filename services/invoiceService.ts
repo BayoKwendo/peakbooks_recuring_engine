@@ -6,7 +6,7 @@ export default {
     createInvoice: async ({ customer_id, invoice_no, terms, due_date, invoice_date, message_invoice, sub_total, statement_invoice, amount,
         due_amount, tax_amount, discount_amount, recurring, created_by, estimate, reference, tax_exclusive, sales_person_id, approved }: Invoices) => {
         const result = await client.query(`INSERT INTO ${TABLE.INVOICES}  SET
-        customer_id=?,terms=?, due_date =?, invoice_date =?, message_invoice=?,sub_total=?, 
+        customer_id=?, invoice_no = ?, terms=?, due_date =?, invoice_date =?, message_invoice=?,sub_total=?,
         statement_invoice=?, 
         amount=?, 
         due_amount=?,
@@ -20,6 +20,7 @@ export default {
         approved=?,
         reference=?`, [
             customer_id,
+            invoice_no,
             terms,
             due_date,
             invoice_date,
@@ -779,6 +780,14 @@ export default {
         return result;
     },
 
+
+    updateInvoiceItems: async ({ invoice_no, filter_value, created_by }: Invoices) => {
+        const result = await client.query(
+            `UPDATE ${TABLE.INVOICE_ITEMS} SET invoice_no = ? WHERE invoice_no = ? AND client_id = ?`, [invoice_no,filter_value, created_by]);
+        return result;
+    },
+
+   
     getInvoiceDeleteItems: async ({ filter_value, created_by }: Invoices) => {
         const result = await client.query(
             `DELETE FROM ${TABLE.INVOICE_ITEMS} WHERE invoice_no = ? AND client_id = ?`, [filter_value, created_by]);

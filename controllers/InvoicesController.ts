@@ -37,7 +37,7 @@ export default {
       //
       const body222 = await invoiceService.createInvoice({
         customer_id: values.customer_id,
-        invoice_no: "djf",
+        invoice_no: values.invoice_no,
         terms: values.terms,
         due_date: values.due_date,
         invoice_date: values.invoice_date,
@@ -143,6 +143,10 @@ export default {
       };
     }
   },
+
+
+
+
 
   /**
   * @description Get all Sales Person
@@ -598,48 +602,42 @@ export default {
     try {
       const values = await body.value;
 
-      // const total = await invoiceService.getInvoiceItemDelete({
-      //   created_by: Number(values.created_by),
-      //   filter_value: values.estimate_no,
-      // });
-     
-      // console.log(total)
-
-      // // if (total > 0) {
-      // //   for (let i = 0; i < total; i++) {
-      // //     if (total) {
-      // //       // const data = await invoiceService.getInvoiceDeleteItems({
-      // //       //   created_by: Number(created_by),
-      // //       //   filter_value: filter_value
-      // //       // });
-      // //       // if (data) {
-      // //       //   // response.status = 200;
-      // //       //   // response.body = {
-      // //       //   //   status: true,
-      // //       //   //   status_code: 200,
-      // //       //   //   // message: "Client Account has been activated",
-      // //       // };
-      // //     }
-      // //   }
-
-
-
-         const total = await invoiceService.getMaxmumInvoiceNo({
-        created_by: values.created_by
+      const total = await invoiceService.getInvoiceItemDelete({
+        created_by: Number(values.created_by),
+        filter_value: values.estimate_no,
       });
 
-      console.log(total);
-      if (total) {
+      console.log(values.estimate_no)
+
+      const invoice_no = await invoiceService.getMaxmumInvoiceNo({
+        created_by: values.created_by
+      });
+      if (invoice_no) {
         await invoiceService.convertEstimate({
           invoice_no: values.invoice_no,
-          id: total
+          id: invoice_no
         });
         response.body = {
           status: true,
           status_code: 200,
           message: ` Success! Quotation#${values.invoice_no} has been converted to invoice`,
         };
+
+        for (let i = 0; i < total; i++) {
+          if (total) {
+
+            await invoiceService.updateInvoiceItems({
+              created_by: Number(values.created_by),
+              filter_value: values.estimate_no,
+              invoice_no: invoice_no
+            });
+
+          }
+        }
       }
+
+      // // if (total > 0) {
+
     } catch (error) {
       response.status = 400;
       response.body = {
@@ -759,6 +757,35 @@ export default {
       };
     }
   },
+
+
+
+  getInvoiceNo: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      // console.log("bayo", kw)
+      let { created_by } = getQuery(ctx, {
+        mergeParams: true,
+      });
+
+      const total = await invoiceService.getMaxmumInvoiceNo({
+        created_by: Number(created_by)
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        totals: total
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
 
 
 
