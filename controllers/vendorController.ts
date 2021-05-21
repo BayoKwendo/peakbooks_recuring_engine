@@ -53,6 +53,7 @@ export default {
         city_town1: values.city_town1,
         state_province1: values.state_province1,
         country1: values.country1,
+        tax_info: values.tax_info,
         remarks: values.remarks,
         terms: values.terms,
         opening_balance: values.opening_balance,
@@ -175,6 +176,7 @@ export default {
         country1: values.country1,
         remarks: values.remarks,
         terms: values.terms,
+        tax_info: values.tax_info,
         opening_balance: values.opening_balance,
       });
       response.body = {
@@ -258,6 +260,36 @@ export default {
       };
     }
   },
+
+
+  /**
+  * @description Delete vendor
+  */
+  deleteVendor: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      // console.log("bayo", kw)
+      let { vendor_id } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      const data = await vendorService.vendorDelete({
+        id: Number(vendor_id),
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        message: "Delete successfully",
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
 
   /**
    * @description Add a new vendor

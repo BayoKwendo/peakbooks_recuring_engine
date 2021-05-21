@@ -7,6 +7,9 @@ const router = new Router();
 
 router
   .post("/vendor", authorize, vendorController.createVendor)
+  .delete("/vendor", authorize, vendorController.deleteVendor)
+
+
   .post("/expense", authorize, vendorController.createExpense)
   .get("/expense", authorize, vendorController.getAllExpenses)
 

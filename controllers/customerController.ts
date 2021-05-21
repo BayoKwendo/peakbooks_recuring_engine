@@ -314,6 +314,8 @@ export default {
         first_name: values.first_name,
         other_name: values.other_name,
         email: values.email,
+        tax_info: values.tax_info,
+        out_of_balance: values.out_of_balance,
         msisdn: values.msisdn,
         company_name: values.company_name,
         customer_display_name: values.customer_display_name,
@@ -329,6 +331,36 @@ export default {
       response.body = {
         success: false,
         message: `${error}`,
+      };
+    }
+  },
+
+
+
+  /**
+  * @description Delete customer
+  */
+  deleteCustomer: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      // console.log("bayo", kw)
+      let { customer_id } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      const data = await customerServices.customerDelete({
+        customer_id: customer_id,
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        message: "Delete successfully",
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
       };
     }
   },

@@ -10,7 +10,8 @@ router2
 
   .get("/customer",authorize, customerController.getAllCustomers)
   .put("/customer",authorize, customerController.updateUserCustomer)
-  
+  .delete("/customer", authorize, customerController.deleteCustomer)
+
   .put("/customermore",authorize, customerController.updateUserCustomerMore)
 
   .post("/customermore",authorize, customerController.createBilling)
@@ -19,6 +20,8 @@ router2
 
   .get("/customermore",authorize, customerController.getAllCustomersInfo)
   .get("/custom_balanceratio", authorize, customerController.getCustomerBalanceRatio)
+
+
 
 
 export default router2;

@@ -6,7 +6,7 @@ import Vendor from "../interfaces/Vendor.ts";
 export default {
     createVendor: async ({ client_id, title, first_name, other_name,
         msisdn, email, company_name, vendor_display_name, website, street, city_town, state_province, country, street1,
-        city_town1, state_province1, country1, remarks, terms, opening_balance }: Vendor) => {
+        city_town1, state_province1, country1, remarks, terms, opening_balance, tax_info }: Vendor) => {
         const result = await client.query(`INSERT INTO ${TABLE.VENDORS}  SET
               client_id=?, title=?,
               first_name =?, other_name =?,
@@ -14,44 +14,7 @@ export default {
               vendor_display_name=?, website=?, 
               street=?, city_town=?, state_province=?, country=?, 
               street1=?, city_town1=?, state_province1=?, country1=?, 
-              remarks=?, terms=?, opening_balance=?`, [
-            client_id,
-            title,
-            first_name,
-            other_name,
-            msisdn,
-            email,
-            company_name,
-            vendor_display_name,
-            website,
-            street,
-            city_town,
-            state_province,
-            country,
-            street1,
-            city_town1,
-            state_province1,
-            country1,
-            remarks,
-            terms,
-            opening_balance
-        ]);
-        return result;
-    },
-
-
-
-    updateVendor: async ({ client_id, title, first_name, other_name,
-        msisdn, email, company_name, vendor_display_name, website, street, city_town, state_province, country, street1,
-        city_town1, state_province1, country1, remarks, terms, opening_balance }: Vendor) => {
-        const result = await client.query(`UPDATE ${TABLE.VENDORS}  SET
-              client_id=?, title=?,
-              first_name =?, other_name =?,
-              msisdn=?, email =?, company_name=?,
-              vendor_display_name=?, website=?, 
-              street=?, city_town=?, state_province=?, country=?, 
-              street1=?, city_town1=?, state_province1=?, country1=?, 
-              remarks=?, terms=?, opening_balance=? WHERE email=?`, [
+              remarks=?, terms=?, opening_balance=?, tax_info=?`, [
             client_id,
             title,
             first_name,
@@ -72,7 +35,46 @@ export default {
             remarks,
             terms,
             opening_balance,
-            email
+            tax_info
+        ]);
+        return result;
+    },
+
+
+
+    updateVendor: async ({ client_id, title, first_name, other_name,
+        msisdn, email, company_name, vendor_display_name, website, street, city_town, state_province, country, street1,
+        city_town1, state_province1, country1, remarks, terms, opening_balance, id, tax_info }: Vendor) => {
+        const result = await client.query(`UPDATE ${TABLE.VENDORS}  SET
+              client_id=?, title=?,
+              first_name =?, other_name =?,
+              msisdn=?, email =?, company_name=?,
+              vendor_display_name=?, website=?, 
+              street=?, city_town=?, state_province=?, country=?, 
+              street1=?, city_town1=?, state_province1=?, country1=?, 
+              remarks=?, terms=?, opening_balance=?, tax_info=? WHERE id=?`, [
+            client_id,
+            title,
+            first_name,
+            other_name,
+            msisdn,
+            email,
+            company_name,
+            vendor_display_name,
+            website,
+            street,
+            city_town,
+            state_province,
+            country,
+            street1,
+            city_town1,
+            state_province1,
+            country1,
+            remarks,
+            terms,
+            opening_balance,
+            tax_info,
+            id
         ]);
         return result;
     },
@@ -810,7 +812,7 @@ export default {
         return result;
     },
 
-    
+
     getRecurringExpeFilter: async ({ filter_value }: Vendor) => {
         const result = await client.query(
             `SELECT * FROM  ${TABLE.EXPENSES} WHERE reference = '${filter_value}' `);
@@ -875,7 +877,7 @@ export default {
 
     getVendorFilter: async ({ filter_value }: Vendor) => {
         const result = await client.query(
-            `SELECT * FROM  ${TABLE.VENDORS} WHERE email LIKE ? or msisdn LIKE ? or vendor_display_name LIKE ?`, [filter_value, filter_value, filter_value]);
+            `SELECT * FROM  ${TABLE.VENDORS} WHERE id =?`, [filter_value]);
         return result;
     },
     getPageSizeVendor: async ({ client_id }: Vendor) => {
@@ -887,6 +889,15 @@ export default {
         const query = await client.query(`UPDATE ${TABLE.CUSTOMER} SET status = 1 WHERE id = ? `, [customer_id]);
         return query;
     },
+
+
+    vendorDelete: async ({ id }: Vendor) => {
+        const query = await client.query(`DELETE FROM  ${TABLE.VENDORS}
+        WHERE id = ?`, [id]);
+        return query;
+    },
+
+
 
     updatefrequencyexpensestatus: async ({ expense_ref }: Vendor) => {
         const result = await client.query(

@@ -86,35 +86,40 @@ export default {
     );
     return query;
   },
+
+
   updateCustomerAll: async ({
     client_id,
-    customer_type,
-    title,
     first_name,
-    other_name,
     msisdn,
     email,
     company_name,
     customer_display_name,
-    website,
+    tax_info,
+    out_of_balance,
     customer_id,
   }: Customers) => {
     const query = await client.query(
       `UPDATE ${TABLE.CUSTOMER} SET 
-        client_id=?, customer_type=?, title=?, first_name =?, other_name =?, msisdn=?, email =?, company_name=?, customer_display_name=?, website=?
+        client_id=?,  
+        first_name =?, 
+        msisdn=?, 
+        email =?, 
+        company_name=?, 
+        customer_display_name=?,
+        out_of_balance=?,
+        tax_info=?
         WHERE id = ?
         `,
       [
         client_id,
-        customer_type,
-        title,
         first_name,
-        other_name,
         msisdn,
         email,
         company_name,
         customer_display_name,
-        website,
+        out_of_balance,
+        tax_info,
         customer_id,
       ]
     );
@@ -172,8 +177,8 @@ export default {
 
   getCustomerFilter: async ({ filter_value }: Customers) => {
     const result = await client.query(
-      `SELECT * FROM  ${TABLE.CUSTOMER} WHERE email LIKE ? or msisdn LIKE ? or customer_display_name LIKE ?`,
-      [filter_value, filter_value, filter_value]
+      `SELECT * FROM  ${TABLE.CUSTOMER} WHERE id = ?`,
+      [filter_value]
     );
     return result;
   },
@@ -186,6 +191,15 @@ export default {
     );
     return result;
   },
+
+
+
+  customerDelete: async ({ customer_id }: Customers) => {
+    const query = await client.query(`DELETE FROM  ${TABLE.CUSTOMER}
+        WHERE id = ?`, [customer_id]);
+    return query;
+  },
+
 
 
   getCustomerBalanceRatio: async ({ client_id, startDate, endDate }: Customers) => {
