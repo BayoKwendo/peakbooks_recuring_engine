@@ -69,7 +69,7 @@ let task = cron('*/.5 * * * * *', async () => {
 
     // console.log(data)
 
-    // console.log(invoice_no.invoice_no)
+    // console.log(data)
 
     try {
       const body222 = await invoiceService.createInvoice(

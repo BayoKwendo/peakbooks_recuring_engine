@@ -81,7 +81,7 @@ export default {
 
     getCreditNote: async ({ offset, created_by, page_size }: Credit) => {
         const result = await client.query(
-            `SELECT i.credit_no, i.credit_date, i.tax_exclusive,  i.status, i.customer_note,
+            `SELECT i.credit_no, i.credit_date, i.tax_exclusive,i.discount_amount,  i.status, i.customer_note,
             i.date_modified,i.terms_condition, i.reference,i.customer_id, i.sub_total, i.tax_amount,
              i.due_amount, i.amount, c.customer_display_name, c.email, c.company_name  FROM 
             ${TABLE.CREDIT_NOTE} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
