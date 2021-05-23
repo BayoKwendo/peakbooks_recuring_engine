@@ -12,14 +12,21 @@ router
 
   .post("/expense", authorize, vendorController.createExpense)
   .get("/expense", authorize, vendorController.getAllExpenses)
+  .delete("/expense", authorize, vendorController.deleteExpense)
+
 
   .get("/expensejournal", authorize, vendorController.getExpensesJournal)
   .get("/vendor", authorize, vendorController.getAllVendors)
   .get("/expense_recurring", authorize, vendorController.getAllExpensesRecuring)
+  .delete("/expense_recurring", authorize, vendorController.deleteExpenseRecurring)
 
   .put("/vendor", authorize, vendorController.updateVendor)
   .put("/recurringexpense", authorize, vendorController.updatefrequencyexpensestatus)
   .put("/recurringexpense2", authorize, vendorController.updatefrequencyexpensestatus2)
+
+  .put("/recurringfrequency", authorize, vendorController.updatefrequencyexpensefrequency)
+
+
   .get("/expensesamount", authorize, vendorController.getExpenseReport)
 
   .get("/operationexpense", authorize, vendorController.getExpenseReportExpenseCost)

@@ -5,7 +5,7 @@ import Credit from "../interfaces/Credit.ts";
 export default {
 
     createCrediNote: async ({ customer_id, credit_date, terms_condition, sub_total,
-        customer_note, amount, due_amount, tax_amount, discount_amount, created_by, tax_exclusive }: Credit) => {
+        customer_note, amount, due_amount, tax_amount, discount_amount, status, created_by, tax_exclusive }: Credit) => {
         const result = await client.query(`INSERT INTO ${TABLE.CREDIT_NOTE}  SET
         customer_id=?, 
         credit_date =?, 
@@ -18,7 +18,7 @@ export default {
         discount_amount=?,
         created_by=?,
         tax_exclusive = ?,
-        status=1`, [
+        status=?`, [
             customer_id,
             credit_date,
             terms_condition,
@@ -29,12 +29,13 @@ export default {
             tax_amount,
             discount_amount,
             created_by,
-            tax_exclusive
+            tax_exclusive,
+            status
         ]);
         return result;
     },
 
-    updatedCredit: async ({ customer_id, credit_date, terms_condition, credit_no, sub_total, customer_note, amount,
+    updatedCredit: async ({ customer_id, status, credit_date, terms_condition, credit_no, sub_total, customer_note, amount,
         due_amount, tax_amount, discount_amount, created_by, tax_exclusive }: Credit) => {
         const result = await client.query(`UPDATE ${TABLE.CREDIT_NOTE} 
         SET
@@ -49,7 +50,7 @@ export default {
         discount_amount=?,
         created_by=?,
         tax_exclusive = ?,
-        status=1
+        status=?
         WHERE credit_no = ?`, [
             customer_id,
             credit_date,
@@ -62,6 +63,7 @@ export default {
             discount_amount,
             created_by,
             tax_exclusive,
+            status,
             credit_no]);
 
         return result;
@@ -78,6 +80,20 @@ export default {
             credit_no]);
         return result;
     },
+
+    updatedfrequesymeter: async ({
+        due_amount, credit_no }: Credit) => {
+        const result = await client.query(`UPDATE ${TABLE.CREDIT_NOTE} 
+        SET
+        frequecy = ?,
+        frequency_type = ?,
+        status=1
+        WHERE credit_no = ?`, [
+            due_amount,
+            credit_no]);
+        return result;
+    },
+
 
     getCreditNote: async ({ offset, created_by, page_size }: Credit) => {
         const result = await client.query(
@@ -147,7 +163,7 @@ export default {
         ]);
         return result;
     },
-//updatevendor credit
+    //updatevendor credit
     updatedCreditVendor: async ({ vendor_id, credit_date, credit_no, sub_total, notes, amount,
         due_amount, tax_amount, discount_amount, created_by, tax_exclusive }: Credit) => {
         const result = await client.query(`UPDATE ${TABLE.CREDIT_NOTE_VENDOR} 

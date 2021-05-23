@@ -7,6 +7,7 @@ export default interface Vendor {
   title?: string,
   first_name?: string,
   other_name?: string,
+  recurring?: string,
   company_name?: string,
   vendor_display_name?: string,
   website?: string,

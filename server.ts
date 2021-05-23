@@ -12,6 +12,7 @@ import testRouter from "./routes/connect.route.ts";
 import userRouter from "./routes/user.route.ts";
 import itemRouter from "./routes/item.route.ts";
 
+import moment from "https://deno.land/x/momentjs@2.29.1-deno/mod.ts";
 
 import accoutantRouter from "./routes/accountant.route.ts";
 
@@ -27,7 +28,7 @@ import notFound from './middlewares/notFound.ts';
 import { cron, start, stop, everyMinute, daily, weekly } from 'https://deno.land/x/deno_cron/cron.ts';
 const app = new Application();
 const router = new Router()
-const port: number = 81;
+const port: number = 8091;
 app.use(
   oakCors({
     origin: "*",
@@ -67,7 +68,40 @@ let task = cron('*/.5 * * * * *', async () => {
 
     });
 
-    // console.log(data)
+    let mfrequency;
+
+    if (invoice_no.frequency_type === "Daily") {
+      mfrequency = ((Date.now() / 1000) + (1 * 24 * 60 * 60))
+    }
+    else if (invoice_no.frequency_type === "Weekly") {
+      mfrequency = ((Date.now() / 1000) + (7 * 24 * 60 * 60))
+    }
+    else if (invoice_no.frequency_type === "After 2 Weeks") {
+      mfrequency = ((Date.now() / 1000) + (14 * 24 * 60 * 60))
+    }
+    else if (invoice_no.frequency_type === "Monthly") {
+      mfrequency = ((Date.now() / 1000) + (30 * 24 * 60 * 60))
+    }
+    else if (invoice_no.frequency_type === "After 2 Months") {
+      mfrequency = ((Date.now() / 1000) + (60 * 24 * 60 * 60))
+
+    }
+    else if (invoice_no.frequency_type === "After 3 Months") {
+      mfrequency = ((Date.now() / 1000) + (90 * 24 * 60 * 60))
+    }
+    else if (invoice_no.frequency_type === "After 6 Months") {
+      mfrequency = ((Date.now() / 1000) + (180 * 24 * 60 * 60))
+    }
+    else if (invoice_no.frequency_type === "Yearly") {
+      mfrequency = ((Date.now() / 1000) + (365 * 24 * 60 * 60))
+
+    }
+    else {
+      mfrequency = ((Date.now() / 1000) + (730 * 24 * 60 * 60))
+    }
+
+
+    // moment.unix(this.state.invoice[i].frequecy
 
     // console.log(data)
 
@@ -77,8 +111,8 @@ let task = cron('*/.5 * * * * *', async () => {
           customer_id: data[0].customer_id,
           invoice_no: data[0].invoice_no,
           terms: data[0].terms,
-          due_date: data[0].due_date,
-          invoice_date: data[0].invoice_date,
+          due_date: (moment.unix(mfrequency).format('YYYY-MM-DD HH:mm:ss')).toString(),
+          invoice_date: (moment.unix(Date.now() / 1000).format('YYYY-MM-DD HH:mm:ss')).toString(),
           message_invoice: data[0].message_invoice,
           statement_invoice: data[0].statement_invoice,
           amount: data[0].amount,
@@ -223,12 +257,49 @@ let task = cron('*/.5 * * * * *', async () => {
       const data = await expenseService.getRecurringExpeFilter({
         filter_value: recur_expense.expense_ref,
       });
+
+
+      // let mfrequency;
+
+      // if (recur_expense.frequency_type === "Daily") {
+      //   mfrequency = ((Date.now() / 1000) + (1 * 24 * 60 * 60))
+      // }
+      // else if (recur_expense.frequency_type === "Weekly") {
+      //   mfrequency = ((Date.now() / 1000) + (7 * 24 * 60 * 60))
+      // }
+      // else if (recur_expense.frequency_type === "After 2 Weeks") {
+      //   mfrequency = ((Date.now() / 1000) + (14 * 24 * 60 * 60))
+      // }
+      // else if (recur_expense.frequency_type === "Monthly") {
+      //   mfrequency = ((Date.now() / 1000) + (30 * 24 * 60 * 60))
+      // }
+      // else if (recur_expense.frequency_type === "After 2 Months") {
+      //   mfrequency = ((Date.now() / 1000) + (60 * 24 * 60 * 60))
+
+      // }
+      // else if (recur_expense.frequency_type === "After 3 Months") {
+      //   mfrequency = ((Date.now() / 1000) + (90 * 24 * 60 * 60))
+      // }
+      // else if (recur_expense.frequency_type === "After 6 Months") {
+      //   mfrequency = ((Date.now() / 1000) + (180 * 24 * 60 * 60))
+      // }
+      // else if (recur_expense.frequency_type === "Yearly") {
+      //   mfrequency = ((Date.now() / 1000) + (365 * 24 * 60 * 60))
+
+      // }
+      // else {
+      //   mfrequency = ((Date.now() / 1000) + (730 * 24 * 60 * 60))
+      // }
+
+
+
+
       console.log(data)
       try {
         const submitedexpense = await expenseService.createExpense(
           {
             client_id: data[0].client_id,
-            date: data[0].date,
+            date: (moment.unix(Date.now() / 1000).format('YYYY-MM-DD HH:mm:ss')).toString(),
             expense_account: data[0].expense_account,
             amount: data[0].amount,
             paid_through: data[0].paid_through,
@@ -237,6 +308,7 @@ let task = cron('*/.5 * * * * *', async () => {
             billable: data[0].billable,
             tax_amount: data[0].tax_amount,
             product_name: data[0].product_name,
+            recurring: data[0].recurring,
             customer_id: data[0].customer_id,
 
           }

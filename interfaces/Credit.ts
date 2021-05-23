@@ -15,6 +15,7 @@ export default interface Credit {
   sub_total?: string,
   terms_condition?: string,
   notes?: string,
+  status?: string,
   vendor_id?: string,
   customer_note?: string,
   startDate?: any,
@@ -22,5 +23,5 @@ export default interface Credit {
   endDate?: any,
 
   filter_value?: any,
- 
+
 }

@@ -41,6 +41,7 @@ export default {
         customer_note: values.customer_note,
         terms_condition: values.terms_condition,
         amount: values.amount,
+        status: values.status,
         due_amount: values.due_amount,
         tax_exclusive: values.tax_exclusive,
         discount_amount: values.discount_amount,
@@ -196,6 +197,7 @@ export default {
         customer_note: values.customer_note,
         terms_condition: values.terms_condition,
         amount: values.amount,
+        status: values.status,
         due_amount: values.due_amount,
         tax_exclusive: values.tax_exclusive,
         discount_amount: values.discount_amount,
@@ -250,6 +252,7 @@ export default {
         tax_exclusive: values.tax_exclusive,
         discount_amount: values.discount_amount,
         sub_total: values.sub_total,
+        status: values.status,
         tax_amount: values.tax_amount,
         created_by: values.created_by,
       });

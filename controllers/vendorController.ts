@@ -262,6 +262,64 @@ export default {
   },
 
 
+
+  /**
+ * @description Delete recurring expense
+ */
+  deleteExpenseRecurring: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      // console.log("bayo", kw)
+      let { expense_ref } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      const data = await vendorService.deleteExpenseRecurring({
+        expense_ref: expense_ref,
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        message: "Delete successfully",
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
+  /**
+  * @description Delete expense
+  */
+  deleteExpense: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      // console.log("bayo", kw)
+      let { id } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      const data = await vendorService.deleteExpense({
+        id: Number(id),
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        message: "Delete successfully",
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
   /**
   * @description Delete vendor
   */
@@ -322,6 +380,7 @@ export default {
         vendor_id: values.vendor_id,
         notes: values.notes,
         billable: values.billable,
+        recurring: values.recurring,
         product_name: values.product_name,
         start_time: values.start_time,
         end_time: values.end_time,
@@ -1024,6 +1083,48 @@ export default {
       ctx.response.body = {
         success: false,
         message: `Error: ${error}`,
+      };
+    }
+  },
+
+
+  //frequency
+
+  updatefrequencyexpensefrequency: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
+    const body = await request.body();
+    if (!request.hasBody) {
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      await vendorService.updatefrequencyexpensefrequency({
+        expense_ref: values.expense_ref,
+        frequecy: values.frequecy,
+        frequency_type: values.frequency_type,
+
+      });
+
+      console.log(values)
+      response.body = {
+        status: true,
+        status_code: 200,
+        message: "Updated Successfully",
+      };
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: `${error}`,
       };
     }
   },

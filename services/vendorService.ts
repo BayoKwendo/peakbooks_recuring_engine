@@ -80,18 +80,29 @@ export default {
     },
 
 
-    createExpense: async ({ client_id, date, expense_account, amount, paid_through, customer_id, vendor_id, billable, product_name, notes, tax_amount }: Vendor) => {
+    createExpense: async ({ client_id, date, expense_account, amount, paid_through, recurring, customer_id, vendor_id, billable, product_name, notes, tax_amount }: Vendor) => {
         const result = await client.query(`INSERT INTO ${TABLE.EXPENSES}  SET
               client_id=?, date =?,
               expense_account=?, amount =?, paid_through=?,
               customer_id=?, vendor_id=?, 
-              notes=?,billable=?,product=?, tax_amount= ?`, [
-            client_id, date, expense_account, amount, paid_through, customer_id, vendor_id, notes, billable, product_name, tax_amount
+              notes=?,billable=?,product=?, tax_amount= ?,recurring=?`, [
+            client_id, date, expense_account, amount, paid_through, customer_id,
+            vendor_id, notes, billable, product_name, tax_amount, recurring
         ]);
         return result;
     },
 
 
+
+    deleteExpense: async ({ id }: Vendor) => {
+        const result = await client.query(`DELETE FROM ${TABLE.EXPENSES} WHERE id = ?`, [id]);
+        return result;
+    },
+
+    deleteExpenseRecurring: async ({ expense_ref }: Vendor) => {
+        const result = await client.query(`DELETE FROM ${TABLE.RECURRING_EXPENSE} WHERE expense_ref = ?`, [expense_ref]);
+        return result;
+    },
 
 
     createRecurringExpense: async ({ start_time, end_time, customer_id, frequecy, vendor_id, created_by, frequency_type }: Vendor) => {
@@ -746,7 +757,7 @@ export default {
     },
 
     getExpenses: async ({ offset, client_id, page_size }: Vendor) => {
-        const query = await client.query(`SELECT i.date,i.tax_amount,i.created_at, i.expense_account,  c.customer_display_name, v.vendor_display_name, i.paid_through,i.reference, i.billable,i.product,i.notes, i.amount
+        const query = await client.query(`SELECT i.date,i.tax_amount,i.id,i.created_at,i.recurring,  i.expense_account,  c.customer_display_name, v.vendor_display_name, i.paid_through,i.reference, i.billable,i.product,i.notes, i.amount
         FROM (( ${TABLE.EXPENSES} i
         left join ${TABLE.VENDORS} v ON i.vendor_id = v.id)
         left join ${TABLE.CUSTOMER} c ON i.customer_id = c.id) WHERE i.client_id = ? order by i.id DESC LIMIT ?,?`, [client_id, offset, page_size]);
@@ -907,6 +918,18 @@ export default {
             [expense_ref]);
         return result;
     },
+
+    updatefrequencyexpensefrequency: async ({ frequecy, frequency_type, expense_ref }: Vendor) => {
+        const result = await client.query(
+            `UPDATE ${TABLE.RECURRING_EXPENSE} SET 
+            status = 1,
+            frequecy = ?,
+            frequency_type = ?
+            WHERE expense_ref = ?`,
+            [frequecy, frequency_type, expense_ref]);
+        return result;
+    },
+
 
 
     updatefrequencyexpensestatus2: async ({ expense_ref }: Vendor) => {
