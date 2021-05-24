@@ -671,17 +671,44 @@ export default {
    */
   getDocumets: async (ctx: any) => {
     try {
-      let { page_number, filter_value, id } = getQuery(ctx, { mergeParams: true });
+
+
+      let {
+
+        filter_value,
+        created_by,
+        page_number,
+        page_size,
+        startDate,
+        id,
+        endDate,
+      } = getQuery(ctx, { mergeParams: true });
+
+      console.log(startDate)
+
+      // let { page_number, filter_value, page_size, startDate, endDate, id } = getQuery(ctx, { mergeParams: true });
+
+
       if (filter_value == null || filter_value == "") {
         const total = await userService.getPageSizeDocument({
-          id: id
+          id: id,
+          startDate: startDate,
+          endDate: endDate
         });
+
+        console.log()
+
         if (page_number == null) {
           page_number = "1";
+          page_size = "100"
 
-          const offset = (Number(page_number) - 1) * 10;
+
+          const offset = (Number(page_number) - 1) * Number(page_size);
           const data = await userService.getDocument({
             offset: Number(offset),
+            startDate: startDate,
+            endDate: endDate,
+            page_size: Number(page_size),
             id: id,
           });
           ctx.response.body = {
@@ -691,9 +718,12 @@ export default {
             data: data,
           };
         } else {
-          const offset = (Number(page_number) - 1) * 10;
+          const offset = (Number(page_number) - 1) * Number(page_size);
           const data = await userService.getDocument({
             offset: Number(offset),
+            page_size: Number(page_size),
+            startDate: startDate,
+            endDate: endDate,
             id: id,
           });
 

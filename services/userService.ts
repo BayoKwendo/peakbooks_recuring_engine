@@ -344,15 +344,17 @@ export default {
 
 
   // get document
-  getDocument: async ({ offset, id }: User) => {
+  getDocument: async ({ offset, startDate, endDate, id, page_size }: User) => {
     const result = await client.query(
-      `SELECT * FROM  ${TABLE.DOCUMENTS} WHERE  client_id = ?  LIMIT ?,10 `, [id, offset]);
+      `SELECT * FROM  ${TABLE.DOCUMENTS} WHERE  
+      client_id = ? AND date_created BETWEEN ${startDate} AND ${endDate} ORDER BY id DESC LIMIT ?,? `, [id, offset, page_size]);
     return result;
   },
 
-  getPageSizeDocument: async ({ id }: User) => {
+  getPageSizeDocument: async ({ id, startDate, endDate }: User) => {
     const [result] = await client.query(
-      `SELECT COUNT(id) count FROM  ${TABLE.DOCUMENTS} WHERE  client_id = ? `, [id]);
+      `SELECT COUNT(id) count FROM  ${TABLE.DOCUMENTS} WHERE  
+      client_id = ? AND date_created BETWEEN ${startDate} AND ${endDate}`, [id]);
     return result.count;
   },
 
