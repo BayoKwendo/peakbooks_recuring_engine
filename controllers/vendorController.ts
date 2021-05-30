@@ -339,6 +339,35 @@ export default {
         message: "Delete successfully",
         data: data,
       };
+
+
+      // const total = await invoiceService.getInvoiceItemDelete({
+      //   created_by: Number(created_by),
+      //   filter_value: filter_value,
+      // });
+      // ctx.response.body = {
+      //   status: true,
+      //   status_code: 200,
+      //   message: "Delete successfully",
+      // };
+
+      // if (total > 0) {
+      //   for (let i = 0; i < total; i++) {
+      //     if (total) {
+      //       const data = await invoiceService.getInvoiceDeleteItems({
+      //         created_by: Number(created_by),
+      //         filter_value: filter_value
+      //       });
+      //       if (data) {
+      //         // response.status = 200;
+      //         // response.body = {
+      //         //   status: true,
+      //         //   status_code: 200,
+      //         //   // message: "Client Account has been activated",
+      //       };
+      //     }
+      //   }
+      // }
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = {

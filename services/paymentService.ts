@@ -247,6 +247,7 @@ export default {
             i.due_date,
             i.due_amount,
             i.status, 
+            i.recurring,
             i.bill_date, 
             i.date_modified, 
             i.discount_amount, 
@@ -471,7 +472,7 @@ export default {
     //return paid payment for bils
     getPaymentReceivedpaidbills: async ({ offset, created_by }: Payment) => {
         const result = await client.query(
-            `SELECT i.created, i.reference, i.id, c.vendor_display_name, i.bill_no, i.payment_mode, i.amount_inexcess, i.amount_received FROM 
+            `SELECT i.created, i.reference, i.id, i.paid_amount, c.vendor_display_name, i.bill_no, i.payment_mode, i.amount_inexcess, i.amount_received FROM 
         ${TABLE.PAYMENT_RECEIVED_PAY_BILL} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id WHERE
          c.client_id = ? AND i.status = 1 order by i.id DESC LIMIT ?,10`, [created_by, offset]);
         return result;
@@ -551,7 +552,7 @@ export default {
 
     getBanking: async ({ startDate, endDate, created_by }: Payment) => {
         const result = await client.query(
-        `SELECT f.total, f.peak_amount , f.account_balance, f.account_type
+            `SELECT f.total, f.peak_amount , f.account_balance, f.account_type
           FROM
           
       (

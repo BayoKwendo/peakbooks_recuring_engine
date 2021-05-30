@@ -233,7 +233,8 @@ export default {
               AND i.created_at BETWEEN ${startDate} AND ${endDate} ) 
               UNION ALL
 
-            (   SELECT i.credit_no transaction, 
+            (   
+                SELECT i.credit_no transaction, 
                 CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)) amount,
 
                 if(i.credit_no, "Credit Note", "Credit Note") transaction_type,
@@ -242,10 +243,39 @@ export default {
 
                 if(i.status = "1", "Open", "Closed") status,
 
-                i.created_at date_created, c.customer_display_name customer_name  FROM
+                i.created_at date_created, c.customer_display_name customer_name  
+                FROM
              ${TABLE.CREDIT_NOTE} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
              WHERE i.created_by = ${created_by} 
-             AND i.created_at BETWEEN ${startDate} AND ${endDate}) 
+             AND i.created_at BETWEEN ${startDate} AND ${endDate}
+             ) 
+                UNION ALL
+
+             (
+            
+              SELECT
+
+              if(i.invoice_no, "Customer opening balance", "Cendor opening balance") transaction,
+
+              CAST(c.out_of_balance AS DECIMAL(10,2)) amount,
+
+              if(i.invoice_no, "Invoice", "Invoice") transaction_type,
+
+              if(i.status = "1", 0, CAST(c.out_of_balance AS DECIMAL(10,2))) balance,
+
+              if(i.status = "1", "Paid", "Overdue") status,
+
+              i.created_at date_created, c.customer_display_name customer_name  
+              
+              FROM
+              ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id
+              WHERE i.created_by = ${created_by}  
+              AND i.created_at BETWEEN ${startDate} AND ${endDate}  GROUP BY c.out_of_balance 
+              
+              )
+
+
+              
             ) as t
              order by t.date_created DESC
              LIMIT ${offset},${page_size}
@@ -288,10 +318,10 @@ export default {
              IFNULL(credit_amount, 0) credit_amount, (IFNULL(invoice_amount, 0) - IFNULL(credit_amount, 0)) balance  
              FROM (
 
-             (SELECT  c.customer_display_name, 
+             (SELECT  c.out_of_balance, c.customer_display_name,
              COUNt(i.id) count,
              i.customer_id,
-             sum( CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2))) invoice_amount 
+            CAST((sum(SUBSTRING(replace(IFNULL(i.amount, 0), ',', ''),5)) + IFNULL(c.out_of_balance, 0)) AS DECIMAL(10,2)) invoice_amount
              from
              ${TABLE.CUSTOMER} c 
              left join  ${TABLE.INVOICES} i on c.id = i.customer_id 
