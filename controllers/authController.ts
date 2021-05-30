@@ -35,7 +35,7 @@ export default {
         ctx.response.body = {
           status: false,
           status_code: 400,
-          message: "Email not found",
+          message: "Invalid Email or Password",
         };
         return;
       } else {
@@ -110,7 +110,7 @@ export default {
           ctx.response.body = {
             status: false,
             status_code: 400,
-            message: "Password Incorrect",
+            message: "Invalid Email or Password",
           };
           return;
         }
@@ -268,7 +268,7 @@ export default {
           response.body = {
             status: true,
             status_code: 200,
-            message: "Created Successfully! email has been send",
+            message: "Created Successfully! Email has been sent",
           };
           // } else {
           //   response.body = {
@@ -1259,7 +1259,7 @@ export default {
         response.body = {
           status: false,
           status_code: 400,
-          message: "Email not found",
+          message: "Reset instructions have been sent to your email",
         };
         return;
       } else {
@@ -1281,7 +1281,7 @@ export default {
           response.body = {
             status: true,
             status_code: 200,
-            message: "Success! check your email. Password reset link sent",
+            message: "Reset instructions have been sent to your email",
           };
         }
       }

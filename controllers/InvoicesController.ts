@@ -239,7 +239,7 @@ export default {
         response.body = {
           status: true,
           status_code: 200,
-          message: "Successfully",
+          message: "Added Successfully",
         };
       }
 
