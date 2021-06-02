@@ -566,8 +566,8 @@ export default {
           (
            ( 
             SELECT 
-            IFNULL(SUM(i.amount_received), 0) amount_received,
-            IFNULL(SUM(i.amount_received), 0) amount_received2,
+            IFNULL(SUM(i.paid_amount), 0) amount_received,
+            IFNULL(SUM(i.paid_amount), 0) amount_received2,
             IFNULL((b.account_balance), 0) account_balance,            
             IFNULL((i.deposit_to), "Banks") account_type
             FROM ${TABLE.PAYMENT_RECEIVED_PAY} i 
@@ -580,7 +580,7 @@ export default {
          
             UNION ALL
            (
-             SELECT IFNULL(SUM(i.amount_received), 0) amount_received,
+             SELECT IFNULL(SUM(i.paid_amount), 0) amount_received,
              IFNULL(NULL, 0) amount_received2,
              IFNULL((b.account_balance), 0) account_balance, 
              IFNULL((i.deposit_to), "Banks") account_type  
@@ -621,9 +621,9 @@ export default {
            (
            (
             SELECT
-            IFNULL(SUM(i.amount_received), 0) amount_received,
+            IFNULL(SUM(i.paid_amount), 0) amount_received,
 
-            IFNULL(SUM(i.amount_received), 0) amount_received2,
+            IFNULL(SUM(i.paid_amount), 0) amount_received2,
 
             IFNULL((b.account_balance), 0) account_balance, IFNULL((i.deposit_to), "Petty Cash") account_type
             FROM ${TABLE.PAYMENT_RECEIVED_PAY} i 
@@ -635,7 +635,7 @@ export default {
             )
                UNION ALL
            ( 
-             SELECT IFNULL(SUM(i.amount_received), 0) amount_received,
+             SELECT IFNULL(SUM(i.paid_amount), 0) amount_received,
              IFNULL(NULL, 0) amount_received2,
 
              IFNULL((b.account_balance), 0) account_balance, IFNULL((i.deposit_to), "Petty Cash") account_type  FROM
@@ -668,9 +668,9 @@ export default {
           (
            (
             SELECT
-            IFNULL(SUM(i.amount_received), 0) amount_received,
+            IFNULL(SUM(i.paid_amount), 0) amount_received,
 
-            IFNULL(SUM(i.amount_received), 0) amount_received2,
+            IFNULL(SUM(i.paid_amount), 0) amount_received2,
 
             IFNULL((b.account_balance), 0) account_balance, IFNULL((i.deposit_to), "Undeposited Funds") account_type
             FROM ${TABLE.PAYMENT_RECEIVED_PAY} i 
@@ -682,7 +682,7 @@ export default {
             )
                UNION ALL
            ( 
-             SELECT IFNULL(SUM(i.amount_received), 0) amount_received,
+             SELECT IFNULL(SUM(i.paid_amount), 0) amount_received,
              IFNULL(NULL, 0) amount_received2,
 
              IFNULL((b.account_balance), 0) account_balance, IFNULL((i.deposit_to), "Undeposited Funds") account_type  FROM
