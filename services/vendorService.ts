@@ -273,18 +273,47 @@ export default {
     getVendorSales: async ({ offset, created_by, page_size, startDate, endDate }: Vendor) => {
         const result = await client.query(
             `SELECT 
-             vendor_display_name, IFNULL(count, 0) bill_count, IFNULL(counts, 0) credit_count,
-           
-             IFNULL(count_expense, 0) expense_count,
-           
-             ((IFNULL(bill_amount, 0) + IFNULL(expense_amount, 0))  - IFNULL(credit_amount, 0)) purchase_with_tax,
-            
-             IFNULL(expense_amount, 0),
              
-             (IFNULL(bill_amount, 0) + IFNULL(expense_amount, 0))-(IFNULL(credit_tax, 0)+IFNULL(bill_tax, 0)+IFNULL(credit_amount, 0)) purchases
+            vendor_display_name, IFNULL(count, 0) bill_count, 
+            
+            IFNULL(counts, 0) credit_count,
+             
+            IFNULL(count_expense, 0) expense_count,
+           
+            ((IFNULL(bill_amount, 0) + IFNULL(expense_amount, 0))  - IFNULL(credit_amount, 0)) purchase_with_tax,
+            
+            IFNULL(expense_amount, 0),
+             
+            (IFNULL(bill_amount, 0) + IFNULL(expense_amount, 0))-(IFNULL(credit_tax, 0)+IFNULL(bill_tax, 0)+IFNULL(credit_amount, 0)) purchases
             
              FROM (
-              
+             (SELECT  c.vendor_display_name,
+             COUNt(b.id) count,
+             b.vendor_id,
+             sum( CAST(SUBSTRING(replace(b.amount, ',', ''),5) AS DECIMAL(10,2))) bill_amount, 
+             sum( CAST(SUBSTRING(replace(b.tax_amount, ',', ''),5) AS DECIMAL(10,2))) bill_tax 
+             from
+             ${TABLE.BILLS} b
+             left join  ${TABLE.VENDORS} c on c.id = b.vendor_id 
+             WHERE b.created_by = ${created_by}  
+             AND b.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY c.vendor_display_name) a
+             left join
+             ( 
+             SELECT  
+             d.vendor_display_name vendor,
+             COUNt(n.id) counts,
+             n.vendor_id,
+             sum( CAST(SUBSTRING(replace(n.tax_amount, ',', ''),5) AS DECIMAL(10,2))) credit_tax, 
+             sum( CAST(SUBSTRING(replace(n.amount, ',', ''),5) AS DECIMAL(10,2))) credit_amount
+             from
+             ${TABLE.VENDORS} d 
+             left join  ${TABLE.CREDIT_NOTE_VENDOR} n on n.vendor_id = d.id
+             WHERE n.created_by = ${created_by} 
+             AND n.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY d.vendor_display_name) b
+             on a.vendor_id = b.vendor_id
+             
+             left join
+             (
              SELECT  c.vendor_display_name vendor_name_expense,
              COUNt(e.id) count_expense,
              e.vendor_id,
@@ -300,7 +329,6 @@ export default {
               LIMIT ${offset},${page_size}`);
         return result;
     },
-
 
 
     getVendorSalesSize: async ({ created_by, startDate, endDate }: Vendor) => {

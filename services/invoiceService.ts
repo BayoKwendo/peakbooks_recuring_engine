@@ -81,11 +81,26 @@ export default {
         return result;
     },
 
+    editTaxRate: async ({ tax_name, tax_value, id, created_by }: Invoices) => {
+        const result = await client.query(`UPDATE ${TABLE.TAX_RATES} 
+        SET
+        tax_name=?, 
+        tax_value=?,
+        created_by=? WHERE id = ?`, [
+            tax_name,
+            tax_value,
+            created_by,
+            id
+        ]);
+        return result;
+    },
+
     getTaxRates: async ({ created_by }: Invoices,) => {
         const query = await client.query(`SELECT tax_name, tax_value, date_created, id FROM  ${TABLE.TAX_RATES}
         WHERE created_by = ? LIMIT 10000`, [created_by]);
         return query;
     },
+
 
     deleteTaxRates: async ({ id }: Invoices,) => {
         const query = await client.query(`DELETE FROM  ${TABLE.TAX_RATES}

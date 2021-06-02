@@ -495,6 +495,7 @@ export default {
       const values = await body.value;
       await paymentService.updatePaymentBillUnpaidrecord({
         vendor_id: values.vendor_id,
+        bill_no: values.bill_no
       });
       response.body = {
         status: true,
@@ -530,6 +531,7 @@ export default {
       const values = await body.value;
       await paymentService.updatePaymentUnpaidrecord({
         customer_id: values.customer_id,
+        invoice_no: values.invoice_no
       });
       response.body = {
         status: true,

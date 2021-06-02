@@ -128,7 +128,7 @@ export default {
 
     getPaymentUnpaidrecord: async ({ customer_id }: Payment) => {
         const result = await client.query(
-            `SELECT id FROM  ${TABLE.PAYMENT_RECEIVED_PAY} WHERE status = 0 and customer_id = ?`, [customer_id]);
+            `SELECT id, reference FROM  ${TABLE.PAYMENT_RECEIVED_PAY} WHERE status = 0 and customer_id = ?`, [customer_id]);
         return result;
     },
 
@@ -138,18 +138,20 @@ export default {
         return result;
     },
 
-    updatePaymentBillUnpaidrecord: async ({ vendor_id }: Payment) => {
+    updatePaymentBillUnpaidrecord: async ({ vendor_id, bill_no }: Payment) => {
         const query = await client.query(`UPDATE ${TABLE.PAYMENT_RECEIVED_PAY_BILL} SET 
-        status = 1 
-        WHERE status = 0 and vendor_id = ?`, [vendor_id]);
+        status = 1,
+        bill_no = ? 
+        WHERE status = 0 and vendor_id = ?`, [bill_no, vendor_id]);
         return query;
     },
 
 
-    updatePaymentUnpaidrecord: async ({ customer_id }: Payment) => {
+    updatePaymentUnpaidrecord: async ({ invoice_no,customer_id }: Payment) => {
         const query = await client.query(`UPDATE ${TABLE.PAYMENT_RECEIVED_PAY} SET 
-        status = 1 
-        WHERE status = 0 and customer_id = ?`, [customer_id]);
+        status = 1,
+        invoice_no = ?
+        WHERE status = 0 and customer_id = ?`, [invoice_no,customer_id]);
         return query;
     },
 

@@ -1365,11 +1365,7 @@ export default {
         created_by,
       } = getQuery(ctx, { mergeParams: true });
 
-      const total = await vendorService.getVendorSalesSize({
-        created_by: created_by,
-        startDate: startDate,
-        endDate: endDate,
-      });
+      const total = 0;
 
       if (page_number == null) {
         page_number = "1";

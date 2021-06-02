@@ -173,7 +173,6 @@ export default {
              bill_item,
              IFNULL((bill_amount - credit_amount), 0) amount,
              IFNULL((bill_quantity - credit_quantity), 0) quantity,
-
              IFNULL(CAST( (IFNULL((bill_quantity - credit_amount), 0)/IFNULL((bill_quantity - credit_quantity), 0))  AS DECIMAL(10,2)), 0)  avarage
 
              FROM ( 
