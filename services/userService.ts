@@ -214,9 +214,9 @@ export default {
 
 
 
-  getClients: async ({ offset, status }: User) => {
+  getClients: async ({ offset, status, page_size }: User) => {
     const result = await client.query(
-      `SELECT * FROM  ${TABLE.USERS} WHERE role_id = 2 AND status = ? GROUP BY client_id ORDER BY id DESC LIMIT ?,10 `, [status, offset]);
+      `SELECT * FROM  ${TABLE.USERS} WHERE role_id = 2 AND status = ? GROUP BY client_id ORDER BY id DESC LIMIT ?,? `, [status, offset, page_size]);
     return result;
   },
 
@@ -279,9 +279,10 @@ export default {
   },
 
   //update organization profile
-  updateUserCurrency: async ({ currency, company_name, business_pin, financial_year, msisdn, id }: User,) => {
-    const query = await client.query(`UPDATE  ${TABLE.USERS} SET currency = ?, company_name = ?, business_pin=?,financial_year = ?,msisdn=?
-         WHERE id = ? `, [currency, company_name, business_pin, financial_year, msisdn, id]);
+  updateUserCurrency: async ({ currency, company_name, postal_address, business_pin, financial_year, msisdn, id }: User,) => {
+    const query = await client.query(`UPDATE  ${TABLE.USERS} SET currency = ?, company_name = ?, business_pin=?,
+    financial_year = ?,msisdn=?, postal_address = ?
+         WHERE id = ? `, [currency, company_name, business_pin, financial_year, msisdn, postal_address, id]);
     return query;
   },
 

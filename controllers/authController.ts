@@ -542,6 +542,7 @@ export default {
         currency: values.currency,
         company_name: values.company_name,
         business_pin: values.business_pin,
+        postal_address: values.postal_address,
         financial_year: values.financial_year,
         msisdn: values.msisdn,
         id: values.client_id
@@ -607,7 +608,7 @@ export default {
    */
   getClients: async (ctx: any) => {
     try {
-      let { page_number, filter_value, status } = getQuery(ctx, { mergeParams: true });
+      let { page_number, filter_value, page_size, status } = getQuery(ctx, { mergeParams: true });
       if (filter_value == null || filter_value == "") {
         const total = await userService.getPageSizeCLient({
           status: status
@@ -617,10 +618,12 @@ export default {
 
         if (page_number == null) {
           page_number = "1";
+          page_size = "50";
 
           const offset = (Number(page_number) - 1) * 10;
           const data = await userService.getClients({
             offset: Number(offset),
+            page_size: Number(page_size),
             status: status,
           });
           ctx.response.body = {
@@ -633,6 +636,7 @@ export default {
           const offset = (Number(page_number) - 1) * 10;
           const data = await userService.getClients({
             offset: Number(offset),
+            page_size: Number(page_size),
             status: status,
           });
 

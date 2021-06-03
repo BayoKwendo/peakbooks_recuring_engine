@@ -162,7 +162,7 @@ export default {
 
     getPaymentReceivedUnpaid: async ({ offset, created_by, page_size }: Payment) => {
         const result = await client.query(
-            `SELECT i.created, i.reference, i.id, i.paid_amount, c.customer_display_name, i.invoice_no,i.payment_mode,i.amount_inexcess,i.amount_received FROM 
+            `SELECT i.created, i.reference, i.id, i.paid_amount,i.payment_date, c.customer_display_name, i.invoice_no,i.payment_mode,i.amount_inexcess,i.amount_received FROM 
         ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
          c.client_id = ? AND i.status = 1 order by i.id DESC LIMIT ?,?`, [created_by, offset, page_size]);
         return result;
@@ -474,7 +474,7 @@ export default {
     //return paid payment for bils
     getPaymentReceivedpaidbills: async ({ offset, created_by }: Payment) => {
         const result = await client.query(
-            `SELECT i.created, i.reference, i.id, i.paid_amount, c.vendor_display_name, i.bill_no, i.payment_mode, i.amount_inexcess, i.amount_received FROM 
+            `SELECT i.created, i.reference, i.id, i.paid_amount,i.payment_date, c.vendor_display_name, i.bill_no, i.payment_mode, i.amount_inexcess, i.amount_received FROM 
         ${TABLE.PAYMENT_RECEIVED_PAY_BILL} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id WHERE
          c.client_id = ? AND i.status = 1 order by i.id DESC LIMIT ?,10`, [created_by, offset]);
         return result;
