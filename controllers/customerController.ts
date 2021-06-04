@@ -151,8 +151,8 @@ export default {
 
         if (page_number == null) {
           page_number = "1";
-          page_size = "10";
-          const offset = (Number(page_number) - 1) * 10;
+          page_size = "100";
+          const offset = (Number(page_number) - 1) * Number(page_size);
           const data = await customerServices.getAll({
             client_id: client_id,
             page_size: Number(page_size),
@@ -165,7 +165,7 @@ export default {
             data: data,
           };
         } else {
-          const offset = (Number(page_number) - 1) * 10;
+          const offset = (Number(page_number) - 1) * Number(page_size);
           const data = await customerServices.getAll({
             client_id: client_id,
             page_size: Number(page_size),
