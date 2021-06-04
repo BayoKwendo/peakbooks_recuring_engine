@@ -1136,7 +1136,8 @@ export default {
             body: JSON.stringify({
               apiKey: "8f15430edfeb253fb0961c36e0fee0cc",
               shortCode: "PEAKBOOKS",
-              message: "Dear " + values.name + "\n\nThis is to confirm that your subscription to " + values.plan_type + " plan was succesfully. \n\nYour plan is due on " + values.subscription,
+              message: "Dear " + values.name + "\n\nThis is to confirm that your subscription to " +
+                values.plan_type + " plan was succesfully. \n\nYour plan is due on " + values.subscription,
               recipient: values.msisdn.toString(),
               callbackURL: "https://api.vaspro.co.ke",
               enqueue: 0,
@@ -1144,11 +1145,31 @@ export default {
           }
         );
         if (postRequest) {
-          ctx.response.body = {
-            status: true,
-            status_code: 200,
-            message: "SUCCESS!!",
-          };
+          const postRequest = await fetch('https://www.peakbooks.biz:9000/insightphp/peakBooksEmailPaymentAcknowledgemnt.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              company_name: values.name,
+              email: values.email,
+              subscription: values.subscription
+            })
+          })
+          if (postRequest) {
+
+            ctx.response.body = {
+              status: true,
+              status_code: 200,
+              message: "SUCCESS!!",
+            };
+          }else{
+            ctx.response.body = {
+              status: true,
+              status_code: 200,
+              message: "SUCCESS!!",
+            };
+          }
         }
       } else {
         ctx.response.body = {
@@ -1208,11 +1229,31 @@ export default {
           }
         );
         if (postRequest) {
-          ctx.response.body = {
-            status: true,
-            status_code: 200,
-            message: "SUCCESS!!",
-          };
+          const postRequest = await fetch('https://www.peakbooks.biz:9000/insightphp/peakBooksEmailPaymentAcknowledgemnt.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              company_name: values.name,
+              email: values.email,
+              subscription: values.subscription
+            })
+          })
+          if (postRequest) {
+
+            ctx.response.body = {
+              status: true,
+              status_code: 200,
+              message: "SUCCESS!!",
+            };
+          } else {
+            ctx.response.body = {
+              status: true,
+              status_code: 200,
+              message: "SUCCESS!!",
+            };
+          }
         }
       } else {
         ctx.response.body = {
