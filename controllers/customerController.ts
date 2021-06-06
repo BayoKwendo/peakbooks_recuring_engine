@@ -184,6 +184,7 @@ export default {
 
         const data = await customerServices.getCustomerFilter({
           filter_value: filter_value,
+          client_id: client_id
         });
 
         ctx.response.body = {

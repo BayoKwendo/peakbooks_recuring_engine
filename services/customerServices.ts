@@ -175,14 +175,15 @@ export default {
     return query;
   },
 
-  getCustomerFilter: async ({ filter_value }: Customers) => {
+  getCustomerFilter: async ({ filter_value, client_id }: Customers) => {
     const result = await client.query(
-      `SELECT * FROM  ${TABLE.CUSTOMER} WHERE id = ?`,
-      [filter_value]
+      `SELECT * FROM  ${TABLE.CUSTOMER} WHERE company_name = ? AND client_id = ?`,
+      [filter_value, client_id]
     );
     return result;
   },
 
+  
   getCustomerBalance: async ({ client_id, startDate, endDate }: Customers) => {
     const result = await client.query(
       `SELECT  IFNULL(SUM(IFNULL(out_of_balance, 0)), 0) out_of_balance FROM  ${TABLE.CUSTOMER} b LEFT JOIN ${TABLE.CUSTOMER_MORE} c ON b.id = c.customer_id WHERE

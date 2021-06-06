@@ -297,6 +297,51 @@ export default {
     }
   },
 
+
+
+//update invoices to send or not
+  updateInvoiceSent: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
+    const body = await request.body();
+    const values = await body.value;
+    if (!request.hasBody) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      //
+      const body222 = await invoiceService.updateInvoiceSent({
+        filter_value: values.filter_value,
+      });
+      if (body222) {
+        response.body = {
+          status: true,
+          status_code: 200,
+          message: "Updated Successfully",
+        };
+      }
+
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        status: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+  
+
   /**
   * @description Get all Taxra
   */

@@ -644,6 +644,8 @@ export default {
     },
 
 
+
+
     getOneInvoices: async ({ offset, created_by, estimate }: Invoices) => {
         const result = await client.query(
             `SELECT i.invoice_no, i.terms, i.due_date, i.status,i.id, i.invoice_date, i.approved, i.discount_amount, i.sub_total, i.tax_amount, i.message_invoice,i.statement_invoice,
@@ -831,6 +833,13 @@ export default {
     updateInvoiceItems: async ({ invoice_no, filter_value, created_by }: Invoices) => {
         const result = await client.query(
             `UPDATE ${TABLE.INVOICE_ITEMS} SET invoice_no = ? WHERE invoice_no = ? AND client_id = ?`, [invoice_no, filter_value, created_by]);
+        return result;
+    },
+
+
+    updateInvoiceSent: async ({  filter_value }: Invoices) => {
+        const result = await client.query(
+            `UPDATE ${TABLE.INVOICES} SET status = 3, approved = 1 WHERE id = ?`, [filter_value]);
         return result;
     },
 

@@ -22,6 +22,9 @@ router
   .put("/recurringinvoice2", authorize, InvoicesController.updatefrequencystatus2)
   .get("/estimateupdate", authorize, InvoicesController.getInvoiceFilterEstimate)
   .get("/newinvoice", authorize, InvoicesController.getInvoiceNo)
+  .put("/invoicesent", authorize, InvoicesController.updateInvoiceSent)
+
+
 
 
 

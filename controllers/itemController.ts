@@ -114,7 +114,10 @@ export default {
       const total = await itemService.getPageSizeItem({
         client_id: Number(client_id),
       });
-      console.log(page_size, '||| params');
+      console.log(filter_value, '||| params');
+
+
+
 
 
       if (filter_value == null || filter_value == "") {
@@ -122,9 +125,9 @@ export default {
         if (page_number == null) {
           page_number = "1";
 
-          page_size = "10";
+          page_size = "100";
 
-          const offset = (Number(page_number) - 1) * 10;
+          const offset = (Number(page_number) - 1) * Number(page_size);
 
           const data = await itemService.getItems({
             offset: Number(offset),
@@ -138,7 +141,7 @@ export default {
             data: data
           };
         } else {
-          const offset = (Number(page_number) - 1) * 10;
+          const offset = (Number(page_number) - 1) * Number(page_size);
           const data = await itemService.getItems({
             offset: Number(offset),
             page_size: Number(page_size),

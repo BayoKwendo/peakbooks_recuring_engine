@@ -52,9 +52,12 @@ export default {
 
     getItemFilter: async ({ filter_value, client_id }: Item) => {
         const result = await client.query(
-            `SELECT * FROM  ${TABLE.ITEMS} WHERE item_name = ? AND client_id = ?`, [filter_value, client_id]);
+            `SELECT * FROM  ${TABLE.ITEMS} WHERE item_name = "${filter_value}" AND client_id = ?`, [client_id]);
         return result;
     },
+
+
+    
     getPageSizeItem: async ({ client_id }: Item) => {
         const [result] = await client.query(
             `SELECT COUNT(id) count FROM ${TABLE.ITEMS} WHERE client_id = ? `, [client_id]);
