@@ -209,7 +209,7 @@ export default {
       if (filter_value == null || filter_value == "") {
         if (page_number == null) {
           page_number = "1";
-          page_size = "10";
+          page_size = "100";
           const offset = (Number(page_number) - 1) * Number(page_size);
           const data = await vendorService.getAll({
             client_id: client_id,
@@ -1206,7 +1206,7 @@ export default {
       if (filter_value == null || filter_value == "") {
         if (page_number == null) {
           page_number = "1";
-          page_size = "10";
+          page_size = "100";
           const offset = (Number(page_number) - 1) * 10;
           const data = await vendorService.getExpenses({
             client_id: client_id,
@@ -1297,7 +1297,7 @@ export default {
       if (filter_value == null || filter_value == "") {
         if (page_number == null) {
           page_number = "1";
-          page_size = "10";
+          page_size = "100";
           const offset = (Number(page_number) - 1) * 10;
           const data = await vendorService.getRecurringExpenses({
             client_id: client_id,

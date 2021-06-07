@@ -501,7 +501,7 @@ export default {
              FROM 
             ${TABLE.INVOICES} i
             inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
-            WHERE i.created_by = ${created_by} AND i.status = "0" AND i.estimate = '0'
+            WHERE i.created_by = ${created_by} AND i.status = "0" AND i.approved = 1 AND i.estimate = '0'
             AND i.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY c.customer_display_name 
             order by i.date_modified DESC LIMIT ${offset},${page_size}`);
         return result;
@@ -525,10 +525,9 @@ export default {
 
     getInvoicesAmount: async ({ created_by, startDate, endDate }: Invoices) => {
         const result = await client.query(
-            `SELECT  IFNULL(sum( CAST(SUBSTRING(replace(amount, ',', ''),5) AS DECIMAL(10,2))), 0) amount
-            FROM
-            ${TABLE.INVOICES}  
-            WHERE created_by = ${created_by} AND estimate=0 AND created_at BETWEEN ${startDate} AND ${endDate}`);
+            `SELECT  IFNULL(sum( CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2))), 0) amount
+            FROM ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id
+            WHERE created_by = ${created_by} AND i.estimate=0 AND i.approved = 1 AND i.created_at BETWEEN ${startDate} AND ${endDate}`);
         console.log(endDate)
 
         return result;
