@@ -203,6 +203,35 @@ export default {
     }
   },
 
+
+  getOneCustomersFilter: async (ctx: any) => {
+    try {
+      // console.log("bayo", kw)
+      let { page_number, filter_value, page_size, client_id } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      // console.log(filter_value, '||| params');
+      const data = await customerServices.getCustomerGetOne({
+        filter_value: filter_value
+      });
+
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data
+      };
+
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
+
   /**
    * @description Get One Customer balance
    */

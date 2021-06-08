@@ -7,10 +7,11 @@ const router2 = new Router();
 
 router2
   .post("/customer",authorize, customerController.createCustomer)
-
   .get("/customer",authorize, customerController.getAllCustomers)
   .put("/customer",authorize, customerController.updateUserCustomer)
   .delete("/customer", authorize, customerController.deleteCustomer)
+  .get("/customeredit", authorize, customerController.getOneCustomersFilter)
+
 
   .put("/customermore",authorize, customerController.updateUserCustomerMore)
 

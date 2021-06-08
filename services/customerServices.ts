@@ -177,13 +177,20 @@ export default {
 
   getCustomerFilter: async ({ filter_value, client_id }: Customers) => {
     const result = await client.query(
-      `SELECT * FROM  ${TABLE.CUSTOMER} WHERE company_name = ? AND client_id = ?`,
-      [filter_value, client_id]
+      `SELECT * FROM  ${TABLE.CUSTOMER} WHERE company_name like "%${filter_value}%" AND client_id = ${client_id}`
     );
     return result;
   },
 
-  
+
+  getCustomerGetOne: async ({ filter_value }: Customers) => {
+    const result = await client.query(
+      `SELECT * FROM  ${TABLE.CUSTOMER} WHERE id = ?`,
+      [filter_value]
+    );
+    return result;
+  },
+
   getCustomerBalance: async ({ client_id, startDate, endDate }: Customers) => {
     const result = await client.query(
       `SELECT  IFNULL(SUM(IFNULL(out_of_balance, 0)), 0) out_of_balance FROM  ${TABLE.CUSTOMER} WHERE
