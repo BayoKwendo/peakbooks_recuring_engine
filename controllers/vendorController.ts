@@ -456,6 +456,66 @@ export default {
     }
   },
 
+  /**
+   * @description Add a new vendor
+   */
+  editExpense: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
+    const body = await request.body();
+    if (!request.hasBody) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      const body222 = await vendorService.editExpense({
+        client_id: values.client_id,
+        date: values.date,
+        expense_account: values.expense_account,
+        amount: values.amount,
+        paid_through: values.paid_through,
+        tax_amount: values.tax_amount,
+        vendor_id: values.vendor_id,
+        notes: values.notes,
+        billable: values.billable,
+        recurring: values.recurring,
+        product_name: values.product_name,
+        start_time: values.start_time,
+        end_time: values.end_time,
+        frequecy: values.frequecy,
+        frequency_type: values.frequency_type,
+        customer_id: values.customer_id,
+        created_by: values.client_id,
+        id: values.id
+      });
+      if (body222) {
+        if (values.frequecy == null) {
+          response.body = {
+            status: true,
+            status_code: 200,
+            message: "Expense Edited Successfully"
+          };
+        }
+      }
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        status: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+
   updatefrequencyexpensestatus: async ({
     request,
     response,
@@ -514,6 +574,28 @@ export default {
     }
   },
 
+  getExpenseOne: async (ctx: any) => {
+    try {
+      let { id } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      const data = await vendorService.getExpense({
+        id: Number(id)
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
   getInvestmentReport: async (ctx: any) => {
     try {
       let { client_id, startDate, endDate } = getQuery(ctx, {
@@ -537,6 +619,7 @@ export default {
       };
     }
   },
+
 
   getVendorCredit: async (ctx: any) => {
     try {

@@ -93,9 +93,39 @@ export default {
     },
 
 
+    editExpense: async ({ client_id, date, expense_account, amount, id, paid_through, recurring,
+        customer_id, vendor_id, billable, product_name, notes,
+        tax_amount }: Vendor) => {
+        const result = await client.query(`UPDATE ${TABLE.EXPENSES}  
+              SET
+              client_id=?, 
+              date =?,
+              expense_account=?, 
+              amount =?, 
+              paid_through=?,
+              customer_id=?, 
+              vendor_id=?, 
+              notes=?,
+              billable =?,
+              product = ?, 
+              tax_amount = ?,
+              recurring = ? 
+              WHERE id = ?`, [client_id, date,
+            expense_account, amount, paid_through, customer_id,
+            vendor_id, notes, billable, product_name, tax_amount, recurring, id
+        ]);
+        return result;
+    },
+
+    
 
     deleteExpense: async ({ id }: Vendor) => {
         const result = await client.query(`DELETE FROM ${TABLE.EXPENSES} WHERE id = ?`, [id]);
+        return result;
+    },
+
+    getExpense: async ({ id }: Vendor) => {
+        const result = await client.query(`SELECT * FROM ${TABLE.EXPENSES} WHERE id = ?`, [id]);
         return result;
     },
 

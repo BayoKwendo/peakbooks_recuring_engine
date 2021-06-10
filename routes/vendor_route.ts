@@ -10,9 +10,12 @@ router
   .delete("/vendor", authorize, vendorController.deleteVendor)
 
 
+//expenses
+  .get("/expenseone", authorize, vendorController.getExpenseOne)
   .post("/expense", authorize, vendorController.createExpense)
   .get("/expense", authorize, vendorController.getAllExpenses)
   .delete("/expense", authorize, vendorController.deleteExpense)
+  .put("/expense", authorize, vendorController.editExpense)
 
 
   .get("/expensejournal", authorize, vendorController.getExpensesJournal)
