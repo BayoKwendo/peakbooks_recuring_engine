@@ -299,7 +299,7 @@ export default {
 
 
 
-//update invoices to send or not
+  //update invoices to send or not
   updateInvoiceSent: async ({
     request,
     response,
@@ -340,7 +340,7 @@ export default {
     }
   },
 
-  
+
 
   /**
   * @description Get all Taxra
@@ -452,6 +452,38 @@ export default {
       };
     }
   },
+
+
+
+  // delete invoice item from
+
+  getInvoiceDeleteItems: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      // console.log("bayo", kw)
+      let { filter_value, created_by } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      const data = await invoiceService.getInvoiceDeleteItems({
+        created_by: Number(created_by),
+        filter_value: filter_value
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        message: "Delete successfully",
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
 
 
   /**
@@ -1615,7 +1647,7 @@ export default {
 
 
   /**
-  * @description Get all Invoices List
+  * @description Get Delete Recurring invoice
   */
   deleteRecurringInvoices: async (ctx: any) => {
     try {

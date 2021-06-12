@@ -24,6 +24,8 @@ router
   .get("/newinvoice", authorize, InvoicesController.getInvoiceNo)
   .put("/invoicesent", authorize, InvoicesController.updateInvoiceSent)
 
+  .delete("/invoiceitemdelete", authorize, InvoicesController.getInvoiceDeleteItems)
+
 
 
 
