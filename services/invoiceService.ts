@@ -836,18 +836,37 @@ export default {
     },
 
 
-    updateInvoiceSent: async ({  filter_value }: Invoices) => {
+    updateInvoiceSent: async ({ filter_value }: Invoices) => {
         const result = await client.query(
             `UPDATE ${TABLE.INVOICES} SET status = 3, approved = 1 WHERE id = ?`, [filter_value]);
         return result;
     },
 
-
-    getInvoiceDeleteItems: async ({ filter_value, created_by }: Invoices) => {
+    // delete invoice items
+    getInvoiceDeleteItems: async ({ filter_value }: Invoices) => {
         const result = await client.query(
-            `DELETE FROM ${TABLE.INVOICE_ITEMS} WHERE invoice_no = ? AND client_id = ?`, [filter_value, created_by]);
+            `DELETE FROM ${TABLE.INVOICE_ITEMS} WHERE id = ?`, [filter_value]);
         return result;
     },
+    //select items
+    selectItemQuantity: async ({ item_name, quantity, created_by }: Invoices) => {
+        const [query] = await client.query(`SELECT quantity FROM ${TABLE.ITEMS} 
+         WHERE item_name = ? AND client_id = ?`, [item_name, created_by]);
+        return query;
+    },
+
+    // update item quantity
+    updateItemQuantity: async ({ item_name, quantity, created_by }: Invoices) => {
+        const query = await client.query(`UPDATE ${TABLE.ITEMS} SET 
+         quantity = ? 
+         WHERE item_name = ? AND client_id = ?`, [quantity, item_name, created_by]);
+        return query;
+    },
+
+
+
+
+
 
 
     getInvoiceItemDelete: async ({ filter_value, created_by }: Invoices) => {

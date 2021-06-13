@@ -461,19 +461,46 @@ export default {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
-      let { filter_value, created_by } = getQuery(ctx, {
+      let { filter_value, item_name, quantity, created_by } = getQuery(ctx, {
         mergeParams: true,
       });
       const data = await invoiceService.getInvoiceDeleteItems({
         created_by: Number(created_by),
         filter_value: filter_value
       });
-      ctx.response.body = {
-        status: true,
-        status_code: 200,
-        message: "Delete successfully",
-        data: data,
-      };
+
+      console.log(data.affectedRows)
+
+      if (data.affectedRows > 0) {
+
+        console.log("DONE")
+
+        const itemselect = await invoiceService.selectItemQuantity({
+          created_by: Number(created_by),
+          item_name: item_name,
+          quantity: Number(quantity),
+          filter_value: filter_value
+        });
+
+        let final_quantity = itemselect.quantity + Number(quantity);
+
+        if (itemselect) {
+          const data = await invoiceService.updateItemQuantity({
+            created_by: Number(created_by),
+            item_name: item_name,
+            quantity: final_quantity,
+            filter_value: filter_value
+          });
+          if (data) {
+            ctx.response.body = {
+              status: true,
+              status_code: 200,
+              message: "Delete successfully",
+              data: data,
+            };
+          }
+        }
+      }
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = {
@@ -482,6 +509,7 @@ export default {
       };
     }
   },
+
 
 
 

@@ -203,7 +203,6 @@ export default {
     }
   },
 
-
   getOneCustomersFilter: async (ctx: any) => {
     try {
       // console.log("bayo", kw)
@@ -364,6 +363,50 @@ export default {
       };
     }
   },
+
+
+
+
+  /**
+   * @description Get Update Customer open balace
+   */
+  updateOutofBalance: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
+    const body = await request.body();
+    if (!request.hasBody) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      await customerServices.updateOutofBalance({
+        customer_id: values.customer_id,
+        out_of_balance: values.out_of_balance
+      });
+      response.body = {
+        status: true,
+        status_code: 200,
+        message: "Customer Updated Successfully",
+      };
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+
 
 
 

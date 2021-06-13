@@ -126,6 +126,23 @@ export default {
     return query;
   },
 
+
+  updateOutofBalance: async ({
+    out_of_balance,
+    customer_id,
+  }: Customers) => {
+    const query = await client.query(
+      `UPDATE ${TABLE.CUSTOMER} SET 
+        out_of_balance=?
+        WHERE id = ?`,
+      [
+        out_of_balance, customer_id,
+      ]
+    );
+    return query;
+  },
+
+
   getCustomerMore: async ({ customer_id }: Customers) => {
     const query = await client.query(
       `SELECT * FROM ${TABLE.CUSTOMER_MORE} WHERE customer_id = ?`,

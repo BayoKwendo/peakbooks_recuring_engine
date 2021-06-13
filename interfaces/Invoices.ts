@@ -42,6 +42,8 @@ export default interface Bet {
   reference?: string,
   notes?: string,
   vendor_id?: string,
+  item_name?: string,
+  quantity?: number,
   startDate?: any,
   endDate?: any,
   approved?: string,

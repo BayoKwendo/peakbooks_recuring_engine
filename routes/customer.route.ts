@@ -12,6 +12,8 @@ router2
   .delete("/customer", authorize, customerController.deleteCustomer)
   .get("/customeredit", authorize, customerController.getOneCustomersFilter)
 
+  .put("/updateopenbalance", authorize, customerController.updateOutofBalance)
+
 
   .put("/customermore",authorize, customerController.updateUserCustomerMore)
 
