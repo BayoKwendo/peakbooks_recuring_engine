@@ -54,6 +54,7 @@ router
   .delete("/tax", authorize, InvoicesController.deleteTaxRates)
 
   .delete("/invoice", authorize, InvoicesController.deleteInvoices)
+  
 
   .delete("/recurringinvoice", authorize, InvoicesController.deleteRecurringInvoices)
 

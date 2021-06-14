@@ -426,6 +426,7 @@ export default {
           status_code: 200,
           message: "Delete successfully",
         };
+        
 
         if (total > 0) {
           for (let i = 0; i < total; i++) {
