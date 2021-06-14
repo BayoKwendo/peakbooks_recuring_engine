@@ -414,6 +414,8 @@ export default {
       });
 
 
+
+
       if (data) {
         const total = await invoiceService.getInvoiceItemDelete({
           created_by: Number(created_by),
@@ -428,10 +430,12 @@ export default {
         if (total > 0) {
           for (let i = 0; i < total; i++) {
             if (total) {
-              const data = await invoiceService.getInvoiceDeleteItems({
+              const data = await invoiceService.invoiceDeleteItems({
                 created_by: Number(created_by),
                 filter_value: filter_value
               });
+
+              console.log(data)
               if (data) {
                 // response.status = 200;
                 // response.body = {

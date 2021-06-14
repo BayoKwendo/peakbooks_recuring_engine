@@ -829,6 +829,9 @@ export default {
     },
 
 
+
+
+
     updateInvoiceItems: async ({ invoice_no, filter_value, created_by }: Invoices) => {
         const result = await client.query(
             `UPDATE ${TABLE.INVOICE_ITEMS} SET invoice_no = ? WHERE invoice_no = ? AND client_id = ?`, [invoice_no, filter_value, created_by]);
@@ -848,6 +851,15 @@ export default {
             `DELETE FROM ${TABLE.INVOICE_ITEMS} WHERE id = ?`, [filter_value]);
         return result;
     },
+
+    // delete invoice items for invoice
+    invoiceDeleteItems: async ({ filter_value, created_by }: Invoices) => {
+        const result = await client.query(
+            `DELETE FROM ${TABLE.INVOICE_ITEMS} WHERE invoice_no = ? AND client_id = ?`, [filter_value, created_by]);
+        return result;
+    },
+
+
     //select items
     selectItemQuantity: async ({ item_name, quantity, created_by }: Invoices) => {
         const [query] = await client.query(`SELECT quantity FROM ${TABLE.ITEMS} 
