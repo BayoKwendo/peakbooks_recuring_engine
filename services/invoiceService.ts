@@ -217,7 +217,7 @@ export default {
            
             DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) period,
            
-            i.due_date, i.status, i.invoice_date, i.date_modified, i.discount_amount, i.recurring, i.sub_total, i.tax_amount, i.message_invoice,i.statement_invoice,
+            i.due_date, i.currency_type, i.status, i.invoice_date, i.date_modified, i.discount_amount, i.recurring, i.sub_total, i.tax_amount, i.message_invoice,i.statement_invoice,
 
             i.due_amount, i.amount, c.customer_display_name,c.email, c.company_name  FROM 
           
