@@ -31,6 +31,7 @@ export default interface Bet {
   start_time?: string,
   page_size?: number,
   end_time?: string,
+  currency_type?: string,
   frequecy?: string,
   recurring?: string,
   frequency_type?: string,

@@ -3,11 +3,12 @@ import { TABLE } from "../db/config.ts";
 import Invoices from "../interfaces/Invoices.ts";
 
 export default {
-    createInvoice: async ({ customer_id, invoice_no, terms, due_date, invoice_date, message_invoice, sub_total, statement_invoice, amount,
+    createInvoice: async ({ customer_id, invoice_no, currency_type, terms, due_date, invoice_date, message_invoice, sub_total, statement_invoice, amount,
         due_amount, tax_amount, discount_amount, recurring, created_by, estimate, reference, tax_exclusive, sales_person_id, approved }: Invoices) => {
         const result = await client.query(`INSERT INTO ${TABLE.INVOICES}  SET
         customer_id=?, invoice_no = ?, terms=?, due_date =?, invoice_date =?, message_invoice=?,sub_total=?,
-        statement_invoice=?, 
+        statement_invoice=?,
+        currency_type=?,
         amount=?, 
         due_amount=?,
         tax_amount=?, 
@@ -27,6 +28,7 @@ export default {
             message_invoice,
             sub_total,
             statement_invoice,
+            currency_type,
             amount,
             due_amount,
             tax_amount,

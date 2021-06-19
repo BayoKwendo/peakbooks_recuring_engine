@@ -48,6 +48,7 @@ export default {
         tax_exclusive: values.tax_exclusive,
         sales_person_id: values.sales_person_id,
         estimate: values.estimate,
+        currency_type: values.currency_type,
         due_amount: values.due_amount,
         approved: values.approved,
         discount_amount: values.discount_amount,
