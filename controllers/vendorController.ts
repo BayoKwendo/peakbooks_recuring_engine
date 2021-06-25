@@ -403,6 +403,8 @@ export default {
         client_id: values.client_id,
         date: values.date,
         expense_account: values.expense_account,
+        reference: values.ref_no,
+
         amount: values.amount,
         paid_through: values.paid_through,
         tax_amount: values.tax_amount,

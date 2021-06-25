@@ -151,7 +151,7 @@ export default {
         const query = await client.query(`UPDATE ${TABLE.PAYMENT_RECEIVED_PAY} SET 
         status = 1,
         invoice_no = ?
-        WHERE status = 0 and customer_id = ?`, [invoice_no, customer_id]);
+        WHERE id = ?`, [invoice_no, customer_id]);
         return query;
     },
 

@@ -388,15 +388,52 @@ export default {
     }
     try {
       const values = await body.value;
-      await customerServices.updateOutofBalance({
+      const update = await customerServices.updateOutofBalance({
         customer_id: values.customer_id,
         out_of_balance: values.out_of_balance
       });
-      response.body = {
-        status: true,
-        status_code: 200,
-        message: "Customer Updated Successfully",
-      };
+
+      if (update) {
+        const insert = await customerServices.insertOutofBalance({
+          filter_value: values.payment_received_id,
+          out_of_balance: values.out_of_balance,
+          amount: values.amount
+        });
+
+
+
+        // const balance = Number(values.amount) - Number(values.out_of_balance);
+
+        if (insert) {
+          // alert(balance.toString())
+          await customerServices.updatePaymentReceiveRecipt({
+            filter_value: values.payment_received_id,
+            out_of_balance: values.openbalance_received,
+            amount: values.amount_2
+          });
+
+
+          console.log({
+
+            filter_value: values.payment_received_id,
+            out_of_balance: values.openbalance_received,
+            amount: values.amount
+          })
+
+
+          response.body = {
+            status: true,
+            status_code: 200,
+            message: "Customer Updated Successfully",
+          };
+
+        }
+
+
+
+
+
+      }
     } catch (error) {
       response.status = 400;
       response.body = {

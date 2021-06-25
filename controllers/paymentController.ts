@@ -559,9 +559,14 @@ export default {
     try {
       const values = await body.value;
       await paymentService.updatePaymentUnpaidrecord({
-        customer_id: values.customer_id,
+        customer_id: values.payment_id,
         invoice_no: values.invoice_no
       });
+
+
+
+
+      console.log(values.payment_id)
       response.body = {
         status: true,
         status_code: 200,

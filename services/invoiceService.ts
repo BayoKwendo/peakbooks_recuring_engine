@@ -683,9 +683,36 @@ export default {
 
     getInvoiceFilterPaidReceipt: async ({ filter_value }: Invoices) => {
         const result = await client.query(
-            `SELECT * FROM 
-             ${TABLE.INVOICES} WHERE
-           payment_received_id = ?`, [filter_value]);
+            `
+
+            SELECT t.invoice_no, t.invoice_date, t.due_amount, t.amount
+             FROM (
+
+             (
+                SELECT
+                open_balance_id invoice_no,
+                created_on invoice_date,
+                balance due_amount,
+                amount amount
+                FROM
+                opening_balances_sales
+                WHERE
+                payment_received_id = ${filter_value}
+            )
+                            UNION All
+
+            (
+                SELECT
+                invoice_no invoice_no,
+                invoice_date invoice_date ,
+                due_amount due_amount,
+                amount amount
+                FROM
+                invoices WHERE
+              payment_received_id = ${filter_value}
+            )
+            
+            ) AS t`);
         return result;
     },
 

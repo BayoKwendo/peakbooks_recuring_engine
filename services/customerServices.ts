@@ -143,6 +143,56 @@ export default {
   },
 
 
+
+
+  insertOutofBalance: async ({
+    out_of_balance,
+    filter_value,
+    amount
+  }: Customers) => {
+    const query = await client.query(
+      `INSERT INTO opening_balances_sales
+      SET
+       payment_received_id = ?,
+       amount = ?,
+       balance = ?`,
+      [
+        filter_value,
+        amount,
+        out_of_balance
+
+      ]
+    );
+    return query;
+  },
+
+
+
+
+
+
+  updatePaymentReceiveRecipt: async ({
+    out_of_balance,
+    amount,
+    filter_value
+  }: Customers) => {
+    const query = await client.query(
+      `UPDATE payment_received 
+       SET
+        amount_received=?,
+        paid_amount= ?,
+        status=1
+        WHERE id = ?`,
+      [
+        amount, amount, filter_value
+      ]
+    );
+    return query;
+  },
+
+
+
+
   getCustomerMore: async ({ customer_id }: Customers) => {
     const query = await client.query(
       `SELECT * FROM ${TABLE.CUSTOMER_MORE} WHERE customer_id = ?`,
@@ -254,4 +304,5 @@ export default {
     );
     return query;
   },
+
 };

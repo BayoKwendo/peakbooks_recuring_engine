@@ -80,14 +80,14 @@ export default {
     },
 
 
-    createExpense: async ({ client_id, date, expense_account, amount, paid_through, recurring, customer_id, vendor_id, billable, product_name, notes, tax_amount }: Vendor) => {
+    createExpense: async ({ client_id, date, expense_account, amount, paid_through, recurring,reference, customer_id, vendor_id, billable, product_name, notes, tax_amount }: Vendor) => {
         const result = await client.query(`INSERT INTO ${TABLE.EXPENSES}  SET
               client_id=?, date =?,
               expense_account=?, amount =?, paid_through=?,
               customer_id=?, vendor_id=?, 
-              notes=?,billable=?,product=?, tax_amount= ?,recurring=?`, [
+              notes=?,billable=?,product=?, tax_amount= ?,recurring=?, reference = ?`, [
             client_id, date, expense_account, amount, paid_through, customer_id,
-            vendor_id, notes, billable, product_name, tax_amount, recurring
+            vendor_id, notes, billable, product_name, tax_amount, recurring, reference
         ]);
         return result;
     },
@@ -951,6 +951,17 @@ export default {
         return result;
     },
 
+
+    updatefrequencyexpensestatus2: async ({ expense_ref }: Vendor) => {
+        const result = await client.query(
+            `UPDATE ${TABLE.RECURRING_EXPENSE} SET 
+            status = 1
+            WHERE expense_ref = ?`,
+            [expense_ref]);
+        return result;
+    },
+
+
     updatefrequencyexpensefrequency: async ({ frequecy, frequency_type, expense_ref }: Vendor) => {
         const result = await client.query(
             `UPDATE ${TABLE.RECURRING_EXPENSE} SET 
@@ -964,14 +975,6 @@ export default {
 
 
 
-    updatefrequencyexpensestatus2: async ({ expense_ref }: Vendor) => {
-        const result = await client.query(
-            `UPDATE ${TABLE.RECURRING_EXPENSE} SET 
-            status = 1
-            WHERE expense_ref = ?`,
-            [expense_ref]);
-        return result;
-    },
-
+   
 
 };

@@ -16,6 +16,7 @@ export default interface Customers {
   tax_info?: any,
   filter_value?: any,
   page_size?: number,
+  amount?: string,
   street?: string,
   customer_id?: string,
   city_town?: string,
@@ -31,5 +32,5 @@ export default interface Customers {
   payment_method?: string,
   delivery_method?: string,
   terms?: string,
-  out_of_balance?: string
+  out_of_balance?: number
 }
