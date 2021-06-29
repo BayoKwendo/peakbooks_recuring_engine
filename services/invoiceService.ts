@@ -3,7 +3,7 @@ import { TABLE } from "../db/config.ts";
 import Invoices from "../interfaces/Invoices.ts";
 
 export default {
-    createInvoice: async ({ customer_id, invoice_no, currency_type, terms, due_date, invoice_date, message_invoice, sub_total, statement_invoice, amount,
+    createInvoice: async ({ customer_id, invoice_no, currency_type, sales_order_no, terms, due_date, invoice_date, message_invoice, sub_total, statement_invoice, amount,
         due_amount, tax_amount, discount_amount, recurring, created_by, estimate, reference, tax_exclusive, sales_person_id, approved }: Invoices) => {
         const result = await client.query(`INSERT INTO ${TABLE.INVOICES}  SET
         customer_id=?, invoice_no = ?, terms=?, due_date =?, invoice_date =?, message_invoice=?,sub_total=?,
@@ -16,6 +16,7 @@ export default {
         recurring=?,
         created_by=?,
         estimate=?,
+        sales_order_no = ?,
         tax_exclusive=?,
         sales_person_id=?,
         approved=?,
@@ -36,6 +37,7 @@ export default {
             recurring,
             created_by,
             estimate,
+            sales_order_no,
             tax_exclusive,
             sales_person_id,
             approved,
@@ -209,21 +211,29 @@ export default {
         return query;
     },
 
+    convertSales: async ({ invoice_no, id }: Invoices,) => {
+        const query = await client.query(`UPDATE ${TABLE.INVOICES} SET 
+        sales_order_no = 0,
+        approved= 0,
+        invoice_no= ?
+        WHERE id = ? `, [id, invoice_no]);
+        return query;
+    },
 
-    getInvoices: async ({ offset, startDate, endDate, created_by, estimate, page_size }: Invoices) => {
+    getInvoices: async ({ offset, startDate, endDate, sales_order_no, created_by, estimate, page_size }: Invoices) => {
         const result = await client.query(
             `SELECT i.invoice_no,i.id, i.tax_exclusive, i.lock_reminder, i.terms, i.approved,i.estimate_no, i.customer_id,
             CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)) amount_invoice,
            
             DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) period,
-           
+           i.sales_order_no,
             i.due_date, i.currency_type, i.status, i.invoice_date, i.date_modified, i.discount_amount, i.recurring, i.sub_total, i.tax_amount, i.message_invoice,i.statement_invoice,
 
             i.due_amount, i.amount, c.customer_display_name,c.email, c.company_name  FROM 
           
             ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
             
-            WHERE i.created_by = ${created_by} AND i.estimate = ${estimate} 
+            WHERE i.created_by = ${created_by} AND i.estimate = ${estimate} AND i.sales_order_no = ${sales_order_no}
               AND i.created_at BETWEEN ${startDate} AND ${endDate}
               
               order by i.invoice_no DESC, i.estimate_no DESC LIMIT ${offset},${page_size}`);
@@ -660,7 +670,7 @@ export default {
         const result = await client.query(
             `SELECT * FROM 
            ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
-           WHERE i.estimate=0 and i.created_by = ? AND i.invoice_no = ?`, [created_by, filter_value]);
+           WHERE i.estimate=0 and i.sales_order_no=0 and i.created_by = ? AND i.invoice_no = ?`, [created_by, filter_value]);
         return result;
     },
 
@@ -731,10 +741,11 @@ export default {
         return result.count;
     },
 
-    getPageSizeInvoice: async ({ created_by, startDate, endDate, estimate }: Invoices) => {
+    getPageSizeInvoice: async ({ created_by, startDate, sales_order_no, endDate, estimate }: Invoices) => {
         const [result] = await client.query(
             `SELECT COUNT(i.id) count FROM ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER}
              c on c.id = i.customer_id WHERE i.created_by = ${created_by} AND i.estimate = ${estimate}
+              AND i.sales_order_no = ${sales_order_no}
               AND i.created_at BETWEEN ${startDate} AND ${endDate}
              `,);
         return result.count;
@@ -880,6 +891,16 @@ export default {
             `DELETE FROM ${TABLE.INVOICE_ITEMS} WHERE id = ?`, [filter_value]);
         return result;
     },
+
+
+    // delete paymnet
+    getDeletePayments: async ({ filter_value }: Invoices) => {
+        const result = await client.query(
+            `DELETE FROM ${TABLE.PAYMENT_RECEIVED_PAY} WHERE id = ?`, [filter_value]);
+        return result;
+    },
+
+
 
     // delete invoice items for invoice
     invoiceDeleteItems: async ({ filter_value, created_by }: Invoices) => {

@@ -12,6 +12,10 @@ router
   .get("/invoice", authorize, InvoicesController.getInvoices)
   .get("/estimate", authorize, InvoicesController.getEstimates)
   .put("/convertestimate", authorize, InvoicesController.convertEstimate)
+
+  .put("/convertesalesorder", authorize, InvoicesController.convertSalesOrder)
+
+
   .get("/invoiceitem", authorize, InvoicesController.getInvoiceItem)
   .get("/estimateitem", authorize, InvoicesController.getEstimateItem)
   .get("/invoiceunpaid", authorize, InvoicesController.getInvoicesUnpaid)

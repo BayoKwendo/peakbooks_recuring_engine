@@ -51,6 +51,7 @@ export default {
         currency_type: values.currency_type,
         due_amount: values.due_amount,
         approved: values.approved,
+        sales_order_no: values.sales_order_no,
         discount_amount: values.discount_amount,
         sub_total: values.sub_total,
         tax_amount: values.tax_amount,
@@ -67,8 +68,8 @@ export default {
             status_code: 200,
             message:
               values.estimate == 0
-                ? "Invoice added successfully"
-                : "Quatation added successfully",
+                ? "Successfully"
+                : "Successfully",
           };
         } else {
           const recurring_invoices = await invoiceService.createRecurringInvoice(
@@ -400,6 +401,36 @@ export default {
   },
 
 
+
+  /**
+  * @description Get all Delete
+  */
+  getDeletePayments: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      // console.log("bayo", kw)
+      let { id } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      const data = await invoiceService.getDeletePayments({
+        id: Number(id),
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        message: "Delete successfully",
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
   /**
   * @description Get all Invoices List
   */
@@ -413,10 +444,6 @@ export default {
       const data = await invoiceService.deleteInvoices({
         id: Number(id),
       });
-
-
-
-
       if (data) {
         const total = await invoiceService.getInvoiceItemDelete({
           created_by: Number(created_by),
@@ -427,7 +454,7 @@ export default {
           status_code: 200,
           message: "Delete successfully",
         };
-        
+
 
         if (total > 0) {
           for (let i = 0; i < total; i++) {
@@ -777,6 +804,73 @@ export default {
           status: true,
           status_code: 200,
           message: ` Success! Quotation#${values.invoice_no} has been converted to invoice`,
+        };
+
+        for (let i = 0; i < total; i++) {
+          if (total) {
+
+            await invoiceService.updateInvoiceItems({
+              created_by: Number(values.created_by),
+              filter_value: values.estimate_no,
+              invoice_no: invoice_no
+            });
+
+          }
+        }
+      }
+
+      // // if (total > 0) {
+
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+
+
+
+  convertSalesOrder: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
+    const body = await request.body();
+    if (!request.hasBody) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+
+      const total = await invoiceService.getInvoiceItemDelete({
+        created_by: Number(values.created_by),
+        filter_value: values.sales_order_no,
+      });
+
+      // console.log(values.estimate_no)
+
+      const invoice_no = await invoiceService.getMaxmumInvoiceNo({
+        created_by: values.created_by
+      });
+      if (invoice_no) {
+        await invoiceService.convertSales({
+          invoice_no: values.invoice_no,
+          id: invoice_no
+        });
+        response.body = {
+          status: true,
+          status_code: 200,
+          message: ` Success! Sales Order#${values.invoice_no} has been converted to invoice`,
         };
 
         for (let i = 0; i < total; i++) {
@@ -1359,6 +1453,7 @@ export default {
         created_by,
         page_number,
         page_size,
+        sales_order_no,
         startDate,
         endDate,
       } = getQuery(ctx, { mergeParams: true });
@@ -1367,6 +1462,7 @@ export default {
         created_by: Number(created_by),
         startDate: startDate,
         endDate: endDate,
+        sales_order_no: sales_order_no,
         estimate: estimate,
       });
       if (filter_value == null || filter_value === "") {
@@ -1381,6 +1477,7 @@ export default {
             offset: Number(offset),
             estimate: estimate,
             startDate: startDate,
+            sales_order_no: sales_order_no,
             page_size: Number(page_size),
             endDate: endDate,
             created_by: Number(created_by),
@@ -1397,6 +1494,7 @@ export default {
             offset: Number(offset),
             estimate: estimate,
             startDate: startDate,
+            sales_order_no: sales_order_no,
             endDate: endDate,
             page_size: Number(page_size),
             created_by: Number(created_by),
