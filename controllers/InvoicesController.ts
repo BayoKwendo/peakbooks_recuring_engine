@@ -1470,7 +1470,7 @@ export default {
 
         if (page_number == null) {
           page_number = "1";
-          page_size = "100";
+          page_size = "10";
 
           const offset = (Number(page_number) - 1) * Number(page_size);
           const data = await invoiceService.getInvoices({

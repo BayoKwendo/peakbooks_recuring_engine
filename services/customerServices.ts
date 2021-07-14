@@ -184,7 +184,7 @@ export default {
         status=1
         WHERE id = ?`,
       [
-        amount, amount, filter_value
+        out_of_balance, amount, filter_value
       ]
     );
     return query;
