@@ -34,6 +34,9 @@ export const TABLE = {
   DOCUMENTS: 'documents',
   JOURNAL_ITEMS: 'journal_items',
   JOURNALS: 'journals',
+
+  CURRENCY: 'currency',
+
   MPESA_PAYMENT: 'mpesa_payments'
 
 };

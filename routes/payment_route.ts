@@ -26,6 +26,14 @@ router
   .put("/recurebill", authorize, paymentController.getFrequencyBills)
 
 
+   //currency rest api  
+  .get("/currency", authorize, paymentController.getCurrency)
+
+  .put("/currency", authorize, paymentController.updateCurrency)
+
+  
+  
+
 
   .put("/recurringbill", authorize, paymentController.updatefrequencystatus)
   .put("/recurringbill2", authorize, paymentController.updatefrequencystatus2)
