@@ -120,6 +120,7 @@ let task = cron('*/.5 * * * * *', async () => {
           estimate: data[0].estimate,
           due_amount: data[0].due_amount,
           discount_amount: data[0].discount_amount,
+          sales_order_no: data[0].sales_order_no,
           sub_total: data[0].sub_total,
           tax_amount: data[0].tax_amount,
           tax_exclusive: data[0].tax_exclusive,
@@ -138,8 +139,10 @@ let task = cron('*/.5 * * * * *', async () => {
           page_size: Number("100"),
           created_by: data[0].created_by,
           startDate: `"${"2020-01-10 00:00:00"}"`,
+          sales_order_no: "0",
           endDate: `"${"2023-01-10 00:00:00"}"`
         });
+
         // let innvoiceNo = { invoice_no: dataInvoice[0].invoice_no };
         let data3 = [];
 
@@ -147,7 +150,6 @@ let task = cron('*/.5 * * * * *', async () => {
         for (let i = 0; i < itemData.length; i++) {
           let innvoiceNo = { invoice_no2: dataInvoice[0].invoice_no };
           // let innvoiceNo = { invoice_no2: dataInvoice[0].invoice_no };
-
           data3.push(Object.assign(innvoiceNo, itemData[i]));
         }
         // console.log(data3)
