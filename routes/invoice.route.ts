@@ -15,6 +15,11 @@ router
 
   .put("/convertesalesorder", authorize, InvoicesController.convertSalesOrder)
 
+  //notes
+  .post("/notes", authorize, InvoicesController.creatNotes)
+  .put("/notes", authorize, InvoicesController.updateNotes)
+  .get("/notes", authorize, InvoicesController.getGeneralNotes)
+  
 
   .get("/invoiceitem", authorize, InvoicesController.getInvoiceItem)
   .get("/estimateitem", authorize, InvoicesController.getEstimateItem)

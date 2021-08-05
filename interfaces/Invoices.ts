@@ -19,10 +19,8 @@ export default interface Bet {
   amount?: string,
   due_amount?: string,
   tax_amount?: string,
-
+  invoice_notes?: string,
   sales_person?: string,
-
-
   discount_amount?: string,
   sub_total?: string,
   estimate_no?: string,

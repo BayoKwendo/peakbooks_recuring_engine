@@ -106,6 +106,35 @@ export default {
     },
 
 
+    //Tax General Notes
+    createNotes: async ({ invoice_notes, created_by }: Invoices) => {
+        const result = await client.query(`INSERT INTO invoice_notes  SET
+        invoice_notes = ?, 
+        user_id = ?`, [
+            invoice_notes,
+            created_by
+        ]);
+        return result;
+    },
+
+    editNotes: async ({ invoice_notes, created_by }: Invoices) => {
+        const result = await client.query(`UPDATE invoice_notes 
+        SET
+        invoice_notes =?
+        WHERE user_id = ?`, [
+            invoice_notes,
+            created_by
+        ]);
+        return result;
+    },
+
+    getNotes: async ({ created_by }: Invoices,) => {
+        const query = await client.query(`SELECT * FROM  invoice_notes
+        WHERE user_id = ? LIMIT 10000`, [created_by]);
+        return query;
+    },
+
+
     deleteTaxRates: async ({ id }: Invoices,) => {
         const query = await client.query(`DELETE FROM  ${TABLE.TAX_RATES}
         WHERE id = ?`, [id]);
@@ -488,7 +517,7 @@ export default {
             
              sum(CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2))) total_amount,
 
-             sum( if ( DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) = 0,
+             sum( if ( DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) < 0,
              CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)),0)) as current_amount,
 
              sum( if ( (DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) < 16  
@@ -513,7 +542,7 @@ export default {
              FROM 
             ${TABLE.INVOICES} i
             inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
-            WHERE i.created_by = ${created_by} AND i.status = "0" AND i.approved = 1 AND i.estimate = '0'
+            WHERE i.created_by = ${created_by} AND i.status = "0" AND i.approved = 1 AND i.sales_order_no = 0 AND i.estimate = '0'
             AND i.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY c.customer_display_name 
             order by i.date_modified DESC LIMIT ${offset},${page_size}`);
         return result;
@@ -539,7 +568,7 @@ export default {
         const result = await client.query(
             `SELECT  IFNULL(sum( CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2))), 0) amount
             FROM ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id
-            WHERE created_by = ${created_by} AND i.estimate=0 AND i.approved = 1 AND i.created_at BETWEEN ${startDate} AND ${endDate}`);
+            WHERE created_by = ${created_by} AND i.estimate=0 AND i.sales_order_no=0 AND i.approved= 1 AND i.approved = 1 AND i.created_at BETWEEN ${startDate} AND ${endDate}`);
         console.log(endDate)
 
         return result;
