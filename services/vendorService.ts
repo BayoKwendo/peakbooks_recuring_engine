@@ -361,6 +361,39 @@ export default {
     },
 
 
+    getExpensesVendor: async ({ offset, created_by, page_size, startDate, endDate }: Vendor) => {
+        const result = await client.query(
+            `SELECT 
+             
+            vendor_name_expense, 
+            
+            IFNULL(count_expense, 0) expense_count,
+            
+            IFNULL(tax_expense_amount, 0) purchase_with_tax,
+            
+            IFNULL(expense_amount, 0) expense_amount
+            
+            FROM (
+                (
+                SELECT  c.vendor_display_name vendor_name_expense,
+                COUNt(e.id) count_expense,
+                e.vendor_id,
+                sum(CAST(e.amount AS DECIMAL(10,2))) expense_amount,
+                sum(CAST(e.tax_amount AS DECIMAL(10,2))) tax_expense_amount
+                from
+                ${TABLE.EXPENSES} e
+                left join  ${TABLE.VENDORS} c on c.id = e.vendor_id 
+                WHERE e.client_id = ${created_by}
+                AND e.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY c.vendor_display_name
+                ) c
+               )
+   
+           
+              LIMIT ${offset},${page_size}`);
+        return result;
+    },
+
+
     getVendorSalesSize: async ({ created_by, startDate, endDate }: Vendor) => {
         const [result] = await client.query(
             `SELECT 

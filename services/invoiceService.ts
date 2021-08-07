@@ -413,6 +413,7 @@ export default {
             left join ${TABLE.INVOICES} i on c.id = i.customer_id 
             left join ${TABLE.CREDIT_NOTE} n on n.customer_id = c.id 
             WHERE (i.created_by = ${created_by} OR n.created_by = ${created_by}) AND (i.status = "0" OR n.status = "1") AND i.estimate = '0' AND
+             i.approved = 1 AND i.sales_order_no = 0 AND
              (i.created_at BETWEEN ${startDate} AND ${endDate} OR 
              n.created_at BETWEEN ${startDate} AND ${endDate})
              `);
@@ -440,7 +441,7 @@ export default {
              from
              ${TABLE.SALES_PERSON} c
              left join  ${TABLE.INVOICES} i on c.id = i.sales_person_id
-             WHERE i.created_by = ${created_by} AND  i.estimate = '0' 
+             WHERE i.created_by = ${created_by} AND  i.estimate = '0' AND i.approved = 1 AND i.sales_order_no = 0
              AND i.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY c.sales_person) a
 
              left join
@@ -482,7 +483,7 @@ export default {
              from
              ${TABLE.CUSTOMER} c 
              left join  ${TABLE.INVOICES} i on c.id = i.customer_id 
-             WHERE i.created_by = ${created_by} AND i.estimate = '0' 
+             WHERE i.created_by = ${created_by} AND i.estimate = '0' AND i.approved = 1 AND i.sales_order_no = 0 
              AND i.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY c.customer_display_name) a
 
              left join

@@ -63,6 +63,9 @@ router
   //sales by vendor purchase report
   .get("/vendorpurchase", authorize, vendorController.getVendorSales)
 
+  .get("/vendorexpenses", authorize, vendorController.getVendorExpenses)
+
+
   //vendorbalance report 
   .get("/vendorbalancebill", authorize, vendorController.getVendorBalanceBills)
   .get("/payablesummary", authorize, vendorController.getPayableSummary)
