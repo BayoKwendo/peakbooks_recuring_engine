@@ -30,6 +30,7 @@ export default interface User {
   currency_against_kenya?: string,
   expired?: string,
   login_expiry?: string,
+  username?: string,
   inventory?: number,
   bank?: number,
   sales?: number,

@@ -14,6 +14,7 @@ export default {
     currency_against_kenya,
     admin_role,
     inventory,
+    username,
     bank,
     sales,
     purchase,
@@ -25,12 +26,14 @@ export default {
     const result = await client.query(`INSERT INTO ${TABLE.USERS} SET
              approval = ?,
              first_name =?,
+             username=?,
              last_name =?, msisdn=?, email =?, industry=?, company_name=?, postal_address =?, 
              role_id=?, password=?, first_time=?, our_client=?, paid=?,subscription=?, 
              currency=?,currency_against_kenya=?, 
              admin_role = ?, inventory = ?, bank =?, sales = ?, purchase =?, investment = ?, accountant = ?,reports = ?, documents = ?,url= ?,client_id = ?, status=1`, [
       approval,
       first_name,
+      username,
       last_name,
       msisdn,
       email,
@@ -62,7 +65,7 @@ export default {
 
 
 
-  updateCLientUser: async ({ first_name, url, last_name, msisdn, client_id, industry, role_id, email,
+  updateCLientUser: async ({ first_name, url, username, last_name, msisdn, client_id, industry, role_id, email,
     company_name,
     postal_address,
     first_time,
@@ -82,6 +85,7 @@ export default {
     const result = await client.query(`UPDATE ${TABLE.USERS} SET
              approval =?,
              first_name =?,
+             username=?,
              last_name =?, 
              msisdn=?,
              email =?, 
@@ -106,6 +110,7 @@ export default {
              email = ?`, [
       approval,
       first_name,
+      username,
       last_name,
       msisdn,
       email,
@@ -132,27 +137,43 @@ export default {
   },
 
 
-  loginUser: async ({ email }: User) => {
+  loginUser: async ({ username }: User) => {
     const [result] = await client.query(
-      `SELECT * FROM users WHERE email = ?`,
-      [email],
+      `SELECT * FROM users WHERE username = ?`,
+      [username],
     );
     return result;
   },
 
 
-  checkActive: async ({ email }: User) => {
+  checkActive: async ({ username }: User) => {
     const [result] = await client.query(
-      `SELECT * FROM  ${TABLE.USERS} WHERE email = ? AND status = 1`,
-      [email],
+      `SELECT * FROM  ${TABLE.USERS} WHERE username = ? AND status = 1`,
+      [username],
     );
     return result;
   },
 
-  userExist: async ({ email, msisdn }: User) => {
+  userExist: async ({ email, admin_role }: User) => {
     const [result] = await client.query(
-      `SELECT * FROM  ${TABLE.USERS} WHERE msisdn = ?`,
-      [email, msisdn],
+      `SELECT * FROM  ${TABLE.USERS} WHERE email = ? AND admin_role =?`,
+      [email, admin_role],
+    );
+    return result;
+  },
+
+  userClientID: async ({ email, client_id }: User) => {
+    const [result] = await client.query(
+      `SELECT * FROM  ${TABLE.USERS} WHERE email = ? AND client_id =?`,
+      [email, client_id],
+    );
+    return result;
+  },
+
+  usernameExist: async ({ username }: User) => {
+    const [result] = await client.query(
+      `SELECT * FROM  ${TABLE.USERS} WHERE username = ?`,
+      [username],
     );
     return result;
   },
