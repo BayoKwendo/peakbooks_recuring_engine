@@ -177,7 +177,8 @@ export default {
 	updateInvoicePaid: async ({ id }: Payment) => {
 		const query = await client.query(
 			`UPDATE ${TABLE.INVOICES} SET 
-        due_amount = amount
+        due_amount = amount,
+		status =0
         WHERE payment_received_id = ${id} LIMIT 1`
 		);
 		return query;
