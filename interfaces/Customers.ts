@@ -13,6 +13,7 @@ export default interface Customers {
   page_number?: number,
   offset?: number,
   mobile?: any,
+  balance_open?: string,
   tax_info?: any,
   filter_value?: any,
   page_size?: number,

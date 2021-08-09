@@ -371,6 +371,49 @@ export default {
 	},
 
 	/**
+  * @description Delete payment received
+  */
+	deleteDeletePaymentReceived: async (ctx: any) => {
+		try {
+			// let kw = request.url.searchParams.get('page_number');
+			// console.log("bayo", kw)
+			let { id, customer_id } = getQuery(ctx, {
+				mergeParams: true,
+			});
+			const data = await paymentService.deletePaymentReceived({
+				id: Number(id),
+			});
+
+			if (data) {
+				console.log('payment received deleted');
+
+				const data_2 = await paymentService.updateInvoicePaid({
+					id: id,
+				});
+
+				const data_3 = await paymentService.updateCustomerBalance({
+					id: customer_id,
+				});
+
+				if (data_2) {
+					ctx.response.body = {
+						status: true,
+						status_code: 200,
+						message: 'Delete successfully',
+						data: data,
+					};
+				}
+			}
+		} catch (error) {
+			ctx.response.status = 400;
+			ctx.response.body = {
+				success: false,
+				message: `Error: ${error}`,
+			};
+		}
+	},
+
+	/**
    * @description Add a new payment received
    */
 	createPaymentReceivedPay: async ({ request, response }: { request: any, response: any }) => {

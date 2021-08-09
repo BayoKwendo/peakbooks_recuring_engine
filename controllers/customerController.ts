@@ -53,6 +53,7 @@ export default {
         email: values.email,
         msisdn: values.msisdn,
         out_of_balance: values.out_of_balance,
+        balance_open: values.out_of_balance,
         tax_info: values.tax_info,
         company_name: values.company_name,
         customer_display_name: values.customer_display_name,

@@ -174,6 +174,24 @@ export default {
 		return query;
 	},
 
+	updateInvoicePaid: async ({ id }: Payment) => {
+		const query = await client.query(
+			`UPDATE ${TABLE.INVOICES} SET 
+        due_amount = amount
+        WHERE payment_received_id = ${id} LIMIT 1`
+		);
+		return query;
+	},
+
+	updateCustomerBalance: async ({ id }: Payment) => {
+		const query = await client.query(
+			`UPDATE ${TABLE.CUSTOMER} SET 
+			out_of_balance = balance_opening_balance
+	        WHERE id = ${id}`
+		);
+		return query;
+	},
+
 	updatePaymentUnpaidrecord: async ({ invoice_no, customer_id }: Payment) => {
 		const query = await client.query(
 			`UPDATE ${TABLE.PAYMENT_RECEIVED_PAY} SET 
@@ -189,7 +207,7 @@ export default {
 
 	getPaymentReceivedUnpaid: async ({ offset, created_by, page_size }: Payment) => {
 		const result = await client.query(
-			`SELECT i.created, i.reference, i.id, i.paid_amount,i.payment_date, c.customer_display_name, i.invoice_no,i.payment_mode,i.amount_inexcess,i.amount_received FROM 
+			`SELECT i.created, i.reference, i.id,i.customer_id, i.paid_amount,i.payment_date, c.customer_display_name, i.invoice_no,i.payment_mode,i.amount_inexcess,i.amount_received FROM 
         ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
          c.client_id = ? AND i.status = 1 order by i.id DESC LIMIT ?,?`,
 			[ created_by, offset, page_size ]
@@ -198,7 +216,7 @@ export default {
 	},
 	getReceivedFilter: async ({ filter_value }: Payment) => {
 		const result = await client.query(
-			`SELECT i.created, i.reference, c.customer_display_name, i.invoice_no,i.payment_mode,i.amount_inexcess,i.amount_received FROM 
+			`SELECT i.created, i.reference,i.customer_id, c.customer_display_name, i.invoice_no,i.payment_mode,i.amount_inexcess,i.amount_received FROM 
        ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE i.invoice_no = ?`,
 			[ filter_value ]
 		);
@@ -388,16 +406,11 @@ export default {
 
 	//Edit value aginst kenya shillings
 
-	editCurrency: async ({
-		id,
-		filter_value
-	}: Payment) => {
+	editCurrency: async ({ id, filter_value }: Payment) => {
 		const result = await client.query(
 			`UPDATE ${TABLE.CURRENCY}  SET
             agnaist_ksh=? WHERE id = ?`,
-			[
-				filter_value, id
-			]
+			[ filter_value, id ]
 		);
 		return result;
 	},
@@ -420,6 +433,15 @@ export default {
 		);
 		return result;
 	},
+
+	deletePaymentReceived: async ({ id }: Invoices) => {
+		const query = await client.query(
+			`DELETE FROM  ${TABLE.PAYMENT_RECEIVED_PAY}
+        WHERE id = ?`,
+			[ id ]
+		);
+		return query;
+	},
 	getPageSizeFrequencyBills: async ({ created_by }: Invoices) => {
 		const [
 			result,
@@ -430,6 +452,7 @@ export default {
 		);
 		return result.count;
 	},
+
 	getFrequencyBillsFilter: async ({ filter_value }: Invoices) => {
 		const result = await client.query(
 			`SELECT * FROM 
