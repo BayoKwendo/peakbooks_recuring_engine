@@ -179,7 +179,7 @@ export default {
 			`UPDATE ${TABLE.INVOICES} SET 
         due_amount = amount,
 		status =0
-        WHERE payment_received_id = ${id} LIMIT 1`
+        WHERE payment_received_id = ${id}`
 		);
 		return query;
 	},

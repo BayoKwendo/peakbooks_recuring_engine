@@ -41,7 +41,7 @@ export default {
 				website,
 				out_of_balance,
 				balance_open,
-				tax_info,
+				tax_info
 			]
 		);
 		return result;

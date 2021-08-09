@@ -10,6 +10,7 @@ router
   .get("/payment_method", authorize, paymentController.getPayments)
   .post("/deposit_to", authorize, paymentController.createDeposit_to)
   .get("/deposit_to", authorize, paymentController.getDeposit_to)
+  
   .post("/payment_received", authorize, paymentController.createPaymentReceivedPay)
 
   .delete("/payment_received", authorize, paymentController.deleteDeletePaymentReceived)
