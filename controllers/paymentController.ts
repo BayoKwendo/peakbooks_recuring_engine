@@ -231,6 +231,7 @@ export default {
 				await paymentService.createExpenseAccount({
 					name: values.name,
 					category: values.category,
+					category_type: values.category_type,
 					created_by: values.created_by
 				});
 				response.body = {

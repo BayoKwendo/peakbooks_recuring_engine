@@ -30,16 +30,19 @@ export default {
 		createExpenseAccount: async ({
 			name, 
 			category, 
+			category_type,
 			created_by}: Payment) => {
 			const result = await client.query(
 				`INSERT INTO ${TABLE.EXPENSE_ACCOUNT}  SET
 				name = ?, 
-				category = ?, 
+				category = ?,
+				category_type = ?, 
 				created_by = ?
 				`,
 				[
 					name, 
 					category, 
+					category_type,
 					created_by
 				]
 			);
