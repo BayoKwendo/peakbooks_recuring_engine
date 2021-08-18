@@ -25,6 +25,35 @@ export default {
 		return result;
 	},
 
+		//Create Expense Account
+
+		createExpenseAccount: async ({
+			name, 
+			category, 
+			created_by}: Payment) => {
+			const result = await client.query(
+				`INSERT INTO ${TABLE.EXPENSE_ACCOUNT}  SET
+				name = ?, 
+				category = ?, 
+				created_by = ?
+				`,
+				[
+					name, 
+					category, 
+					created_by
+				]
+			);
+			return result;
+		},
+// get bank category
+
+getExpenseAccount: async ({ created_by }: Payment) => {
+	const result = await client.query(`SELECT name label, name value, category FROM ${TABLE.EXPENSE_ACCOUNT} WHERE created_by in (0,${created_by})`);
+	return result;
+},
+
+
+
 	createBank: async ({
 		account_name,
 		account_balance,

@@ -800,6 +800,7 @@ export default {
       await invoiceService.updateInvoice({
         customer_id: values.customer_id,
         invoice_no: values.invoice_no,
+        currency_type: values.currency_type,
         terms: values.terms,
         due_date: values.due_date,
         invoice_date: values.invoice_date,

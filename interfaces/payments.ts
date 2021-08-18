@@ -8,6 +8,7 @@ export default interface Payment {
   name?: string,
   filter_value?: any,
   invoice_no?: string,
+  category?: string,
   amount_received?: string,
   payment_date?: string,
   payment_mode?: string,

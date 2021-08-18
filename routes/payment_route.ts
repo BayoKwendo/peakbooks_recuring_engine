@@ -67,6 +67,10 @@ router
   .get("/agingsummarybill", paymentController.getAgingSummaryBills)
 
 
+  // expense account
+  .post("/expense_account", paymentController.createExpenseAccount)
+  .get("/expense_account", paymentController.getExpenseAccount)
+
 
 
 

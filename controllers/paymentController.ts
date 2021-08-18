@@ -213,6 +213,60 @@ export default {
 		}
 	},
 
+		/**
+   * @description Add a expense account
+   */
+     createExpenseAccount: async ({ request, response }: { request: any, response: any }) => {
+			const body = await request.body();
+			if (!request.hasBody) {
+				response.status = 400;
+				response.body = {
+					success: false,
+					message: 'No data provided',
+				};
+				return;
+			}
+			try {
+				const values = await body.value;
+				await paymentService.createExpenseAccount({
+					name: values.name,
+					category: values.category,
+					created_by: values.created_by
+				});
+				response.body = {
+					status: true,
+					status_code: 200,
+					message: `${values.name} added successful`,
+				};
+			} catch (error) {
+				response.status = 400;
+				response.body = {
+					status: false,
+					message: `${error}`,
+				};
+			}
+		},
+
+  // get expense account
+	getExpenseAccount: async (ctx: any) => {
+		try {
+			let { created_by } = getQuery(ctx, {
+				mergeParams: true,
+			});
+
+			const data = await paymentService.getExpenseAccount({
+				created_by: Number(created_by)
+			});
+			ctx.response.body = data ;
+		} catch (error) {
+			ctx.response.status = 400;
+			ctx.response.body = {
+				success: false,
+				message: `Error: ${error}`,
+			};
+		}
+	},
+
 	/**
    * @description Get all Items List
    */

@@ -331,7 +331,7 @@ let task = cron('*/.5 * * * * *', async () => {
           else if (recur_expense.frequency_type === "Weekly") {
             const updateData = await expenseService.updatefrequencyExpenses({
               reference: recur_expense.expense_ref,
-              frequecy: ((Date.now() / 1000) + (1 * 24 * 60 * 60)).toString(),
+              frequecy: ((Date.now() / 1000) + (7 * 24 * 60 * 60)).toString(),
             });
             if (updateData) {
               start();
@@ -340,7 +340,7 @@ let task = cron('*/.5 * * * * *', async () => {
           else if (recur_expense.frequency_type === "After 2 Weeks") {
             const updateData = await expenseService.updatefrequencyExpenses({
               reference: recur_expense.expense_ref,
-              frequecy: ((Date.now() / 1000) + (1 * 24 * 60 * 60)).toString(),
+              frequecy: ((Date.now() / 1000) + (14 * 24 * 60 * 60)).toString(),
             });
             if (updateData) {
               start();
@@ -350,7 +350,7 @@ let task = cron('*/.5 * * * * *', async () => {
           else if (recur_expense.frequency_type === "Monthly") {
             const updateData = await expenseService.updatefrequencyExpenses({
               reference: recur_expense.expense_ref,
-              frequecy: ((Date.now() / 1000) + (1 * 24 * 60 * 60)).toString(),
+              frequecy: ((Date.now() / 1000) + (30 * 24 * 60 * 60)).toString(),
             });
             if (updateData) {
               start();
@@ -359,7 +359,7 @@ let task = cron('*/.5 * * * * *', async () => {
           else if (recur_expense.frequency_type === "After 2 Months") {
             const updateData = await expenseService.updatefrequencyExpenses({
               reference: recur_expense.expense_ref,
-              frequecy: ((Date.now() / 1000) + (1 * 24 * 60 * 60)).toString(),
+              frequecy: ((Date.now() / 1000) + (60 * 24 * 60 * 60)).toString(),
             });
             if (updateData) {
               start();
@@ -368,7 +368,7 @@ let task = cron('*/.5 * * * * *', async () => {
           else if (recur_expense.frequency_type === "After 3 Months") {
             const updateData = await expenseService.updatefrequencyExpenses({
               reference: recur_expense.expense_ref,
-              frequecy: ((Date.now() / 1000) + (1 * 24 * 60 * 60)).toString(),
+              frequecy: ((Date.now() / 1000) + (90 * 24 * 60 * 60)).toString(),
             });
             if (updateData) {
               start();
@@ -377,7 +377,7 @@ let task = cron('*/.5 * * * * *', async () => {
           else if (recur_expense.frequency_type === "After 6 Months") {
             const updateData = await expenseService.updatefrequencyExpenses({
               reference: recur_expense.expense_ref,
-              frequecy: ((Date.now() / 1000) + (1 * 24 * 60 * 60)).toString(),
+              frequecy: ((Date.now() / 1000) + (180 * 24 * 60 * 60)).toString(),
             });
             if (updateData) {
               start();
@@ -386,7 +386,7 @@ let task = cron('*/.5 * * * * *', async () => {
           else if (recur_expense.frequency_type === "Yearly") {
             const updateData = await expenseService.updatefrequencyExpenses({
               reference: recur_expense.expense_ref,
-              frequecy: ((Date.now() / 1000) + (1 * 24 * 60 * 60)).toString(),
+              frequecy: ((Date.now() / 1000) + (365 * 24 * 60 * 60)).toString(),
             });
             if (updateData) {
               start();
@@ -395,7 +395,7 @@ let task = cron('*/.5 * * * * *', async () => {
           else if (recur_expense.frequency_type === "After 2 Years") {
             const updateData = await expenseService.updatefrequencyExpenses({
               reference: recur_expense.expense_ref,
-              frequecy: ((Date.now() / 1000) + (1 * 24 * 60 * 60)).toString(),
+              frequecy: ((Date.now() / 1000) + (730 * 24 * 60 * 60)).toString(),
             });
             if (updateData) {
               start();

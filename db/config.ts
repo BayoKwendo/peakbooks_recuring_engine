@@ -34,6 +34,7 @@ export const TABLE = {
   DOCUMENTS: 'documents',
   JOURNAL_ITEMS: 'journal_items',
   JOURNALS: 'journals',
+  EXPENSE_ACCOUNT: 'expense_account',
 
   CURRENCY: 'currency',
 

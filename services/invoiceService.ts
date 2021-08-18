@@ -181,10 +181,11 @@ export default {
 
 
 
-    updateInvoice: async ({ customer_id, invoice_no, terms, approved, due_date, invoice_date, message_invoice, sub_total, statement_invoice, amount,
+    updateInvoice: async ({ currency_type, customer_id, invoice_no, terms, approved, due_date, invoice_date, message_invoice, sub_total, statement_invoice, amount,
         due_amount, tax_amount, discount_amount, created_by, tax_exclusive }: Invoices,) => {
         const query = await client.query(`UPDATE ${TABLE.INVOICES} 
         SET
+        currency_type=?,
         customer_id=?, 
         invoice_no=?, 
         terms=?, 
@@ -201,6 +202,7 @@ export default {
         tax_exclusive=?,
         approved= ?
         WHERE invoice_no = ? AND created_by=? `, [
+            currency_type,
             customer_id,
             invoice_no,
             terms,
