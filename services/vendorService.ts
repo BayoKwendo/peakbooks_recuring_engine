@@ -891,7 +891,7 @@ export default {
 
     getRecurringExpeFilter: async ({ filter_value }: Vendor) => {
         const result = await client.query(
-            `SELECT * FROM  ${TABLE.EXPENSES} WHERE reference = '${filter_value}' `);
+            `SELECT * FROM  ${TABLE.EXPENSES} WHERE id = '${filter_value}' `);
         return result;
     },
 

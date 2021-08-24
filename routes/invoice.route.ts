@@ -25,6 +25,9 @@ router
   .get("/estimateitem", authorize, InvoicesController.getEstimateItem)
   .get("/invoiceunpaid", authorize, InvoicesController.getInvoicesUnpaid)
   .get("/invoicepaid",  InvoicesController.getInvoicesPaidReceipt)
+
+  .get("/invoicepaid_record",  InvoicesController.getInvoicesPay)
+
   .get("/invoiceEmail", InvoicesController.getOneInvoices)
   .get("/invoicerecurring", authorize, InvoicesController.getFrequencyInvoices)
   .put("/recurringinvoice", authorize, InvoicesController.updatefrequencystatus)

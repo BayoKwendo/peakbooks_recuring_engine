@@ -125,7 +125,7 @@ export default {
              
              ${TABLE.INVOICE_ITEMS} i
              left join  ${TABLE.INVOICES} n on n.invoice_no = i.invoice_no 
-             WHERE n.created_by = ${created_by} AND n.estimate = '0' AND i.approved = 1 AND i.sales_order_no = 0
+             WHERE n.created_by = ${created_by} AND n.estimate = '0' AND n.approved = 1 AND n.sales_order_no = 0
              AND i.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY i.name ) b
 
              on  b.invoice_item = a.credit_item
@@ -160,7 +160,7 @@ export default {
              
              ${TABLE.INVOICE_ITEMS} i
              left join  ${TABLE.INVOICES} n on n.invoice_no = i.invoice_no 
-             WHERE n.created_by = ${created_by} AND n.estimate = '0' AND i.approved = 1 AND i.sales_order_no = 0
+             WHERE n.created_by = ${created_by} AND n.estimate = '0' AND n.approved = 1 AND n.sales_order_no = 0
              AND i.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY i.name ) b
              on  b.invoice_item = a.credit_item
             )`);

@@ -16,6 +16,7 @@ export default interface Payment {
   reference?: string,
   vendor_id?: string,
   account_name?: string,
+  balance_amount?: string,
   account_balance?: string,
   account_type?: string,
   account_code?: string,

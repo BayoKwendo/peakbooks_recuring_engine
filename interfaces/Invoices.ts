@@ -10,6 +10,7 @@ export default interface Bet {
   created_by?: number,
   message_invoice?: string,
   invoice_date?: string,
+  agnaist_ksh?: string,
   estimate_date?: string,
   expiry_date?: string,
   estimate_message?: string,

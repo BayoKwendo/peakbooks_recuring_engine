@@ -48,6 +48,7 @@ export default {
         tax_exclusive: values.tax_exclusive,
         sales_person_id: values.sales_person_id,
         estimate: values.estimate,
+        agnaist_ksh: values.agnaist_ksh,
         currency_type: values.currency_type,
         due_amount: values.due_amount,
         approved: values.approved,
@@ -1714,7 +1715,7 @@ export default {
         page_number = "1";
         page_size = "100";
 
-        const offset = (Number(page_number) - 1) * 10;
+        const offset = (Number(page_number) - 1) * Number(page_size);
         const data = await invoiceService.getReceivableSummary({
           offset: Number(offset),
           estimate: estimate,
@@ -1730,7 +1731,7 @@ export default {
           data: data,
         };
       } else {
-        const offset = (Number(page_number) - 1) * 10;
+        const offset = (Number(page_number) - 1) * Number(page_size);
         const data = await invoiceService.getReceivableSummary({
           offset: Number(offset),
           estimate: estimate,
@@ -1820,6 +1821,34 @@ export default {
       };
     }
   },
+
+
+    /**
+   * @description Get all Invoices List
+   */
+     getInvoicesPay: async (ctx: any) => {
+      try {
+        // let kw = request.url.searchParams.get('page_number');
+        // console.log("bayo", kw)
+        let { filter_value } = getQuery(ctx, { mergeParams: true });
+        const data = await invoiceService.getInvoiceFilterPaidTransactions({
+          filter_value: filter_value,
+        });
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          data: data
+        };
+      } catch (error) {
+        ctx.response.status = 400;
+        ctx.response.body = {
+          success: false,
+          message: `Error: ${error}`,
+        };
+      }
+    },
+
+  
 
   /**
    * @description Get all Estimates List

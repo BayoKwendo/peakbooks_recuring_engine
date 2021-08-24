@@ -4,7 +4,7 @@ import Invoices from "../interfaces/Invoices.ts";
 
 export default {
     createInvoice: async ({ customer_id, invoice_no, currency_type, sales_order_no, terms, due_date, invoice_date, message_invoice, sub_total, statement_invoice, amount,
-        due_amount, tax_amount, discount_amount, recurring, created_by, estimate, reference, tax_exclusive, sales_person_id, approved }: Invoices) => {
+        due_amount, tax_amount, discount_amount, recurring, created_by, estimate, reference,agnaist_ksh, tax_exclusive, sales_person_id, approved }: Invoices) => {
         const result = await client.query(`INSERT INTO ${TABLE.INVOICES}  SET
         customer_id=?, invoice_no = ?, terms=?, due_date =?, invoice_date =?, message_invoice=?,sub_total=?,
         statement_invoice=?,
@@ -14,6 +14,7 @@ export default {
         tax_amount=?, 
         discount_amount=?,
         recurring=?,
+        agnaist_ksh=?,
         created_by=?,
         estimate=?,
         sales_order_no = ?,
@@ -35,6 +36,7 @@ export default {
             tax_amount,
             discount_amount,
             recurring,
+            agnaist_ksh,
             created_by,
             estimate,
             sales_order_no,
@@ -276,19 +278,21 @@ export default {
         const result = await client.query(
             `SELECT t.transaction,t.transaction_type,t.amount, t.customer_name, t.date_created, t.balance, t.status
              FROM (
-            ( SELECT i.invoice_no transaction, 
+            (
+                 SELECT i.invoice_no transaction, 
               CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)) amount,
 
               if(i.invoice_no, "Invoice", "Invoice") transaction_type,
 
-              if(i.status = "1", 0, CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2))) balance,
+              if(i.status = "1", 0, CAST(SUBSTRING(replace(i.due_amount, ',', ''),5) AS DECIMAL(10,2))) balance,
 
               if(i.status = "1", "Sent", "Overdue") status,
 
               i.created_at date_created, c.customer_display_name customer_name  FROM
              ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
-              WHERE i.created_by = ${created_by} AND i.estimate = ${estimate} 
-              AND i.created_at BETWEEN ${startDate} AND ${endDate} ) 
+              WHERE i.created_by = ${created_by} AND i.estimate = ${estimate} AND
+              i.approved = 1 AND i.sales_order_no = 0 AND
+               i.created_at BETWEEN ${startDate} AND ${endDate} ) 
               UNION ALL
 
             (   
@@ -297,7 +301,7 @@ export default {
 
                 if(i.credit_no, "Credit Note", "Credit Note") transaction_type,
 
-                if(i.status = "0", 0, CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2))) balance,
+                if(i.status = "0", 0, CAST(SUBSTRING(replace(i.due_amount, ',', ''),5) AS DECIMAL(10,2))) balance,
 
                 if(i.status = "1", "Open", "Closed") status,
 
@@ -315,11 +319,11 @@ export default {
 
               if(i.invoice_no, "Customer opening balance", "Cendor opening balance") transaction,
 
-              CAST(c.out_of_balance AS DECIMAL(10,2)) amount,
+              CAST(c.balance_opening_balance AS DECIMAL(10,2)) amount,
 
               if(i.invoice_no, "Invoice", "Invoice") transaction_type,
 
-              if(i.status = "1", 0, CAST(c.out_of_balance AS DECIMAL(10,2))) balance,
+              CAST(c.out_of_balance AS DECIMAL(10,2)) balance,
 
               if(i.status = "1", "Paid", "Overdue") status,
 
@@ -327,7 +331,8 @@ export default {
               
               FROM
               ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id
-              WHERE i.created_by = ${created_by}  
+              WHERE i.created_by = ${created_by} AND
+              i.approved = 1 AND i.sales_order_no = 0  
               AND i.created_at BETWEEN ${startDate} AND ${endDate}  GROUP BY c.out_of_balance 
               
               )
@@ -518,29 +523,29 @@ export default {
         const result = await client.query(
             `SELECT c.customer_display_name, 
             
-             sum(CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2))) total_amount,
+             sum(CAST(SUBSTRING(replace(i.due_amount, ',', ''),5) AS DECIMAL(10,2))) total_amount,
 
              sum( if ( DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) < 0,
-             CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)),0)) as current_amount,
+             CAST(SUBSTRING(replace(i.due_amount, ',', ''),5) AS DECIMAL(10,2)),0)) as current_amount,
 
              sum( if ( (DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) < 16  
              AND
              DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) > 0),
-             CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)),0)) as overdue_15,
+             CAST(SUBSTRING(replace(i.due_amount, ',', ''),5) AS DECIMAL(10,2)),0)) as overdue_15,
 
              sum( if ( (DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) < 31  
              AND
              DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) > 15),
-             CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)),0)) as overdue_15_30,
+             CAST(SUBSTRING(replace(i.due_amount, ',', ''),5) AS DECIMAL(10,2)),0)) as overdue_15_30,
 
              sum( if ( (DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) < 46  
              AND
              DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) > 30),
-             CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)),0)) as overdue_30_45,
+             CAST(SUBSTRING(replace(i.due_amount, ',', ''),5) AS DECIMAL(10,2)),0)) as overdue_30_45,
 
 
              sum( if ( (DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) > 45 ),
-             CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)),0)) as overdue_45
+             CAST(SUBSTRING(replace(i.due_amount, ',', ''),5) AS DECIMAL(10,2)),0)) as overdue_45
 
              FROM 
             ${TABLE.INVOICES} i
@@ -755,6 +760,59 @@ export default {
             )
             
             ) AS t`);
+        return result;
+    },
+
+
+    getInvoiceFilterPaidTransactions: async ({ filter_value }: Invoices) => {
+        const result = await client.query(
+            `
+
+            SELECT t.invoice_no,t.payment_received_id, t.invoice_date, t.due_amount, t.amount
+             FROM (
+
+             (
+                SELECT
+                open_balance_id invoice_no,
+                created_on invoice_date,
+                balance due_amount,
+                payment_received_id payment_received_id,
+                amount amount
+                FROM
+                opening_balances_sales
+                WHERE
+                payment_received_id = ${filter_value}
+            )
+                            UNION All
+
+            (
+                SELECT
+                i.invoice_no invoice_no,
+                i.invoice_date invoice_date,
+                s.payment_received_id payment_received_id,
+                s.balance due_amount,
+                s.amount amount
+                FROM
+                invoice_paymentreceived_sales s inner join invoices i on s.invoice_no = i.invoice_no  WHERE
+              s.payment_received_id = ${filter_value}
+            )
+            UNION All
+
+            (
+                SELECT
+                invoice_no invoice_no,
+                invoice_date invoice_date ,
+                due_amount due_amount,
+                payment_received_id payment_received_id,
+                amount amount
+                FROM
+                invoices WHERE
+              payment_received_id = ${filter_value}
+            )
+
+
+            
+            ) AS t `);
         return result;
     },
 

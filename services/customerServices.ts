@@ -138,14 +138,15 @@ export default {
 		return query;
 	},
 
-	insertOutofBalance: async ({ out_of_balance, filter_value, amount }: Customers) => {
+	insertOutofBalance: async ({ out_of_balance, client_id, filter_value, amount }: Customers) => {
 		const query = await client.query(
 			`INSERT INTO opening_balances_sales
       SET
        payment_received_id = ?,
+	   client_id = ?,
        amount = ?,
        balance = ?`,
-			[ filter_value, amount, out_of_balance ]
+			[ filter_value, client_id, amount, out_of_balance ]
 		);
 		return query;
 	},

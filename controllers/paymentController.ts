@@ -435,30 +435,75 @@ export default {
 			let { id, customer_id } = getQuery(ctx, {
 				mergeParams: true,
 			});
+
+
 			const data = await paymentService.deletePaymentReceived({
 				id: Number(id),
 			});
-
+			
 			if (data) {
-				console.log('payment received deleted');
+				const data_length = await paymentService.gerInvoicePaid({
+					id: id,
+				});
+				const c_data_length = await paymentService.gerCustomerBalance({
+					id: id,
+				});			
+				if (data_length.length > 0) {
+					for (let i = 0; i < data_length.length; i++) {
+						const formatCurrency = (amount: any) => {
+							return new Intl.NumberFormat('en-US', {
+								style: 'currency',
+								currency: "ABS",
+								minimumFractionDigits: 2,
+								maximumFractionDigits: 2
+							}).format(amount).replaceAll('ABS', data_length[i].currency_type);
+						};
+						let str = data_length[i].due_amount;
+						str = str.toString().replace(/[^\d\.\-]/g, ""); // You might also include + if you want them to be able to type it
+						const mbalance = parseFloat(str);
+						const newBalance = formatCurrency(mbalance + parseFloat(data_length[i].amount));
+						
+						
+						const data_2 = await paymentService.updateInvoicePaidBInvoice({
+							id: id,
+							invoice_no: data_length[i].invoice_no,
+							client_id: data_length[i].client_id,
+							balance_amount: newBalance
+						});
+						const data_3 = await paymentService.updateCustomerBalance({
+							id: customer_id,
+							balance_amount: c_data_length[0].amount
+						});
 
+						ctx.response.body = {
+							status: true,
+							status_code: 200,
+							message: 'Delete successfully'
+						};
+					}
+					
+		
+				}
+				else {
 				const data_2 = await paymentService.updateInvoicePaid({
 					id: id,
 				});
-
 				const data_3 = await paymentService.updateCustomerBalance({
 					id: customer_id,
+					balance_amount: c_data_length[0].amount
 				});
 
 				if (data_2) {
 					ctx.response.body = {
 						status: true,
 						status_code: 200,
-						message: 'Delete successfully',
-						data: data,
+						message: 'Delete successfully'
 					};
 				}
-			}
+				
+			} 
+		}
+				
 		} catch (error) {
 			ctx.response.status = 400;
 			ctx.response.body = {

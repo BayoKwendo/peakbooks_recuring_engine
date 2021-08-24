@@ -398,13 +398,12 @@ export default {
         const insert = await customerServices.insertOutofBalance({
           filter_value: values.payment_received_id,
           out_of_balance: values.out_of_balance,
+          client_id: values.client_id,
           amount: values.amount
         });
 
 
-
         // const balance = Number(values.amount) - Number(values.out_of_balance);
-
         if (insert) {
           // alert(balance.toString())
           await customerServices.updatePaymentReceiveRecipt({

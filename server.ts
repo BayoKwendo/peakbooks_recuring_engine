@@ -105,10 +105,11 @@ let task = cron('*/.5 * * * * *', async () => {
 
     // moment.unix(this.state.invoice[i].frequecy
 
-
     try {
       const body222 = await invoiceService.createInvoice(
         {
+
+          
           customer_id: data[0].customer_id,
           invoice_no: data[0].invoice_no,
           terms: data[0].terms,
@@ -117,6 +118,11 @@ let task = cron('*/.5 * * * * *', async () => {
           message_invoice: data[0].message_invoice,
           statement_invoice: data[0].statement_invoice,
           amount: data[0].amount,
+          reference: data[0].reference,
+          sales_person_id: data[0].sales_person_id,
+          agnaist_ksh: data[0].agnist_ksh,
+          currency_type: data[0].currency_type,
+        
           estimate: data[0].estimate,
           due_amount: data[0].due_amount,
           discount_amount: data[0].discount_amount,
@@ -260,6 +266,7 @@ let task = cron('*/.5 * * * * *', async () => {
       const data = await expenseService.getRecurringExpeFilter({
         filter_value: recur_expense.expense_ref,
       });
+      // console.log(data)
 
 
       // let mfrequency;
@@ -297,7 +304,6 @@ let task = cron('*/.5 * * * * *', async () => {
 
 
 
-      console.log(data)
       try {
         const submitedexpense = await expenseService.createExpense(
           {

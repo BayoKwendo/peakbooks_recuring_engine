@@ -206,6 +206,38 @@ getExpenseAccount: async ({ created_by }: Payment) => {
 		return query;
 	},
 
+
+	gerInvoicePaid: async ({ id }: Payment) => {
+		const query = await client.query(
+			`  SELECT
+			s.invoice_no invoice_no,
+			s.client_id client_id,
+			i.invoice_date invoice_date,
+			i.currency_type currency_type,
+			s.payment_received_id payment_received_id,
+			s.balance due_amount,
+			s.amount amount
+			FROM
+			invoice_paymentreceived_sales s inner join invoices i on s.invoice_no = i.invoice_no  WHERE
+		  s.payment_received_id = ${id}`
+		);
+		return query;
+	},
+
+	gerCustomerBalance: async ({ id }: Payment) => {
+		const query = await client.query(
+			`SELECT
+			*
+			FROM
+			opening_balances_sales   WHERE
+		  payment_received_id = ${id}`
+		);
+		return query;
+	},
+
+
+
+
 	updateInvoicePaid: async ({ id }: Payment) => {
 		const query = await client.query(
 			`UPDATE ${TABLE.INVOICES} SET 
@@ -216,10 +248,31 @@ getExpenseAccount: async ({ created_by }: Payment) => {
 		return query;
 	},
 
-	updateCustomerBalance: async ({ id }: Payment) => {
+	updateInvoicePaidBInvoice: async ({ id, client_id, invoice_no, balance_amount }: Payment) => {
+		const query = await client.query(
+		`UPDATE ${TABLE.INVOICES} SET 
+        due_amount = "${balance_amount}",
+		status = 0 
+        WHERE
+		created_by = ${client_id} AND invoice_no = "${invoice_no}" AND payment_received_id = ${id}`
+		);
+		return query;
+	},
+
+	updateInvoicePaidBalance: async ({ id }: Payment) => {
+		const query = await client.query(
+			`UPDATE ${TABLE.INVOICES} SET 
+        due_amount = amount,
+		status =0
+        WHERE payment_received_id = ${id}`
+		);
+		return query;
+	},
+
+	updateCustomerBalance: async ({ id,balance_amount }: Payment) => {
 		const query = await client.query(
 			`UPDATE ${TABLE.CUSTOMER} SET 
-			out_of_balance = balance_opening_balance
+			out_of_balance = ${balance_amount}
 	        WHERE id = ${id}`
 		);
 		return query;
@@ -240,7 +293,8 @@ getExpenseAccount: async ({ created_by }: Payment) => {
 
 	getPaymentReceivedUnpaid: async ({ offset, created_by, page_size }: Payment) => {
 		const result = await client.query(
-			`SELECT i.created, i.reference, i.id,i.customer_id, i.paid_amount,i.payment_date, c.customer_display_name, i.invoice_no,i.payment_mode,i.amount_inexcess,i.amount_received FROM 
+			`SELECT i.created, i.reference, i.id,i.customer_id, c.email, i.paid_amount,i.payment_date, c.customer_display_name, i.invoice_no,i.payment_mode,i.amount_inexcess,
+			i.paid_amount amount_received FROM 
         ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
          c.client_id = ? AND i.status = 1 order by i.id DESC LIMIT ?,?`,
 			[ created_by, offset, page_size ]
@@ -249,7 +303,8 @@ getExpenseAccount: async ({ created_by }: Payment) => {
 	},
 	getReceivedFilter: async ({ filter_value }: Payment) => {
 		const result = await client.query(
-			`SELECT i.created, i.reference,i.customer_id, c.customer_display_name, i.invoice_no,i.payment_mode,i.amount_inexcess,i.amount_received FROM 
+			`SELECT i.created, i.reference,i.customer_id, c.customer_display_name, i.invoice_no,i.payment_mode,i.amount_inexcess,
+			i.paid_amount amount_received FROM 
        ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE i.invoice_no = ?`,
 			[ filter_value ]
 		);
@@ -519,7 +574,7 @@ getExpenseAccount: async ({ created_by }: Payment) => {
 
 	getPaymentReceivable: async ({ startDate, endDate, created_by }: Payment) => {
 		const result = await client.query(
-			`SELECT IFNULL(SUM(i.amount_received), 0) amount_received FROM
+			`SELECT IFNULL(SUM(i.paid_amount), 0) amount_received FROM
         ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
          c.client_id = ${created_by} AND i.created BETWEEN ${startDate} AND ${endDate}`
 		);
@@ -531,7 +586,7 @@ getExpenseAccount: async ({ created_by }: Payment) => {
 		const result = await client.query(
 			`SELECT i.created, i.reference,i.notes, i.id, c.customer_display_name, i.invoice_no,i.payment_mode,
             CAST(i.amount_inexcess AS DECIMAL(10,2)) amount_inexcess,
-           i.amount_received FROM 
+           i.paid_amount amount_received FROM 
         ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
          c.client_id = ${created_by} AND i.status = 1 AND i.created BETWEEN ${startDate} AND ${endDate} order by i.id DESC LIMIT ${offset},${page_size}`
 		);
@@ -549,7 +604,7 @@ getExpenseAccount: async ({ created_by }: Payment) => {
 
 	getPaymentPettyCash: async ({ startDate, endDate, created_by }: Payment) => {
 		const result = await client.query(
-			`SELECT IFNULL(SUM(i.amount_received), 0) amount_received FROM
+			`SELECT IFNULL(SUM(i.paid_amount), 0) amount_received FROM
         ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
          c.client_id = ${created_by} AND i.deposit_to = "Petty Cash" AND i.created BETWEEN ${startDate} AND ${endDate}`
 		);
@@ -558,7 +613,7 @@ getExpenseAccount: async ({ created_by }: Payment) => {
 
 	getPaymentUndeposited: async ({ startDate, endDate, created_by }: Payment) => {
 		const result = await client.query(
-			`SELECT IFNULL(SUM(i.amount_received), 0) amount_received  FROM 
+			`SELECT IFNULL(SUM(i.paid_amount), 0) amount_received  FROM 
         ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
          c.client_id = ${created_by} AND i.deposit_to = "Undeposited Funds" AND i.created BETWEEN ${startDate} AND ${endDate}`
 		);
@@ -637,7 +692,8 @@ getExpenseAccount: async ({ created_by }: Payment) => {
 	//return paid payment for bils
 	getPaymentReceivedpaidbills: async ({ offset, created_by }: Payment) => {
 		const result = await client.query(
-			`SELECT i.created, i.reference, i.id, i.paid_amount,i.payment_date, c.vendor_display_name, i.bill_no, i.payment_mode, i.amount_inexcess, i.amount_received FROM 
+			`SELECT i.created, i.reference, i.id, i.paid_amount,i.payment_date, c.vendor_display_name, i.bill_no, i.payment_mode, i.amount_inexcess,
+			 i.amount_received FROM 
         ${TABLE.PAYMENT_RECEIVED_PAY_BILL} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id WHERE
          c.client_id = ? AND i.status = 1 order by i.id DESC LIMIT ?,10`,
 			[ created_by, offset ]
@@ -820,7 +876,7 @@ getExpenseAccount: async ({ created_by }: Payment) => {
          
             UNION ALL
            (
-             SELECT IFNULL(SUM(i.paid_amount), 0) amount_received,
+             SELECT IFNULL(SUM(i.amount_received), 0) amount_received,
              IFNULL(NULL, 0) amount_received2,
              IFNULL((b.account_balance), 0) account_balance, 
              IFNULL((i.deposit_to), "Banks") account_type  
@@ -875,7 +931,7 @@ getExpenseAccount: async ({ created_by }: Payment) => {
             )
                UNION ALL
            ( 
-             SELECT IFNULL(SUM(i.paid_amount), 0) amount_received,
+             SELECT IFNULL(SUM(i.amount_received), 0) amount_received,
              IFNULL(NULL, 0) amount_received2,
 
              IFNULL((b.account_balance), 0) account_balance, IFNULL((i.deposit_to), "Petty Cash") account_type  FROM
@@ -922,7 +978,7 @@ getExpenseAccount: async ({ created_by }: Payment) => {
             )
                UNION ALL
            ( 
-             SELECT IFNULL(SUM(i.paid_amount), 0) amount_received,
+             SELECT IFNULL(SUM(i.amount_received), 0) amount_received,
              IFNULL(NULL, 0) amount_received2,
 
              IFNULL((b.account_balance), 0) account_balance, IFNULL((i.deposit_to), "Undeposited Funds") account_type  FROM
