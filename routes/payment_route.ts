@@ -13,6 +13,8 @@ router
   
   .post("/payment_received", authorize, paymentController.createPaymentReceivedPay)
 
+  .put("/payment_received", authorize, paymentController.editPaymentReceivedPay)
+  
   .delete("/payment_received", authorize, paymentController.deleteDeletePaymentReceived)
   
   .get("/payment_status", authorize, paymentController.getPaymentUnpaidrecord)

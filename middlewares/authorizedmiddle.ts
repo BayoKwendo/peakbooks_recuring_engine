@@ -1,32 +1,32 @@
-import { Status } from "https://deno.land/x/oak/mod.ts";
+import { Status } from 'https://deno.land/x/oak/mod.ts';
 
 // import { validateJwt } from "https://deno.land/x/djwt@v1.7/validate.ts";
-import { verify, decode } from "https://deno.land/x/djwt@v2.0/mod.ts"
+import { verify, decode } from 'https://deno.land/x/djwt/mod.ts';
+import { key } from '../exports.ts';
 
 export default async (ctx: any, next: any) => {
-
-    const jwt = ctx.request.headers
-        .get("Authorization");
-    if (!jwt) {
-        ctx.response.body = {
-            status: false,
-            status_code: 400,
-            message: "Access Token Missing!",
-        };
-    } else {
-        try {
-            const key = "peakinsghts2030+"
-            const data: any = await verify(jwt, key, "HS512");
-            ctx.cookies.delete('jwt');
-            ctx.response.body = data
+	const jwt = ctx.request.headers.get('Authorization');
+	if (!jwt) {
+		ctx.response.body = {
+			status: false,
+			status_code: 400,
+			message: 'Token Missing!',
+		};
+	} else {
+		try {
+			const data: any = await verify(jwt, key);
+			ctx.cookies.delete('jwt');
+			ctx.response.body = data;
+			await next();
+		} catch (error) {
             await next();
-        } catch (error) {
-            // ctx.response.status = 400;
-            ctx.response.body = {
-                status_code: 401,
-                status: false,
-                message: `${error}`,
-            };
-        }
-    }
+
+			// ctx.response.status = 401;
+			// ctx.response.body = {
+			// 	status_code: 401,
+			// 	status: false,
+			// 	message: `${error}`,
+			// };
+		}
+	}
 };

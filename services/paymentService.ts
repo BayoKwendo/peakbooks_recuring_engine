@@ -25,37 +25,28 @@ export default {
 		return result;
 	},
 
-		//Create Expense Account
+	//Create Expense Account
 
-		createExpenseAccount: async ({
-			name, 
-			category, 
-			category_type,
-			created_by}: Payment) => {
-			const result = await client.query(
-				`INSERT INTO ${TABLE.EXPENSE_ACCOUNT}  SET
+	createExpenseAccount: async ({ name, category, category_type, created_by }: Payment) => {
+		const result = await client.query(
+			`INSERT INTO ${TABLE.EXPENSE_ACCOUNT}  SET
 				name = ?, 
 				category = ?,
 				category_type = ?, 
 				created_by = ?
 				`,
-				[
-					name, 
-					category, 
-					category_type,
-					created_by
-				]
-			);
-			return result;
-		},
-// get bank category
+			[ name, category, category_type, created_by ]
+		);
+		return result;
+	},
+	// get bank category
 
-getExpenseAccount: async ({ created_by }: Payment) => {
-	const result = await client.query(`SELECT name label, name value, category FROM ${TABLE.EXPENSE_ACCOUNT} WHERE created_by in (0,${created_by})`);
-	return result;
-},
-
-
+	getExpenseAccount: async ({ created_by }: Payment) => {
+		const result = await client.query(
+			`SELECT name label, name value, category FROM ${TABLE.EXPENSE_ACCOUNT} WHERE created_by in (0,${created_by})`
+		);
+		return result;
+	},
 
 	createBank: async ({
 		account_name,
@@ -177,6 +168,38 @@ getExpenseAccount: async ({ created_by }: Payment) => {
 		return result;
 	},
 
+
+editPaymentReceived: async ({
+		invoice_no,
+		amount_received,
+		payment_date,
+		payment_mode,
+		notes,
+		amount_inexcess,
+		deposit_to,
+		id
+	}: Payment) => {
+		const result = await client.query(
+			`UPDATE ${TABLE.PAYMENT_RECEIVED_PAY}  SET
+        invoice_no=?,
+        amount_received=?,
+        payment_date =?,
+        payment_mode =?,
+        notes=?,
+        amount_inexcess=?,
+        deposit_to=? WHERE id =${id} `,
+			[
+				invoice_no,
+				amount_received,
+				payment_date,
+				payment_mode,
+				notes,
+				amount_inexcess,
+				deposit_to,
+			]
+		);
+		return result;
+	},
 	//get payment recepp unprocessed
 
 	getPaymentUnpaidrecord: async ({ customer_id }: Payment) => {
@@ -206,20 +229,19 @@ getExpenseAccount: async ({ created_by }: Payment) => {
 		return query;
 	},
 
-
-	gerInvoicePaid: async ({ id }: Payment) => {
+	gerInvoicePaid: async ({ id, created_by }: Payment) => {
 		const query = await client.query(
-			`  SELECT
+			` 	 SELECT
 			s.invoice_no invoice_no,
 			s.client_id client_id,
 			i.invoice_date invoice_date,
 			i.currency_type currency_type,
 			s.payment_received_id payment_received_id,
-			s.balance due_amount,
+			i.due_amount due_amount,
 			s.amount amount
 			FROM
 			invoice_paymentreceived_sales s inner join invoices i on s.invoice_no = i.invoice_no  WHERE
-		  s.payment_received_id = ${id}`
+		  s.payment_received_id = ${id} AND i.created_by = ${created_by} `
 		);
 		return query;
 	},
@@ -235,9 +257,6 @@ getExpenseAccount: async ({ created_by }: Payment) => {
 		return query;
 	},
 
-
-
-
 	updateInvoicePaid: async ({ id }: Payment) => {
 		const query = await client.query(
 			`UPDATE ${TABLE.INVOICES} SET 
@@ -250,11 +269,11 @@ getExpenseAccount: async ({ created_by }: Payment) => {
 
 	updateInvoicePaidBInvoice: async ({ id, client_id, invoice_no, balance_amount }: Payment) => {
 		const query = await client.query(
-		`UPDATE ${TABLE.INVOICES} SET 
+			`UPDATE ${TABLE.INVOICES} SET 
         due_amount = "${balance_amount}",
 		status = 0 
         WHERE
-		created_by = ${client_id} AND invoice_no = "${invoice_no}" AND payment_received_id = ${id}`
+		created_by = ${client_id} AND invoice_no = "${invoice_no}"`
 		);
 		return query;
 	},
@@ -269,7 +288,7 @@ getExpenseAccount: async ({ created_by }: Payment) => {
 		return query;
 	},
 
-	updateCustomerBalance: async ({ id,balance_amount }: Payment) => {
+	updateCustomerBalance: async ({ id, balance_amount }: Payment) => {
 		const query = await client.query(
 			`UPDATE ${TABLE.CUSTOMER} SET 
 			out_of_balance = ${balance_amount}
@@ -293,7 +312,7 @@ getExpenseAccount: async ({ created_by }: Payment) => {
 
 	getPaymentReceivedUnpaid: async ({ offset, created_by, page_size }: Payment) => {
 		const result = await client.query(
-			`SELECT i.created, i.reference, i.id,i.customer_id, c.email, i.paid_amount,i.payment_date, c.customer_display_name, i.invoice_no,i.payment_mode,i.amount_inexcess,
+			`SELECT i.created, i.reference, i.deposit_to, i.id,i.customer_id, c.email, i.paid_amount,i.payment_date, c.customer_display_name, i.invoice_no,i.payment_mode,i.amount_inexcess,
 			i.paid_amount amount_received FROM 
         ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
          c.client_id = ? AND i.status = 1 order by i.id DESC LIMIT ?,?`,

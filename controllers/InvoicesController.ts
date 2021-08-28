@@ -1830,9 +1830,10 @@ export default {
       try {
         // let kw = request.url.searchParams.get('page_number');
         // console.log("bayo", kw)
-        let { filter_value } = getQuery(ctx, { mergeParams: true });
+        let { filter_value, created_by } = getQuery(ctx, { mergeParams: true });
         const data = await invoiceService.getInvoiceFilterPaidTransactions({
           filter_value: filter_value,
+          created_by: Number(created_by)
         });
         ctx.response.body = {
           status: true,

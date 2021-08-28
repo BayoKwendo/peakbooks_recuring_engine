@@ -764,7 +764,7 @@ export default {
     },
 
 
-    getInvoiceFilterPaidTransactions: async ({ filter_value }: Invoices) => {
+    getInvoiceFilterPaidTransactions: async ({ filter_value, created_by }: Invoices) => {
         const result = await client.query(
             `
 
@@ -777,7 +777,8 @@ export default {
                 created_on invoice_date,
                 balance due_amount,
                 payment_received_id payment_received_id,
-                amount amount
+                amount amount,
+                client_id created_by
                 FROM
                 opening_balances_sales
                 WHERE
@@ -789,12 +790,13 @@ export default {
                 SELECT
                 i.invoice_no invoice_no,
                 i.invoice_date invoice_date,
-                s.payment_received_id payment_received_id,
                 s.balance due_amount,
-                s.amount amount
+                s.payment_received_id payment_received_id,
+                s.amount amount,
+                i.created_by created_by
                 FROM
-                invoice_paymentreceived_sales s inner join invoices i on s.invoice_no = i.invoice_no  WHERE
-              s.payment_received_id = ${filter_value}
+                invoice_paymentreceived_sales s inner join invoices i on s.invoice_no = i.invoice_no WHERE
+              s.payment_received_id = ${filter_value} AND i.created_by = ${created_by}
             )
             UNION All
 
@@ -804,14 +806,12 @@ export default {
                 invoice_date invoice_date ,
                 due_amount due_amount,
                 payment_received_id payment_received_id,
-                amount amount
+                amount amount,
+                created_by created_by
                 FROM
                 invoices WHERE
-              payment_received_id = ${filter_value}
-            )
-
-
-            
+              payment_received_id = ${filter_value} AND created_by = ${created_by} 
+            )             
             ) AS t `);
         return result;
     },

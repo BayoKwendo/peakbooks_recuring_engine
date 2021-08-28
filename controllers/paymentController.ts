@@ -213,42 +213,42 @@ export default {
 		}
 	},
 
-		/**
+	/**
    * @description Add a expense account
    */
-     createExpenseAccount: async ({ request, response }: { request: any, response: any }) => {
-			const body = await request.body();
-			if (!request.hasBody) {
-				response.status = 400;
-				response.body = {
-					success: false,
-					message: 'No data provided',
-				};
-				return;
-			}
-			try {
-				const values = await body.value;
-				await paymentService.createExpenseAccount({
-					name: values.name,
-					category: values.category,
-					category_type: values.category_type,
-					created_by: values.created_by
-				});
-				response.body = {
-					status: true,
-					status_code: 200,
-					message: `${values.name} added successful`,
-				};
-			} catch (error) {
-				response.status = 400;
-				response.body = {
-					status: false,
-					message: `${error}`,
-				};
-			}
-		},
+	createExpenseAccount: async ({ request, response }: { request: any, response: any }) => {
+		const body = await request.body();
+		if (!request.hasBody) {
+			response.status = 400;
+			response.body = {
+				success: false,
+				message: 'No data provided',
+			};
+			return;
+		}
+		try {
+			const values = await body.value;
+			await paymentService.createExpenseAccount({
+				name: values.name,
+				category: values.category,
+				category_type: values.category_type,
+				created_by: values.created_by,
+			});
+			response.body = {
+				status: true,
+				status_code: 200,
+				message: `${values.name} added successful`,
+			};
+		} catch (error) {
+			response.status = 400;
+			response.body = {
+				status: false,
+				message: `${error}`,
+			};
+		}
+	},
 
-  // get expense account
+	// get expense account
 	getExpenseAccount: async (ctx: any) => {
 		try {
 			let { created_by } = getQuery(ctx, {
@@ -256,9 +256,9 @@ export default {
 			});
 
 			const data = await paymentService.getExpenseAccount({
-				created_by: Number(created_by)
+				created_by: Number(created_by),
 			});
-			ctx.response.body = data ;
+			ctx.response.body = data;
 		} catch (error) {
 			ctx.response.status = 400;
 			ctx.response.body = {
@@ -432,78 +432,79 @@ export default {
 		try {
 			// let kw = request.url.searchParams.get('page_number');
 			// console.log("bayo", kw)
-			let { id, customer_id } = getQuery(ctx, {
+			let { id, customer_id, created_by } = getQuery(ctx, {
 				mergeParams: true,
 			});
-
-
 			const data = await paymentService.deletePaymentReceived({
 				id: Number(id),
 			});
-			
 			if (data) {
 				const data_length = await paymentService.gerInvoicePaid({
 					id: id,
+					created_by: Number(created_by),
 				});
 				const c_data_length = await paymentService.gerCustomerBalance({
 					id: id,
-				});			
+				});
+
+				console.log(JSON.stringify(data_length));
 				if (data_length.length > 0) {
 					for (let i = 0; i < data_length.length; i++) {
 						const formatCurrency = (amount: any) => {
 							return new Intl.NumberFormat('en-US', {
 								style: 'currency',
-								currency: "ABS",
+								currency: 'ABS',
 								minimumFractionDigits: 2,
-								maximumFractionDigits: 2
-							}).format(amount).replaceAll('ABS', data_length[i].currency_type);
+								maximumFractionDigits: 2,
+							})
+								.format(amount)
+								.replaceAll('ABS', data_length[i].currency_type);
 						};
 						let str = data_length[i].due_amount;
-						str = str.toString().replace(/[^\d\.\-]/g, ""); // You might also include + if you want them to be able to type it
+						str = str.toString().replace(/[^\d\.\-]/g, ''); // You might also include + if you want them to be able to type it
 						const mbalance = parseFloat(str);
 						const newBalance = formatCurrency(mbalance + parseFloat(data_length[i].amount));
-						
-						
-						const data_2 = await paymentService.updateInvoicePaidBInvoice({
-							id: id,
-							invoice_no: data_length[i].invoice_no,
-							client_id: data_length[i].client_id,
-							balance_amount: newBalance
-						});
-						const data_3 = await paymentService.updateCustomerBalance({
-							id: customer_id,
-							balance_amount: c_data_length[0].amount
-						});
 
+						// console.log(customer_id+" "+c_data_length[0].amount)
+						// console.log(mbalance + parseFloat(data_length[i].amount))
+
+						if (data_length[i].amount > 0) {
+							const data_2 = await paymentService.updateInvoicePaidBInvoice({
+								id: id,
+								invoice_no: data_length[i].invoice_no,
+								client_id: data_length[i].client_id,
+								balance_amount: newBalance,
+							});
+
+							const data_3 = await paymentService.updateCustomerBalance({
+								id: customer_id,
+								balance_amount: c_data_length[0].amount,
+							});
+						}
 						ctx.response.body = {
 							status: true,
 							status_code: 200,
-							message: 'Delete successfully'
+							message: 'Delete successfully',
 						};
 					}
-					
-		
-				}
-				else {
-				const data_2 = await paymentService.updateInvoicePaid({
-					id: id,
-				});
-				const data_3 = await paymentService.updateCustomerBalance({
-					id: customer_id,
-					balance_amount: c_data_length[0].amount
-				});
+				} else {
+					const data_2 = await paymentService.updateInvoicePaid({
+						id: id,
+					});
+					const data_3 = await paymentService.updateCustomerBalance({
+						id: customer_id,
+						balance_amount: c_data_length[0].amount,
+					});
 
-				if (data_2) {
-					ctx.response.body = {
-						status: true,
-						status_code: 200,
-						message: 'Delete successfully'
-					};
+					if (data_2) {
+						ctx.response.body = {
+							status: true,
+							status_code: 200,
+							message: 'Delete successfully',
+						};
+					}
 				}
-				
-			} 
-		}
-				
+			}
 		} catch (error) {
 			ctx.response.status = 400;
 			ctx.response.body = {
@@ -538,6 +539,48 @@ export default {
 				reference: values.reference,
 				deposit_to: values.deposit_to,
 				notes: values.notes,
+				amount_inexcess: values.amount_inexcess,
+			});
+			response.body = {
+				status: true,
+				status_code: 200,
+				message: 'Payment recorded successfully',
+			};
+		} catch (error) {
+			response.status = 400;
+			response.body = {
+				status: false,
+				message: `${error}`,
+			};
+		}
+	},
+
+	/**
+   * @description payment received edit
+   */
+	editPaymentReceivedPay: async ({ request, response }: { request: any, response: any }) => {
+		const body = await request.body();
+		if (!request.hasBody) {
+			response.status = 400;
+			response.body = {
+				success: false,
+				message: 'No data provided',
+			};
+			return;
+		}
+		try {
+			const values = await body.value;
+
+			await paymentService.editPaymentReceived({
+				customer_id: values.customer_id,
+				invoice_no: values.invoice_no,
+				amount_received: values.amount_received,
+				payment_date: values.payment_date,
+				payment_mode: values.payment_mode,
+				reference: values.reference,
+				deposit_to: values.deposit_to,
+				notes: values.notes,
+				id: values.id,
 				amount_inexcess: values.amount_inexcess,
 			});
 			response.body = {
