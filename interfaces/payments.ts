@@ -14,6 +14,7 @@ export default interface Payment {
   payment_date?: string,
   payment_mode?: string,
   reference?: string,
+  update_amount?: string,
   vendor_id?: string,
   account_name?: string,
   balance_amount?: string,

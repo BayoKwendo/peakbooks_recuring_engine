@@ -147,6 +147,7 @@ export default {
         customer_id=?,
         invoice_no=?,
         amount_received=?,
+		original_amount=?,
         payment_date =?,
         payment_mode =?,
         reference=?,
@@ -156,6 +157,7 @@ export default {
 			[
 				customer_id,
 				invoice_no,
+				amount_received,
 				amount_received,
 				payment_date,
 				payment_mode,
@@ -168,8 +170,7 @@ export default {
 		return result;
 	},
 
-
-editPaymentReceived: async ({
+	editPaymentReceived: async ({
 		invoice_no,
 		amount_received,
 		payment_date,
@@ -177,25 +178,29 @@ editPaymentReceived: async ({
 		notes,
 		amount_inexcess,
 		deposit_to,
-		id
+		update_amount,
+		id,
 	}: Payment) => {
 		const result = await client.query(
 			`UPDATE ${TABLE.PAYMENT_RECEIVED_PAY}  SET
         invoice_no=?,
         amount_received=?,
+		paid_amount=?,
         payment_date =?,
         payment_mode =?,
         notes=?,
         amount_inexcess=?,
-        deposit_to=? WHERE id =${id} `,
+        deposit_to=?,original_amount_update=? WHERE id =${id} `,
 			[
 				invoice_no,
+				amount_received,
 				amount_received,
 				payment_date,
 				payment_mode,
 				notes,
 				amount_inexcess,
 				deposit_to,
+				update_amount,
 			]
 		);
 		return result;
@@ -803,16 +808,15 @@ editPaymentReceived: async ({
            (
            (
              SELECT  
-             
              created_at date,
-             'Opening Balance' transaction_type,
+            'Opening Balance' transaction_type,
              customer_unique details,
              0 payments,
-             IFNULL(SUM(IFNULL(out_of_balance, 0)), 0) amount
+             IFNULL(SUM(IFNULL(balance_opening_balance, 0)), 0) amount
              FROM  ${TABLE.CUSTOMER} WHERE
              id = ${id} AND
              client_id = ${created_by} AND
-             created_at BETWEEN ${startDate} AND ${endDate}
+             created_at BETWEEN ${startDate} AND ${endDate} GROUP BY 'Opening Balance' having amount >= 0 
            )
            UNION ALL
            ( 
@@ -822,28 +826,21 @@ editPaymentReceived: async ({
              i.invoice_no details, 
              i.paid_amount payments, 
              0 amount
-            
              FROM
              ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
              c.client_id = ${created_by} AND i.status = 1 AND c.id = ${id} AND i.created BETWEEN ${startDate} AND ${endDate} order by i.id
              DESC 
-             LIMIT 1000
-           
+             LIMIT 1000 
            )
            UNION ALL 
-           
            (
-            
             SELECT 
             i.created_at date,
             'Invoice' transaction_type,
             i.invoice_no details, 
             0 payments,
             IFNULL(CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)), 0) amount
-
-            
             FROM ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id
-            
             WHERE created_by = ${created_by} AND c.id = ${id} AND i.estimate=0 AND i.approved = 1 AND i.created_at BETWEEN ${startDate} AND ${endDate}
            )
            UNION ALL 
@@ -860,7 +857,7 @@ editPaymentReceived: async ({
            )
 
            
-           ) AS f`
+           ) AS f ORDER BY f.date DESC`
 		);
 		return result;
 	},

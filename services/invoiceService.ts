@@ -766,9 +766,7 @@ export default {
 
     getInvoiceFilterPaidTransactions: async ({ filter_value, created_by }: Invoices) => {
         const result = await client.query(
-            `
-
-            SELECT t.invoice_no,t.payment_received_id, t.invoice_date, t.due_amount, t.amount
+            `SELECT t.invoice_no,t.payment_received_id,t.invoice_amount, t.invoice_date, t.due_amount, t.amount
              FROM (
 
              (
@@ -778,6 +776,7 @@ export default {
                 balance due_amount,
                 payment_received_id payment_received_id,
                 amount amount,
+                amount invoice_amount,
                 client_id created_by
                 FROM
                 opening_balances_sales
@@ -785,7 +784,6 @@ export default {
                 payment_received_id = ${filter_value}
             )
                             UNION All
-
             (
                 SELECT
                 i.invoice_no invoice_no,
@@ -793,6 +791,7 @@ export default {
                 s.balance due_amount,
                 s.payment_received_id payment_received_id,
                 s.amount amount,
+                i.amount invoice_amount,
                 i.created_by created_by
                 FROM
                 invoice_paymentreceived_sales s inner join invoices i on s.invoice_no = i.invoice_no WHERE
@@ -807,12 +806,13 @@ export default {
                 due_amount due_amount,
                 payment_received_id payment_received_id,
                 amount amount,
+                amount invoice_amount,
                 created_by created_by
                 FROM
                 invoices WHERE
               payment_received_id = ${filter_value} AND created_by = ${created_by} 
             )             
-            ) AS t `);
+            ) AS t`);
         return result;
     },
 

@@ -576,6 +576,7 @@ export default {
 				invoice_no: values.invoice_no,
 				amount_received: values.amount_received,
 				payment_date: values.payment_date,
+				update_amount: values.update_amount,
 				payment_mode: values.payment_mode,
 				reference: values.reference,
 				deposit_to: values.deposit_to,
