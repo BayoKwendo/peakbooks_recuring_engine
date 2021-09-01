@@ -170,6 +170,28 @@ export default {
 		return result;
 	},
 
+	// bank account
+	editPaymentAmount: async ({ amount_received, account_type, created_by }: Payment) => {
+		const result = await client.query(
+			`UPDATE ${TABLE.BANK}  SET
+             account_balance=?
+		 WHERE created_by =? AND account_name =? `,
+			[ amount_received, created_by, account_type ]
+		);
+		return result;
+	},
+
+	// bank account
+	editPaymentAmountDefault: async ({ amount_received, account_type, created_by }: Payment) => {
+		const result = await client.query(
+			`UPDATE ${TABLE.CASH_BANK}  SET
+             account_balance=?
+		   WHERE created_by =? AND account_name =? `,
+			[ amount_received, created_by, account_type ]
+		);
+		return result;
+	},
+
 	editPaymentReceived: async ({
 		invoice_no,
 		amount_received,
@@ -317,7 +339,7 @@ export default {
 
 	getPaymentReceivedUnpaid: async ({ offset, created_by, page_size }: Payment) => {
 		const result = await client.query(
-			`SELECT i.created, i.reference, i.deposit_to, i.id,i.customer_id, c.email, i.paid_amount,i.payment_date, c.customer_display_name, i.invoice_no,i.payment_mode,i.amount_inexcess,
+			`SELECT i.created, i.reference, i.deposit_to,i.notes, i.id,i.customer_id, c.email, i.paid_amount,i.payment_date, c.customer_display_name, i.invoice_no,i.payment_mode,i.amount_inexcess,
 			i.paid_amount amount_received FROM 
         ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
          c.client_id = ? AND i.status = 1 order by i.id DESC LIMIT ?,?`,
@@ -860,6 +882,99 @@ export default {
            ) AS f ORDER BY f.date DESC`
 		);
 		return result;
+	},
+
+	// get modules paid via the banks/ credit card
+
+	getBankDetails: async ({ filter_value, page_size, offset, created_by }: Payment) => {
+		const result = await client.query(
+			`
+		SELECT r.reference, r.amount_received, r.amount_made, r.type, r.dates 
+           
+           FROM
+		   (
+            ( 
+            SELECT 
+			i.reference reference,
+            IFNULL(i.paid_amount, 0) amount_received,
+			0 amount_made,
+           'Payment Received' type,
+		    i.created dates 
+            FROM ${TABLE.PAYMENT_RECEIVED_PAY} i 
+            inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id
+            WHERE
+            c.client_id = ${created_by} AND i.deposit_to = "${filter_value}" 
+           )
+            UNION ALL
+           (
+		  SELECT	   
+            i.reference reference,
+        	0 amount_received,
+			IFNULL(i.paid_amount, 0) amount_made,
+		    'Payment Made' type,
+		    i.created dates     
+             FROM
+             ${TABLE.PAYMENT_RECEIVED_PAY_BILL} i 
+             left join ${TABLE.VENDORS} c on c.id = i.vendor_id 
+             WHERE 
+             c.client_id = ${created_by} AND i.deposit_to = "${filter_value}"
+            ) 
+            UNION ALL
+            ( 
+		    SELECT 
+            c.id reference,
+        	0 amount_received,
+		    IFNULL(c.amount, 0) amount_made,
+		    'Expense' type,
+		    c.created_at dates    
+		    FROM ${TABLE.EXPENSES} c
+            WHERE
+            c.paid_through = "${filter_value}" AND c.client_id= ${created_by}  
+           )
+        ) AS r LIMIT ${offset}, ${page_size}
+        `
+		);
+
+		return result;
+	},
+
+	getBankDetailsCount: async ({ filter_value, created_by }: Payment) => {
+		const [ result ] = await client.query(
+			`SELECT  COUNT(r.type) count    
+           FROM
+		   (
+            ( 
+            SELECT 
+			'Payment Received' type
+
+		    FROM ${TABLE.PAYMENT_RECEIVED_PAY} i 
+            inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id
+            WHERE
+            c.client_id = ${created_by} AND i.deposit_to = "${filter_value}" 
+           )
+            UNION ALL
+           (
+		    SELECT	   
+            'Payment Made' type
+		     FROM
+             ${TABLE.PAYMENT_RECEIVED_PAY_BILL} i 
+             left join ${TABLE.VENDORS} c on c.id = i.vendor_id 
+             WHERE 
+             c.client_id = ${created_by} AND i.deposit_to = "${filter_value}"
+           ) 
+            UNION ALL
+           ( 
+		    SELECT 
+            'Expense' type
+			FROM ${TABLE.EXPENSES} c
+            WHERE
+            c.paid_through = "${filter_value}" AND c.client_id= ${created_by}  
+           )
+        ) AS r
+        `
+		);
+
+		return result.count;
 	},
 
 	//banking report

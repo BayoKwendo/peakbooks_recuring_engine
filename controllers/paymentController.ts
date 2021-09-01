@@ -1,3 +1,4 @@
+import { Client } from 'https://deno.land/x/mysql/mod.ts';
 import { getQuery } from 'https://deno.land/x/oak/helpers.ts';
 import * as log from 'https://deno.land/std/log/mod.ts';
 import paymentService from '../services/paymentService.ts';
@@ -130,7 +131,7 @@ export default {
 
 					page_size = '10';
 
-					const offset = (Number(page_number) - 1) * 10;
+					const offset = (Number(page_number) - 1) * Number(page_size);
 
 					const data = await paymentService.getPayment({
 						offset: Number(offset),
@@ -143,7 +144,7 @@ export default {
 						data: data,
 					};
 				} else {
-					const offset = (Number(page_number) - 1) * 10;
+					const offset = (Number(page_number) - 1) * Number(page_size);
 					const data = await paymentService.getPayment({
 						offset: Number(offset),
 						page_size: Number(page_size),
@@ -289,7 +290,7 @@ export default {
 
 					page_size = '10';
 
-					const offset = (Number(page_number) - 1) * 10;
+					const offset = (Number(page_number) - 1) * Number(page_size);
 
 					const data = await paymentService.getDeposit_to({
 						offset: Number(offset),
@@ -302,7 +303,7 @@ export default {
 						data: data,
 					};
 				} else {
-					const offset = (Number(page_number) - 1) * 10;
+					const offset = (Number(page_number) - 1) * Number(page_size);
 					const data = await paymentService.getDeposit_to({
 						offset: Number(offset),
 						page_size: Number(page_size),
@@ -389,6 +390,57 @@ export default {
 			};
 		}
 	},
+
+	getBankDetails: async (ctx: any) => {
+		try {
+			let { page_number, filter_v, client_id, page_size } = getQuery(ctx, {
+				mergeParams: true,
+			});
+			const total = await paymentService.getBankDetailsCount({
+				created_by: Number(client_id),
+				filter_value: filter_v,
+			});
+
+			if (page_number == null) {
+				page_number = '1';
+				page_size = '100';
+				const offset = (Number(page_number) - 1) * Number(page_size);
+				const data = await paymentService.getBankDetails({
+					created_by: Number(client_id),
+					filter_value: filter_v,
+					offset: Number(offset),
+					page_size: Number(page_size),
+				});
+				ctx.response.body = {
+					status: true,
+					status_code: 200,
+					total: total,
+					data: data,
+				};
+			} else {
+				const offset = (Number(page_number) - 1) * Number(page_size);
+				const data = await paymentService.getBankDetails({
+					created_by: Number(client_id),
+					filter_value: filter_v,
+					offset: Number(offset),
+					page_size: Number(page_size),
+				});
+				ctx.response.body = {
+					status: true,
+					status_code: 200,
+					total: total,
+					data: data,
+				};
+			}
+		} catch (error) {
+			ctx.response.status = 400;
+			ctx.response.body = {
+				success: false,
+				message: `Error: ${error}`,
+			};
+		}
+	},
+
 	/* let {
         page_number,
         page_size,
@@ -546,6 +598,55 @@ export default {
 				status_code: 200,
 				message: 'Payment recorded successfully',
 			};
+		} catch (error) {
+			response.status = 400;
+			response.body = {
+				status: false,
+				message: `${error}`,
+			};
+		}
+	},
+
+	/**
+   * @description payment received edit
+   */
+	editBankAmount: async ({ request, response }: { request: any, response: any }) => {
+		const body = await request.body();
+		if (!request.hasBody) {
+			response.status = 400;
+			response.body = {
+				success: false,
+				message: 'No data provided',
+			};
+			return;
+		}
+		try {
+			const values = await body.value;
+
+			if (values.account_type == 'Petty Cash' || values.account_type == 'Undeposited Funds') {
+				values.amount_received = 0;
+				await paymentService.editPaymentAmountDefault({
+					amount_received: values.amount_received,
+					created_by: values.created_by,
+					account_type: values.account_type,
+				});
+				response.body = {
+					status: true,
+					status_code: 200,
+					message: 'Success!',
+				};
+			} else {
+				await paymentService.editPaymentAmount({
+					amount_received: values.amount_received,
+					created_by: values.created_by,
+					account_type: values.account_type,
+				});
+				response.body = {
+					status: true,
+					status_code: 200,
+					message: 'Success!',
+				};
+			}
 		} catch (error) {
 			response.status = 400;
 			response.body = {
@@ -784,7 +885,7 @@ export default {
 		try {
 			// let kw = request.url.searchParams.get('page_number');
 			// console.log("bayo", kw)
-			let { page_number, filter_value, created_by } = getQuery(ctx, {
+			let { page_number, filter_value, page_size, created_by } = getQuery(ctx, {
 				mergeParams: true,
 			});
 			const total = await paymentService.getPageSizePaymentReceivedBills({
@@ -796,7 +897,7 @@ export default {
 				if (page_number == null) {
 					page_number = '1';
 
-					const offset = (Number(page_number) - 1) * 10;
+					const offset = (Number(page_number) - 1) * Number(page_size);
 					const data = await paymentService.getPaymentReceivedpaidbills({
 						offset: Number(offset),
 						created_by: Number(created_by),
@@ -808,7 +909,7 @@ export default {
 						data: data,
 					};
 				} else {
-					const offset = (Number(page_number) - 1) * 10;
+					const offset = (Number(page_number) - 1) * Number(page_size);
 					const data = await paymentService.getPaymentReceivedpaidbills({
 						offset: Number(offset),
 						created_by: Number(created_by),
@@ -939,7 +1040,7 @@ export default {
 
 			if (page_number == null) {
 				page_number = '1';
-				page_size = '100';
+				page_size = '10';
 
 				const offset = (Number(page_number) - 1) * Number(page_size);
 				const data = await paymentService.getPaymentReceivedReports({
@@ -997,7 +1098,7 @@ export default {
 
 			if (page_number == null) {
 				page_number = '1';
-				page_size = '100';
+				page_size = '10';
 
 				const offset = (Number(page_number) - 1) * Number(page_size);
 				const data = await paymentService.getPaymentMadeReports({
@@ -1057,7 +1158,7 @@ export default {
 					page_number = '1';
 					page_size = '10';
 
-					const offset = (Number(page_number) - 1) * 10;
+					const offset = (Number(page_number) - 1) * Number(page_size);
 					const data = await paymentService.getBill({
 						offset: Number(offset),
 						estimate: estimate,
@@ -1071,7 +1172,7 @@ export default {
 						data: data,
 					};
 				} else {
-					const offset = (Number(page_number) - 1) * 10;
+					const offset = (Number(page_number) - 1) * Number(page_size);
 					const data = await paymentService.getBill({
 						offset: Number(offset),
 						estimate: estimate,
@@ -1124,7 +1225,7 @@ export default {
 			console.log(total);
 			if (page_number == null) {
 				page_number = '1';
-				page_size = '1000';
+				page_size = '10';
 
 				const offset = (Number(page_number) - 1) * Number(page_size);
 				const data = await paymentService.getAgingSummaryBills({
@@ -1274,7 +1375,7 @@ export default {
 		try {
 			// let kw = request.url.searchParams.get('page_number');
 			// console.log("bayo", kw)
-			let { page_number, filter_value, estimate, created_by } = getQuery(ctx, {
+			let { page_number, filter_value, page_size, estimate, created_by } = getQuery(ctx, {
 				mergeParams: true,
 			});
 			const total = await paymentService.getPageSizeFrequencyBills({
@@ -1287,7 +1388,7 @@ export default {
 				if (page_number == null) {
 					page_number = '1';
 
-					const offset = (Number(page_number) - 1) * 10;
+					const offset = (Number(page_number) - 1) * Number(page_size);
 					const data = await paymentService.getFrequencyBills({
 						offset: Number(offset),
 						estimate: estimate,
@@ -1300,7 +1401,7 @@ export default {
 						data: data,
 					};
 				} else {
-					const offset = (Number(page_number) - 1) * 10;
+					const offset = (Number(page_number) - 1) * Number(page_size);
 					const data = await paymentService.getFrequencyBills({
 						offset: Number(offset),
 						estimate: estimate,

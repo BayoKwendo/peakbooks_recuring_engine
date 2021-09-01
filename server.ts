@@ -70,7 +70,11 @@ let task = cron('*/.5 * * * * *', async () => {
 
     });
 
+    // deno-lint-ignore camelcase
+
+    // deno-lint-ignore no-unused-vars
     let mfrequency;
+
 
     if (invoice_no.frequency_type === "Daily") {
       mfrequency = ((Date.now() / 1000) + (1 * 24 * 60 * 60))
@@ -86,7 +90,6 @@ let task = cron('*/.5 * * * * *', async () => {
     }
     else if (invoice_no.frequency_type === "After 2 Months") {
       mfrequency = ((Date.now() / 1000) + (60 * 24 * 60 * 60))
-
     }
     else if (invoice_no.frequency_type === "After 3 Months") {
       mfrequency = ((Date.now() / 1000) + (90 * 24 * 60 * 60))
@@ -96,24 +99,42 @@ let task = cron('*/.5 * * * * *', async () => {
     }
     else if (invoice_no.frequency_type === "Yearly") {
       mfrequency = ((Date.now() / 1000) + (365 * 24 * 60 * 60))
-
     }
     else {
       mfrequency = ((Date.now() / 1000) + (730 * 24 * 60 * 60))
     }
 
+        
 
-    // moment.unix(this.state.invoice[i].frequecy
+    const weekly = moment(new Date(new Date(Date.now()).setDate(new Date(Date.now()).getDate() + 15))).format('YYYY-MM-DD HH:mm:ss');
+    const monthly = moment(new Date(new Date(Date.now()).setDate(new Date(Date.now()).getDate() + 30))).format('YYYY-MM-DD HH:mm:ss');
+    const yearly = moment(new Date(new Date(Date.now()).setDate(new Date(Date.now()).getDate() + 133))).format('YYYY-MM-DD HH:mm:ss');
+
+    let mdue_date;
+
+     if (data[0].terms === "Due in 15 days") {
+      mdue_date = weekly.toString()
+      console.log(weekly)
+    }
+    else if (data[0].terms === "fDue in 30 days") {
+      mdue_date = monthly.toString()
+    }
+    else if (data[0].terms === "Due in 6 months") {
+      mdue_date = yearly.toString()
+    }
+     else{
+      mdue_date =  (moment.unix(mfrequency).format('YYYY-MM-DD HH:mm:ss')).toString()
+    }     
 
     try {
+
       const body222 = await invoiceService.createInvoice(
         {
-
-          
+  
           customer_id: data[0].customer_id,
           invoice_no: data[0].invoice_no,
           terms: data[0].terms,
-          due_date: (moment.unix(mfrequency).format('YYYY-MM-DD HH:mm:ss')).toString(),
+          due_date: mdue_date,
           invoice_date: (moment.unix(Date.now() / 1000).format('YYYY-MM-DD HH:mm:ss')).toString(),
           message_invoice: data[0].message_invoice,
           statement_invoice: data[0].statement_invoice,
@@ -122,7 +143,6 @@ let task = cron('*/.5 * * * * *', async () => {
           sales_person_id: data[0].sales_person_id,
           agnaist_ksh: data[0].agnist_ksh,
           currency_type: data[0].currency_type,
-        
           estimate: data[0].estimate,
           due_amount: data[0].due_amount,
           discount_amount: data[0].discount_amount,
@@ -135,6 +155,7 @@ let task = cron('*/.5 * * * * *', async () => {
           recurring: data[0].recurring
         }
       );
+
       if (body222) {
 
         let page_number = "1"

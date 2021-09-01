@@ -1,12 +1,9 @@
-import { Status } from 'https://deno.land/x/oak/mod.ts';
 import { getQuery } from 'https://deno.land/x/oak/helpers.ts';
 import * as log from 'https://deno.land/std/log/mod.ts';
 import userService from '../services/userService.ts';
 import { create, getNumericDate } from 'https://deno.land/x/djwt/mod.ts';
 // import { makeJwt, setExpiration, Jose, Payload } from "https://deno.land/x/djwt@v0.9.0/create.ts";
-import clientemail from '../db/clientemail.ts';
 import * as bcrypt from 'https://deno.land/x/bcrypt@v0.2.4/mod.ts';
-import { connect } from 'https://deno.land/x/redis/mod.ts';
 import { key } from '../exports.ts' 
 
 // const header: Jose = ;

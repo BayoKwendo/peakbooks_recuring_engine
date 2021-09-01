@@ -65,6 +65,10 @@ router
   .post("/bank", paymentController.createBank)
   .get("/bank", paymentController.getBanks)
   .get("/banking", paymentController.getBankings)
+  .get("/banking_details", authorize, paymentController.getBankDetails) // get details report for the bankings
+  .put("/bank_amount_update", authorize, paymentController.editBankAmount) // update bank amount
+
+  
 
   .get("/agingsummarybill", paymentController.getAgingSummaryBills)
 
