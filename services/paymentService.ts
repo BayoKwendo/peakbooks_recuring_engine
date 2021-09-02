@@ -879,7 +879,7 @@ export default {
            )
 
            
-           ) AS f ORDER BY f.date DESC`
+           ) AS f ORDER BY f.date `
 		);
 		return result;
 	},
