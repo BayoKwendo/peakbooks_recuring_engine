@@ -624,10 +624,11 @@ export default {
 			const values = await body.value;
 
 
-			console.log("Bayo", values.account_type)
 
 			if (values.account_type == 'Petty Cash' || values.account_type == 'Undeposited Funds') {
-				values.amount_received = 0;
+				// values.amount_received = 0;
+				console.log("Bayo", values.account_type)
+
 				await paymentService.editPaymentAmountDefault({
 					amount_received: values.amount_received,
 					created_by: values.created_by,
