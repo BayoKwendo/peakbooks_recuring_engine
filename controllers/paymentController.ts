@@ -627,7 +627,7 @@ export default {
 
 			if (values.account_type == 'Petty Cash' || values.account_type == 'Undeposited Funds') {
 				// values.amount_received = 0;
-				console.log("Bayo", values.account_type)
+				console.log("Bayo", values.amount_received)
 
 				await paymentService.editPaymentAmountDefault({
 					amount_received: values.amount_received,
