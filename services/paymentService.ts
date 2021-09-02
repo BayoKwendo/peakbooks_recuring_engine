@@ -174,9 +174,9 @@ export default {
 	editPaymentAmount: async ({ amount_received, account_type, created_by }: Payment) => {
 		const result = await client.query(
 			`UPDATE ${TABLE.BANK}  SET
-             account_balance=?
+             account_balance= account_balance + ${amount_received}
 		 WHERE created_by =? AND account_name =? `,
-			[ amount_received, created_by, account_type ]
+			[  created_by, account_type ]
 		);
 		return result;
 	},
@@ -185,9 +185,9 @@ export default {
 	editPaymentAmountDefault: async ({ amount_received, account_type, created_by }: Payment) => {
 		const result = await client.query(
 			`UPDATE ${TABLE.CASH_BANK}  SET
-             account_balance=?
+             account_balance= account_balance + ${amount_received}
 		   WHERE created_by =? AND account_name =? `,
-			[ amount_received, created_by, account_type ]
+			[  created_by, account_type ]
 		);
 		return result;
 	},
