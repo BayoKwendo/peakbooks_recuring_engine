@@ -116,7 +116,7 @@ let task = cron('*/.5 * * * * *', async () => {
       mdue_date = weekly.toString()
       console.log(weekly)
     }
-    else if (data[0].terms === "fDue in 30 days") {
+    else if (data[0].terms === "Due in 30 days") {
       mdue_date = monthly.toString()
     }
     else if (data[0].terms === "Due in 6 months") {

@@ -550,7 +550,7 @@ export default {
              FROM 
             ${TABLE.INVOICES} i
             inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
-            WHERE i.created_by = ${created_by} AND i.status = "0" AND i.approved = 1 AND i.sales_order_no = 0 AND i.estimate = '0'
+            WHERE i.created_by = ${created_by}  AND i.approved = 1 AND i.sales_order_no = 0 AND i.estimate = '0'
             AND i.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY c.customer_display_name 
             order by i.date_modified DESC LIMIT ${offset},${page_size}`);
         return result;

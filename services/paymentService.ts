@@ -176,7 +176,7 @@ export default {
 			`UPDATE ${TABLE.BANK}  SET
              account_balance= account_balance + ${amount_received}
 		 WHERE created_by =? AND account_name =? `,
-			[  created_by, account_type ]
+			[ created_by, account_type ]
 		);
 		return result;
 	},
@@ -187,7 +187,7 @@ export default {
 			`UPDATE ${TABLE.CASH_BANK}  SET
              account_balance= account_balance + ${amount_received}
 		   WHERE created_by =? AND account_name =? `,
-			[  created_by, account_type ]
+			[ created_by, account_type ]
 		);
 		return result;
 	},
@@ -863,7 +863,7 @@ export default {
             0 payments,
             IFNULL(CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)), 0) amount
             FROM ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id
-            WHERE created_by = ${created_by} AND c.id = ${id} AND i.estimate=0 AND i.approved = 1 AND i.created_at BETWEEN ${startDate} AND ${endDate}
+            WHERE created_by = ${created_by} AND c.id = ${id} AND i.sales_order_no = 0 AND i.status = 0 AND i.estimate=0 AND i.approved = 1 AND i.created_at BETWEEN ${startDate} AND ${endDate}
            )
            UNION ALL 
            (
@@ -985,10 +985,14 @@ export default {
           FROM
           
       (
-         (   
+		 
+		
+        (   
            SELECT  
            IFNULL(SUM(t.amount_received), 0) total,
-           t.amount_received2 - (IFNULL(SUM(t.amount_received), 0) - t.amount_received2) peak_amount, t.account_balance, t.account_type
+           t.amount_received2 - (IFNULL(SUM(t.amount_received), 0) - t.amount_received2) peak_amount, 
+		   t.account_balance, 
+		   t.account_type
            FROM
           (
            ( 
@@ -1004,6 +1008,8 @@ export default {
             c.client_id = ${created_by} AND i.deposit_to in (b.account_name) AND
              b.account_name in (b.account_name) AND i.created BETWEEN ${startDate} AND ${endDate} GROUP BY i.deposit_to
             )
+
+			
          
             UNION ALL
            (
@@ -1014,8 +1020,8 @@ export default {
              
              FROM
              ${TABLE.PAYMENT_RECEIVED_PAY_BILL} i 
-             left join ${TABLE.VENDORS} c on c.id = i.vendor_id 
-             left join ${TABLE.BANK} b on c.client_id = b.created_by
+             inner join ${TABLE.VENDORS} c on c.id = i.vendor_id 
+             inner join ${TABLE.BANK} b on c.client_id = b.created_by
              WHERE 
              c.client_id = ${created_by} AND i.deposit_to in (b.account_name)
              AND b.account_name in (b.account_name)
@@ -1026,8 +1032,8 @@ export default {
 
            ( SELECT 
             IFNULL(SUM(c.amount), 0) amount_received, 
-            IFNULL((b.account_balance), 0) account_balance,
             IFNULL(NULL, 0) amount_received2,
+			IFNULL((b.account_balance), 0) account_balance,
             IFNULL((c.paid_through), "Banks") account_type FROM ${TABLE.EXPENSES} c
             left join ${TABLE.BANK} b on c.client_id = b.created_by
             WHERE
@@ -1038,24 +1044,37 @@ export default {
           GROUP BY t.account_type
 
         )
-
-          UNION ALL
-
+        UNION ALL
            (
                SELECT IFNULL(SUM(g.amount_received), 0) total,
-            g.amount_received2 - (IFNULL(SUM(g.amount_received), 0) - g.amount_received2) peak_amount, g.account_balance, g.account_type
+            g.amount_received2 - (IFNULL(SUM(g.amount_received), 0) - g.amount_received2) peak_amount,
+			 g.account_balance,
+			  g.account_type
              FROM
            (
+			
+			(
+
+				SELECT IFNULL(NULL, 0) amount_received,
+				IFNULL(NULL, 0) amount_received2,
+				IFNULL((account_balance), 0) account_balance, 
+				IFNULL(NULL, "Petty Cash") account_type  
+				FROM
+				${TABLE.CASH_BANK}
+				 WHERE 
+				 created_by = ${created_by}
+				 AND account_name = "Petty Cash"
+			)
+			UNION ALL
            (
             SELECT
             IFNULL(SUM(i.paid_amount), 0) amount_received,
-
             IFNULL(SUM(i.paid_amount), 0) amount_received2,
-
-            IFNULL((b.account_balance), 0) account_balance, IFNULL((i.deposit_to), "Petty Cash") account_type
+            IFNULL(NULL, 0) account_balance, 
+			IFNULL((i.deposit_to), "Petty Cash") account_type
             FROM ${TABLE.PAYMENT_RECEIVED_PAY} i 
-            left join ${TABLE.CUSTOMER} c on c.id = i.customer_id
-            left join ${TABLE.CASH_BANK} b on c.client_id = b.created_by
+            inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id
+            inner join ${TABLE.CASH_BANK} b on c.client_id = b.created_by
             WHERE
             c.client_id = ${created_by} AND i.deposit_to = "Petty Cash" AND
              b.account_name = "Petty Cash" AND i.created BETWEEN ${startDate} AND ${endDate}
@@ -1065,21 +1084,23 @@ export default {
              SELECT IFNULL(SUM(i.amount_received), 0) amount_received,
              IFNULL(NULL, 0) amount_received2,
 
-             IFNULL((b.account_balance), 0) account_balance, IFNULL((i.deposit_to), "Petty Cash") account_type  FROM
+             IFNULL(NULL, 0) account_balance, 
+			 IFNULL((i.deposit_to), "Petty Cash") account_type  FROM
              ${TABLE.PAYMENT_RECEIVED_PAY_BILL} i 
-             left join ${TABLE.VENDORS} c on c.id = i.vendor_id 
-             left join ${TABLE.CASH_BANK} b on c.client_id = b.created_by
+             inner join ${TABLE.VENDORS} c on c.id = i.vendor_id 
+             inner join ${TABLE.CASH_BANK} b on c.client_id = b.created_by
              WHERE
              c.client_id = ${created_by} AND i.deposit_to = "Petty Cash" AND  b.account_name = "Petty Cash"
              AND b.account_name= "Petty Cash" AND i.created BETWEEN ${startDate} AND ${endDate} )
 
              UNION ALL
 
-           ( SELECT IFNULL(SUM(c.amount), 0) amount_received, IFNULL((b.account_balance), 0) account_balance,
-                       IFNULL(NULL, 0) amount_received2,
+           ( SELECT IFNULL(SUM(c.amount), 0) amount_received, 
+		   IFNULL(NULL, 0) amount_received2,
+		   IFNULL(NULL, 0) account_balance,
 
             IFNULL((c.paid_through), "Petty Cash") account_type FROM ${TABLE.EXPENSES} c
-              left join ${TABLE.CASH_BANK} b on c.client_id = b.created_by
+              inner join ${TABLE.CASH_BANK} b on c.client_id = b.created_by
               WHERE
               c.paid_through = "Petty Cash" AND c.client_id= ${created_by} AND
               b.account_name = "Petty Cash" AND c.created_at BETWEEN ${startDate} AND ${endDate}
@@ -1090,19 +1111,35 @@ export default {
 
           (
               SELECT IFNULL(SUM(r.amount_received), 0) total,
-               r.amount_received2 - (IFNULL(SUM(r.amount_received), 0) - r.amount_received2) peak_amount, r.account_balance, r.account_type
+               r.amount_received2 - (IFNULL(SUM(r.amount_received), 0) - r.amount_received2) peak_amount, 
+			   r.account_balance, 
+			   r.account_type
              FROM
           (
+			(
+
+				SELECT IFNULL(NULL, 0) amount_received,
+				IFNULL(NULL, 0) amount_received2,
+				IFNULL((account_balance), 0) account_balance, 
+				IFNULL(NULL, "Undeposited Funds") account_type  
+				FROM
+				${TABLE.CASH_BANK}
+				 WHERE 
+				 created_by = ${created_by}
+				 AND account_name = "Undeposited Funds"
+			)
+			UNION ALL
            (
             SELECT
             IFNULL(SUM(i.paid_amount), 0) amount_received,
 
             IFNULL(SUM(i.paid_amount), 0) amount_received2,
 
-            IFNULL((b.account_balance), 0) account_balance, IFNULL((i.deposit_to), "Undeposited Funds") account_type
+            IFNULL(NULL, 0) account_balance, 
+			IFNULL((i.deposit_to), "Undeposited Funds") account_type
             FROM ${TABLE.PAYMENT_RECEIVED_PAY} i 
-            left join ${TABLE.CUSTOMER} c on c.id = i.customer_id
-            left join ${TABLE.CASH_BANK} b on c.client_id = b.created_by
+            inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id
+            inner join ${TABLE.CASH_BANK} b on c.client_id = b.created_by
             WHERE
             c.client_id = ${created_by} AND i.deposit_to = "Undeposited Funds" AND
              b.account_name = "Undeposited Funds" AND i.created BETWEEN ${startDate} AND ${endDate}
@@ -1112,29 +1149,35 @@ export default {
              SELECT IFNULL(SUM(i.amount_received), 0) amount_received,
              IFNULL(NULL, 0) amount_received2,
 
-             IFNULL((b.account_balance), 0) account_balance, IFNULL((i.deposit_to), "Undeposited Funds") account_type  FROM
+             IFNULL(NULL, 0) account_balance,
+			  IFNULL((i.deposit_to), "Undeposited Funds") account_type  FROM
              ${TABLE.PAYMENT_RECEIVED_PAY_BILL} i 
-             left join ${TABLE.VENDORS} c on c.id = i.vendor_id 
-             left join ${TABLE.CASH_BANK} b on c.client_id = b.created_by
+             inner join ${TABLE.VENDORS} c on c.id = i.vendor_id 
+             inner join ${TABLE.CASH_BANK} b on c.client_id = b.created_by
              WHERE
              c.client_id = ${created_by} AND i.deposit_to = "Undeposited Funds" AND  b.account_name = "Undeposited Funds"
              AND b.account_name= "Undeposited Funds" AND i.created BETWEEN ${startDate} AND ${endDate} )
 
              UNION ALL
 
-           ( SELECT IFNULL(SUM(c.amount), 0) amount_received, IFNULL((b.account_balance), 0) account_balance,
-                       IFNULL(NULL, 0) amount_received2,
+           ( SELECT IFNULL(SUM(c.amount), 0) amount_received, 
+		    IFNULL(NULL, 0) account_balance,
+            IFNULL(NULL, 0) amount_received2,
 
-            IFNULL((c.paid_through), "Undeposited Funds") account_type FROM ${TABLE.EXPENSES} c
-              left join ${TABLE.CASH_BANK} b on c.client_id = b.created_by
+            IFNULL((c.paid_through), "Undeposited Funds") account_type 
+			FROM ${TABLE.EXPENSES} c
+              inner join ${TABLE.CASH_BANK} b on c.client_id = b.created_by
               WHERE
               c.paid_through = "Undeposited Funds" AND c.client_id= ${created_by} AND 
               b.account_name = "Undeposited Funds" AND c.created_at BETWEEN ${startDate} AND ${endDate}
            )
-
           ) AS r
           )
         ) AS f
+
+
+
+
         `
 		);
 
