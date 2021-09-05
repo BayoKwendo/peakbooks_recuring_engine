@@ -863,7 +863,7 @@ export default {
             0 payments,
             IFNULL(CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)), 0) amount
             FROM ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id
-            WHERE created_by = ${created_by} AND c.id = ${id} AND i.sales_order_no = 0 AND i.status = 0 AND i.estimate=0 AND i.approved = 1 AND i.created_at BETWEEN ${startDate} AND ${endDate}
+            WHERE created_by = ${created_by} AND c.id = ${id} AND i.sales_order_no = 0  AND i.estimate=0 AND i.approved = 1 AND i.created_at BETWEEN ${startDate} AND ${endDate}
            )
            UNION ALL 
            (
