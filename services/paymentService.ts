@@ -850,7 +850,7 @@ export default {
              0 amount
              FROM
              ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
-             c.client_id = ${created_by} AND i.status = 1 AND c.id = ${id} AND i.created BETWEEN ${startDate} AND ${endDate} order by i.id
+             c.client_id = ${created_by} AND i.status = 1 AND i.customer_id = ${id} AND i.created BETWEEN ${startDate} AND ${endDate} order by i.id
              DESC 
              LIMIT 1000 
            )
@@ -893,6 +893,18 @@ export default {
            
            FROM
 		   (
+			( 
+				SELECT 
+				"B-20" reference,
+				0 amount_received,
+				IFNULL(account_balance, 0) amount_made,
+			    account_name type,
+				created dates 
+				FROM ${TABLE.CASH_BANK} 
+				WHERE
+				created_by = ${created_by} AND account_name = '${filter_value}' 
+			   )
+            UNION ALL
             ( 
             SELECT 
 			i.reference reference,
@@ -905,7 +917,8 @@ export default {
             WHERE
             c.client_id = ${created_by} AND i.deposit_to = "${filter_value}" 
            )
-            UNION ALL
+		    UNION ALL
+			
            (
 		  SELECT	   
             i.reference reference,
