@@ -145,6 +145,14 @@ export default {
     return result;
   },
 
+  getUsernames: async ({ email }: User) => {
+    const result = await client.query(
+      `SELECT username, company_name FROM users WHERE email = ?`,
+      [email],
+    );
+    return result;
+  },
+
 
   checkActive: async ({ username }: User) => {
     const [result] = await client.query(

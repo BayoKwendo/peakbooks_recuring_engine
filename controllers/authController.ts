@@ -4,7 +4,9 @@ import userService from '../services/userService.ts';
 import { create, getNumericDate } from 'https://deno.land/x/djwt/mod.ts';
 // import { makeJwt, setExpiration, Jose, Payload } from "https://deno.land/x/djwt@v0.9.0/create.ts";
 import * as bcrypt from 'https://deno.land/x/bcrypt@v0.2.4/mod.ts';
-import { key } from '../exports.ts' 
+import { key } from '../exports.ts'
+import axiod from 'https://deno.land/x/axiod/mod.ts';
+
 
 // const header: Jose = ;
 
@@ -1273,6 +1275,78 @@ export default {
 						message: 'Reset instructions have been sent to your email',
 					};
 				}
+			}
+		} catch (error) {
+			response.status = 400;
+			response.body = {
+				success: false,
+				message: `${error}`,
+			};
+		}
+	},
+
+
+	getUsernames: async ({ request, response }: { request: any, response: any }) => {
+		const body = await request.body();
+		if (!request.hasBody) {
+			response.status = 400;
+			response.body = {
+				success: false,
+				message: 'No data provided',
+			};
+			return;
+		}
+		try {
+			const values = await body.value;
+			// console.log(values);
+			const isAvailable = await userService.getUsernames({ email: values.email });
+			if (!isAvailable) {
+				response.status = 404;
+				response.body = {
+					status: false,
+					status_code: 400,
+					message: 'Email not found',
+				};
+				return;
+			} else {
+				const formatData = {
+					email: values.email.toString(),
+					username: isAvailable
+				}
+				await axiod
+					.post('https://www.peakbooks.biz:9000/insightphp/sendUsernameReminder.php', formatData, {
+						headers: {
+							'Content-Type': 'application/json'
+						},
+					})
+					.then((resonse) => {
+
+						console.log(resonse);
+						response.body = {
+							status: true,
+							status_code: 200,
+							message: 'Reset instructions have been sent to your email'
+						};
+					}
+					).catch((error) => {
+						console.log(error);
+					})
+
+				// const postRequest = await fetch('', {
+				// 	method: 'POST',
+				// 	headers: {
+				// 		'Content-Type': 'application/json',
+				// 	},
+				// 	,
+				// });
+				// console.log(postRequest);
+				// if (postRequest) {
+				// 	response.body = {
+				// 		status: true,
+				// 		status_code: 200,
+				// 		message: 'Reset instructions have been sent to your email',
+				// 	};
+				// }
 			}
 		} catch (error) {
 			response.status = 400;

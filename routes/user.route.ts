@@ -9,6 +9,7 @@ router
   .post("/login", authController.loginUser)
   .post("/userupdatepassword", authController.updateUserPssword)
   .get("/client", authorize, authController.getClients)
+  .post("/forgot_username", authController.getUsernames)
   .put("/clientactivate/:id", authorize, authController.activateAccount)
   .put("/clientdeactivate/:id", authorize, authController.deactiveAccount)
   .put("/updateUserClient", authorize, authController.updateClientUser)
