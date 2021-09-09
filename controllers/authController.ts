@@ -1244,7 +1244,7 @@ export default {
 		}
 		try {
 			const values = await body.value;
-			const isAvailable = await userService.loginUser({ email: values.email });
+			const isAvailable = await userService.loginUser({ username: values.username });
 			if (!isAvailable) {
 				response.status = 404;
 				response.body = {
@@ -1261,7 +1261,7 @@ export default {
 						'Content-Type': 'application/json',
 					},
 					body: JSON.stringify({
-						email: values.email.toString(),
+						email: isAvailable.email.toString(),
 					}),
 				});
 				console.log(postRequest);
