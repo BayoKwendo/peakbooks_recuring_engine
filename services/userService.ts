@@ -251,15 +251,15 @@ export default {
 
   getClientFilter: async ({ filter_value }: User) => {
     const result = await client.query(
-      `SELECT * FROM  ${TABLE.USERS} WHERE email LIKE ? or msisdn LIKE ? or client_id = ?`, [filter_value, filter_value, filter_value]);
+      `SELECT * FROM  ${TABLE.USERS} WHERE email LIKE ? or username LIKE ? or msisdn LIKE ? or client_id = ?`, [filter_value,filter_value, filter_value, filter_value]);
     return result;
   },
 
-  updatePassword: async ({ password, email }: User,) => {
+  updatePassword: async ({ password, username }: User,) => {
     const query = await client.query(`UPDATE ${TABLE.USERS} SET 
             account_status = 1,
             password = ? 
-            WHERE email = ? `, [password, email]);
+            WHERE username = ? `, [password, username]);
     return query;
   },
 
@@ -324,10 +324,10 @@ export default {
     return result;
   },
 
-  resetUserPassword: async ({ email, password }: User) => {
+  resetUserPassword: async ({ password, username }: User) => {
     const result = await client.query(
-      `UPDATE ${TABLE.USERS} SET  password = ? WHERE email=?`,
-      [password, email]
+      `UPDATE ${TABLE.USERS} SET  password = ? WHERE username=?`,
+      [password, username]
     );
     return result;
   },

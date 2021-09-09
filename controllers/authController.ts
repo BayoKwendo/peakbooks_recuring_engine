@@ -503,7 +503,7 @@ export default {
 			const hashedPassword = await bcrypt.hash(values.password);
 
 			await userService.updatePassword({
-				email: values.email,
+				username: values.username,
 				password: hashedPassword,
 				// activation_key: values.activation_key
 			});
@@ -1262,6 +1262,7 @@ export default {
 					},
 					body: JSON.stringify({
 						email: isAvailable.email.toString(),
+						username: values.username
 					}),
 				});
 				console.log(postRequest);
@@ -1338,7 +1339,7 @@ export default {
 			const hashedPassword = await bcrypt.hash(values.password);
 
 			await userService.resetUserPassword({
-				email: values.email,
+				username: values.username,
 				password: hashedPassword,
 				// activation_key: values.activation_key
 			});
