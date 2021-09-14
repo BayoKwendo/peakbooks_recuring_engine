@@ -65,6 +65,8 @@ router
 
   .get("/vendorexpenses", authorize, vendorController.getVendorExpenses)
 
+  .get("/customer_expense", authorize, vendorController.getCustomerExpenses)
+
 
   //vendorbalance report 
   .get("/vendorbalancebill", authorize, vendorController.getVendorBalanceBills)

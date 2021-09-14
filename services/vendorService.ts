@@ -80,7 +80,7 @@ export default {
     },
 
 
-    createExpense: async ({ client_id, date, expense_account, amount, paid_through, recurring,reference, customer_id, vendor_id, billable, product_name, notes, tax_amount }: Vendor) => {
+    createExpense: async ({ client_id, date, expense_account, amount, paid_through, recurring, reference, customer_id, vendor_id, billable, product_name, notes, tax_amount }: Vendor) => {
         const result = await client.query(`INSERT INTO ${TABLE.EXPENSES}  SET
               client_id=?, date =?,
               expense_account=?, amount =?, paid_through=?,
@@ -117,7 +117,7 @@ export default {
         return result;
     },
 
-    
+
 
     deleteExpense: async ({ id }: Vendor) => {
         const result = await client.query(`DELETE FROM ${TABLE.EXPENSES} WHERE id = ?`, [id]);
@@ -386,12 +386,42 @@ export default {
                 WHERE e.client_id = ${created_by}
                 AND e.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY c.vendor_display_name
                 ) c
-               )
-   
-           
+               )   
               LIMIT ${offset},${page_size}`);
         return result;
     },
+
+
+    getExpensesCustomer: async ({ offset, created_by, page_size, startDate, endDate }: Vendor) => {
+        const result = await client.query(
+            `SELECT 
+             
+            customer_name_expense, 
+            
+            IFNULL(count_expense, 0) expense_count,
+            
+            IFNULL(tax_expense_amount, 0) purchase_with_tax,
+            
+            IFNULL(expense_amount, 0) expense_amount
+            FROM (
+                (
+                SELECT  c.customer_display_name customer_name_expense,
+                COUNt(e.id) count_expense,
+                e.vendor_id,
+                sum(CAST(e.amount AS DECIMAL(10,2))) expense_amount,
+                sum(CAST(e.tax_amount AS DECIMAL(10,2))) tax_expense_amount
+                from
+                ${TABLE.EXPENSES} e
+                left join  ${TABLE.CUSTOMER} c on c.id = e.customer_id   
+                WHERE e.client_id = ${created_by}
+                AND e.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY c.customer_display_name
+                ) c
+               )
+              LIMIT ${offset},${page_size}`);
+        return result;
+    },
+
+
 
 
     getVendorSalesSize: async ({ created_by, startDate, endDate }: Vendor) => {
@@ -1008,6 +1038,6 @@ export default {
 
 
 
-   
+
 
 };
