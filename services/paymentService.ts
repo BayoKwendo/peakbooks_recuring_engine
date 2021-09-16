@@ -9,7 +9,7 @@ export default {
 			`INSERT INTO ${TABLE.PAYMENT_RECEIVED} SET
              name =?,
              created_by=?`,
-			[ name, client_id ]
+			[name, client_id]
 		);
 		return result;
 	},
@@ -20,7 +20,7 @@ export default {
              account_name =?,
              account_balance=?,
              created_by=?`,
-			[ account_name, account_balance, client_id ]
+			[account_name, account_balance, client_id]
 		);
 		return result;
 	},
@@ -35,7 +35,7 @@ export default {
 				category_type = ?, 
 				created_by = ?
 				`,
-			[ name, category, category_type, created_by ]
+			[name, category, category_type, created_by]
 		);
 		return result;
 	},
@@ -96,13 +96,13 @@ export default {
 	getPayment: async ({ offset, page_size }: Payment) => {
 		const result = await client.query(
 			`SELECT name FROM ${TABLE.PAYMENT_RECEIVED} WHERE created_by order by id LIMIT ?,?`,
-			[ offset, page_size ]
+			[offset, page_size]
 		);
 		return result;
 	},
 
 	getPaymentFilter: async ({ filter_value }: Payment) => {
-		const result = await client.query(`SELECT name FROM  ${TABLE.ITEMS} WHERE name = ?`, [ filter_value ]);
+		const result = await client.query(`SELECT name FROM  ${TABLE.ITEMS} WHERE name = ?`, [filter_value]);
 		return result;
 	},
 
@@ -111,7 +111,7 @@ export default {
 			`INSERT INTO ${TABLE.DEPOSIT_TO} SET
              name =?,
              created_by=?`,
-			[ name, client_id ]
+			[name, client_id]
 		);
 		return result;
 	},
@@ -119,13 +119,13 @@ export default {
 	getDeposit_to: async ({ offset, page_size }: Payment) => {
 		const result = await client.query(
 			`SELECT name FROM ${TABLE.DEPOSIT_TO} WHERE created_by order by id LIMIT ?,?`,
-			[ offset, page_size ]
+			[offset, page_size]
 		);
 		return result;
 	},
 
 	getDeposittoFilter: async ({ filter_value }: Payment) => {
-		const result = await client.query(`SELECT name FROM  ${TABLE.DEPOSIT_TO} WHERE name = ?`, [ filter_value ]);
+		const result = await client.query(`SELECT name FROM  ${TABLE.DEPOSIT_TO} WHERE name = ?`, [filter_value]);
 		return result;
 	},
 
@@ -171,23 +171,25 @@ export default {
 	},
 
 	// bank account
-	editPaymentAmount: async ({ amount_received, account_type, created_by }: Payment) => {
-		const result = await client.query(
-			`UPDATE ${TABLE.BANK}  SET
-             account_balance= account_balance + ${amount_received}
-		 WHERE created_by =? AND account_name =? `,
-			[ created_by, account_type ]
-		);
-		return result;
-	},
+
+	// editPaymentAmount: async ({ amount_received, account_type, created_by }: Payment) => {
+	// 	const result = await client.query(
+	// 		`UPDATE ${TABLE.BANK}  SET
+	//          account_balance=  IFNULL(account_balance, 0)  + ${amount_received}
+	// 	 WHERE created_by =? AND account_name =? `,
+	// 		[created_by, account_type]
+	// 	);
+	// 	return result;
+	// },
 
 	// bank account
 	editPaymentAmountDefault: async ({ amount_received, account_type, created_by }: Payment) => {
 		const result = await client.query(
-			`UPDATE ${TABLE.CASH_BANK}  SET
-             account_balance= account_balance + ${amount_received}
-		   WHERE created_by =? AND account_name =? `,
-			[ created_by, account_type ]
+			`INSERT INTO ${TABLE.CASH_BANK}  SET
+             account_balance = ${amount_received},
+			 account_name = ?,
+			 created_by = ?`,
+			[account_type, created_by]
 		);
 		return result;
 	},
@@ -232,7 +234,7 @@ export default {
 	getPaymentUnpaidrecord: async ({ customer_id }: Payment) => {
 		const result = await client.query(
 			`SELECT id, reference FROM  ${TABLE.PAYMENT_RECEIVED_PAY} WHERE status = 0 and customer_id = ?`,
-			[ customer_id ]
+			[customer_id]
 		);
 		return result;
 	},
@@ -240,7 +242,7 @@ export default {
 	getPaymentUnpaidrecordbill: async ({ vendor_id }: Payment) => {
 		const result = await client.query(
 			`SELECT id FROM  ${TABLE.PAYMENT_RECEIVED_PAY_BILL} WHERE status = 0 and vendor_id = ?`,
-			[ vendor_id ]
+			[vendor_id]
 		);
 		return result;
 	},
@@ -251,7 +253,7 @@ export default {
         status = 1,
         bill_no = ? 
         WHERE status = 0 and vendor_id = ?`,
-			[ bill_no, vendor_id ]
+			[bill_no, vendor_id]
 		);
 		return query;
 	},
@@ -330,7 +332,7 @@ export default {
         status = 1,
         invoice_no = ?
         WHERE id = ?`,
-			[ invoice_no, customer_id ]
+			[invoice_no, customer_id]
 		);
 		return query;
 	},
@@ -343,7 +345,7 @@ export default {
 			i.paid_amount amount_received FROM 
         ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
          c.client_id = ? AND i.status = 1 order by i.id DESC LIMIT ?,?`,
-			[ created_by, offset, page_size ]
+			[created_by, offset, page_size]
 		);
 		return result;
 	},
@@ -352,17 +354,17 @@ export default {
 			`SELECT i.created, i.reference,i.customer_id, c.customer_display_name, i.invoice_no,i.payment_mode,i.amount_inexcess,
 			i.paid_amount amount_received FROM 
        ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE i.invoice_no = ?`,
-			[ filter_value ]
+			[filter_value]
 		);
 		return result;
 	},
 
 	getPageSizePaymentReceived: async ({ created_by }: Payment) => {
-		const [ result ] = await client.query(
+		const [result] = await client.query(
 			`SELECT COUNT(i.id) count  FROM 
             ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
              c.client_id = ? AND i.status = 1 `,
-			[ created_by ]
+			[created_by]
 		);
 		return result.count;
 	},
@@ -433,7 +435,7 @@ export default {
         created_by=?,
         last_updated = '1',
         status ='1'`,
-			[ bill_no, due_amount, start_time, end_time, vendor_id, frequecy, frequency_type, created_by ]
+			[bill_no, due_amount, start_time, end_time, vendor_id, frequecy, frequency_type, created_by]
 		);
 		return result;
 	},
@@ -443,7 +445,7 @@ export default {
 		] = await client.query(
 			`SELECT COUNT(i.id) count FROM ${TABLE.BILLS} i inner join ${TABLE.VENDORS}
              c on c.id = i.vendor_id WHERE created_by = ?`,
-			[ created_by ]
+			[created_by]
 		);
 		return result.count;
 	},
@@ -470,7 +472,7 @@ export default {
             c.company_name  FROM 
             ${TABLE.BILLS} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id 
             WHERE i.created_by = ? order by i.date_modified DESC LIMIT ?,?`,
-			[ created_by, offset, page_size ]
+			[created_by, offset, page_size]
 		);
 		return result;
 	},
@@ -516,7 +518,7 @@ export default {
 	},
 
 	getAgingSummarySizeVendor: async ({ created_by, startDate, endDate }: Invoices) => {
-		const [ result ] = await client.query(
+		const [result] = await client.query(
 			`SELECT COUNT(DISTINCT c.id) count
             FROM 
             ${TABLE.VENDORS} c 
@@ -528,7 +530,7 @@ export default {
 	},
 
 	getBillItems: async ({ filter_value }: Invoices) => {
-		const result = await client.query(`SELECT * FROM  ${TABLE.BILL_ITEMS} WHERE bill_no = ?`, [ filter_value ]);
+		const result = await client.query(`SELECT * FROM  ${TABLE.BILL_ITEMS} WHERE bill_no = ?`, [filter_value]);
 		return result;
 	},
 
@@ -544,7 +546,7 @@ export default {
 		const result = await client.query(
 			`UPDATE ${TABLE.CURRENCY}  SET
             agnaist_ksh=? WHERE id = ?`,
-			[ filter_value, id ]
+			[filter_value, id]
 		);
 		return result;
 	},
@@ -553,7 +555,7 @@ export default {
 		const result = await client.query(
 			`SELECT * FROM 
            ${TABLE.BILLS} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id WHERE i.created_by = ? AND i.bill-no = ?`,
-			[ created_by, filter_value ]
+			[created_by, filter_value]
 		);
 		return result;
 	},
@@ -563,7 +565,7 @@ export default {
             i.frequency_type, c.vendor_display_name,c.email, c.company_name  FROM 
             ${TABLE.RECURRING_BILLS} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id 
             WHERE i.created_by = ? order by i.modified DESC LIMIT ?,10`,
-			[ created_by, offset ]
+			[created_by, offset]
 		);
 		return result;
 	},
@@ -572,7 +574,7 @@ export default {
 		const query = await client.query(
 			`DELETE FROM  ${TABLE.PAYMENT_RECEIVED_PAY}
         WHERE id = ?`,
-			[ id ]
+			[id]
 		);
 		return query;
 	},
@@ -582,7 +584,7 @@ export default {
 		] = await client.query(
 			`SELECT COUNT(i.id) count FROM ${TABLE.RECURRING_BILLS} i inner join ${TABLE.VENDORS}
              c on c.id = i.vendor_id WHERE created_by = ?`,
-			[ created_by ]
+			[created_by]
 		);
 		return result.count;
 	},
@@ -591,7 +593,7 @@ export default {
 		const result = await client.query(
 			`SELECT * FROM 
            ${TABLE.RECURRING_BILLS} i inner join ${TABLE.CUSTOMER} c on c.id = i.vendor_id WHERE i.bill_no = ?`,
-			[ filter_value ]
+			[filter_value]
 		);
 		return result;
 	},
@@ -601,7 +603,7 @@ export default {
 			`SELECT * FROM 
            ${TABLE.BILLS} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id WHERE
             i.vendor_id = ? AND i.status=0 AND i.created_by  = ?`,
-			[ filter_value, created_by ]
+			[filter_value, created_by]
 		);
 		return result;
 	},
@@ -640,7 +642,7 @@ export default {
 	},
 
 	getPaymentReceivedReportsSize: async ({ created_by, startDate, endDate }: Invoices) => {
-		const [ result ] = await client.query(
+		const [result] = await client.query(
 			`SELECT COUNT(i.id) count FROM 
         ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
          c.client_id = ${created_by} AND i.status = 1 AND i.created BETWEEN ${startDate} AND ${endDate}`
@@ -671,26 +673,26 @@ export default {
 			`SELECT * FROM 
              ${TABLE.BILLS} WHERE
            payment_received_id = ?`,
-			[ filter_value ]
+			[filter_value]
 		);
 		return result;
 	},
 
 	getPageSizeBillPaidReceipt: async ({ filter_value }: Invoices) => {
-		const [ result ] = await client.query(
+		const [result] = await client.query(
 			`SELECT COUNT(id) count FROM 
             ${TABLE.INVOICES} WHERE
           payment_received_id = ? `,
-			[ filter_value ]
+			[filter_value]
 		);
 		return result.count;
 	},
 	getPageSizeBillUnpaid: async ({ filter_value, created_by }: Invoices) => {
-		const [ result ] = await client.query(
+		const [result] = await client.query(
 			`SELECT COUNT(*) count FROM 
             ${TABLE.BILLS} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id WHERE
              i.vendor_id = ? AND i.status=0 AND i.created_by  = ?`,
-			[ filter_value, created_by ]
+			[filter_value, created_by]
 		);
 		return result.count;
 	},
@@ -742,7 +744,7 @@ export default {
 			 i.amount_received FROM 
         ${TABLE.PAYMENT_RECEIVED_PAY_BILL} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id WHERE
          c.client_id = ? AND i.status = 1 order by i.id DESC LIMIT ?,10`,
-			[ created_by, offset ]
+			[created_by, offset]
 		);
 		return result;
 	},
@@ -750,17 +752,17 @@ export default {
 		const result = await client.query(
 			`SELECT i.created, i.reference, c.vendor_display_name, i.bill_no, i.payment_mode,i.amount_inexcess,i.amount_received FROM 
          ${TABLE.PAYMENT_RECEIVED_PAY_BILL} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id WHERE i.bill_no = ?`,
-			[ filter_value ]
+			[filter_value]
 		);
 		return result;
 	},
 	getPageSizePaymentReceivedBills: async ({ created_by }: Payment) => {
-		const [ result ] = await client.query(
+		const [result] = await client.query(
 			`SELECT COUNT(i.id) count  FROM 
              ${TABLE.PAYMENT_RECEIVED_PAY_BILL} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id 
              WHERE
              c.client_id = ? AND i.status = 1`,
-			[ created_by ]
+			[created_by]
 		);
 		return result.count;
 	},
@@ -794,7 +796,7 @@ export default {
 	},
 
 	getPaymentMadeReportsSize: async ({ created_by, startDate, endDate }: Invoices) => {
-		const [ result ] = await client.query(
+		const [result] = await client.query(
 			`SELECT COUNT(i.id) count FROM 
         ${TABLE.PAYMENT_RECEIVED_PAY_BILL} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id WHERE
          c.client_id = ${created_by} AND i.status = 1 AND i.created BETWEEN ${startDate} AND ${endDate}`
@@ -808,7 +810,7 @@ export default {
 			`UPDATE ${TABLE.RECURRING_BILLS} SET
             status = 0
             WHERE bill_no = ?`,
-			[ bill_no ]
+			[bill_no]
 		);
 		return result;
 	},
@@ -818,7 +820,7 @@ export default {
 			`UPDATE ${TABLE.RECURRING_BILLS} SET
             status = 1
             WHERE bill_no = ?`,
-			[ bill_no ]
+			[bill_no]
 		);
 		return result;
 	},
@@ -893,11 +895,26 @@ export default {
            
            FROM
 		   (
+
+			(  
+				SELECT 
+				"-" reference,
+				IFNULL(account_balance, 0) amount_received,
+				0 amount_made,
+			    account_name type,
+				created dates 
+				 
+				FROM ${TABLE.BANK}
+				WHERE
+				created_by= ${created_by} AND account_name = '${filter_value}' 
+	       
+			)
+              UNION ALL
 			( 
 				SELECT 
-				"B-20" reference,
-				0 amount_received,
-				IFNULL(account_balance, 0) amount_made,
+				"-" reference,
+				IFNULL(account_balance, 0) amount_received,
+				0 amount_made,
 			    account_name type,
 				created dates 
 				FROM ${TABLE.CASH_BANK} 
@@ -952,7 +969,7 @@ export default {
 	},
 
 	getBankDetailsCount: async ({ filter_value, created_by }: Payment) => {
-		const [ result ] = await client.query(
+		const [result] = await client.query(
 			`SELECT  COUNT(r.type) count    
            FROM
 		   (
@@ -994,11 +1011,33 @@ export default {
 
 	getBanking: async ({ startDate, endDate, created_by }: Payment) => {
 		const result = await client.query(
-			`SELECT f.total, f.peak_amount , f.account_balance, f.account_type
+			`SELECT f.total, f.peak_amount , SUM(f.account_balance) account_balance, f.account_type
           FROM
           
       (
 		 
+		(   
+			SELECT  
+			IFNULL(SUM(d.amount_received), 0) total,
+			d.amount_received2 - (IFNULL(SUM(d.amount_received), 0) - d.amount_received2) peak_amount, 
+			d.account_balance,
+			d.account_name account_type			
+			FROM
+		   (
+			( 
+				SELECT 
+				IFNULL(NULL, 0) amount_received,
+				IFNULL(NULL, 0) amount_received2,
+				IFNULL(SUM(account_balance), 0) account_balance, 
+				account_name 
+				FROM ${TABLE.CASH_BANK}
+				WHERE
+				account_name NOT IN ("Undeposited Funds", "Petty Cash") AND 
+				created_by= ${created_by} AND created BETWEEN ${startDate} AND ${endDate} 
+			)
+		   ) AS d
+		 ) 
+		 UNION ALL
 		
         (   
            SELECT  
@@ -1020,10 +1059,7 @@ export default {
             WHERE
             c.client_id = ${created_by} AND i.deposit_to in (b.account_name) AND
              b.account_name in (b.account_name) AND i.created BETWEEN ${startDate} AND ${endDate} GROUP BY i.deposit_to
-            )
-
-			
-         
+            ) 
             UNION ALL
            (
              SELECT IFNULL(SUM(i.amount_received), 0) amount_received,
@@ -1040,10 +1076,10 @@ export default {
              AND b.account_name in (b.account_name)
              AND i.created BETWEEN ${startDate} AND ${endDate} GROUP BY i.deposit_to
             ) 
-            
-            UNION ALL
 
-           ( SELECT 
+			UNION ALL 
+           ( 
+		    SELECT 
             IFNULL(SUM(c.amount), 0) amount_received, 
             IFNULL(NULL, 0) amount_received2,
 			IFNULL((b.account_balance), 0) account_balance,
@@ -1053,6 +1089,20 @@ export default {
               c.paid_through in (b.account_name) AND c.client_id= ${created_by} AND
               b.account_name in (b.account_name) AND c.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY c.paid_through 
           )
+		   UNION ALL
+			(  
+				
+				SELECT 
+				IFNULL(NULL, 0) amount_received,
+				IFNULL(NULL, 0) amount_received2,
+				IFNULL(account_balance, 0) account_balance, 
+				account_name  
+				FROM ${TABLE.BANK}
+				WHERE
+				created_by= ${created_by} AND created BETWEEN ${startDate} AND ${endDate}
+				
+			)
+
           ) AS t
           GROUP BY t.account_type
 
@@ -1065,12 +1115,12 @@ export default {
 			  g.account_type
              FROM
            (
+
 			
 			(
-
-				SELECT IFNULL(NULL, 0) amount_received,
+	        	SELECT IFNULL(NULL, 0) amount_received,
 				IFNULL(NULL, 0) amount_received2,
-				IFNULL((account_balance), 0) account_balance, 
+				IFNULL((SUM(account_balance)), 0) account_balance, 
 				IFNULL(NULL, "Petty Cash") account_type  
 				FROM
 				${TABLE.CASH_BANK}
@@ -1078,6 +1128,8 @@ export default {
 				 created_by = ${created_by}
 				 AND account_name = "Petty Cash"
 			)
+
+			
 			UNION ALL
            (
             SELECT
@@ -1133,7 +1185,7 @@ export default {
 
 				SELECT IFNULL(NULL, 0) amount_received,
 				IFNULL(NULL, 0) amount_received2,
-				IFNULL((account_balance), 0) account_balance, 
+				IFNULL((SUM(account_balance)), 0) account_balance, 
 				IFNULL(NULL, "Undeposited Funds") account_type  
 				FROM
 				${TABLE.CASH_BANK}
@@ -1185,11 +1237,8 @@ export default {
               b.account_name = "Undeposited Funds" AND c.created_at BETWEEN ${startDate} AND ${endDate}
            )
           ) AS r
-          )
-        ) AS f
-
-
-
+        )
+    ) AS f GROUP BY f.account_type
 
         `
 		);

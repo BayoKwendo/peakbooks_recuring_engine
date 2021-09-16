@@ -1,5 +1,9 @@
 {
-    "deno.enable": true,
-    "deno.lint": true,
-    "deno.unstable": true
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "deno.enable": true,
+  "deno.internalDebug": true,
+  "deno.suggest.completeFunctionCalls": true,
+  "deno.unstable": true,
+  "deno.codeLens.implementations": true,
+  "deno.codeLens.references": true
 }

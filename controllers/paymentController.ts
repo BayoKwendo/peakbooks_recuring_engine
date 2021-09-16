@@ -639,12 +639,20 @@ export default {
 					status_code: 200,
 					message: 'Success!',
 				};
-			} else {
-				await paymentService.editPaymentAmount({
+			} 
+			
+			else {
+				await paymentService.editPaymentAmountDefault({
 					amount_received: values.amount_received,
 					created_by: values.created_by,
 					account_type: values.account_type,
 				});
+
+				console.log({
+					amount_received: values.amount_received,
+					created_by: values.created_by,
+					account_type: values.account_type,
+				})
 				response.body = {
 					status: true,
 					status_code: 200,
