@@ -830,22 +830,9 @@ export default {
 			`SELECT f.transaction_type, f.amount, f.payments, f.date, f.details
              FROM
            (
-           (
-             SELECT  
-             created_at date,
-            'Opening Balance' transaction_type,
-             customer_unique details,
-             0 payments,
-             IFNULL(SUM(IFNULL(balance_opening_balance, 0)), 0) amount
-             FROM ${TABLE.CUSTOMER} WHERE
-             id = ${id} AND
-             client_id = ${created_by} AND
-             created_at BETWEEN ${startDate} AND ${endDate} GROUP BY 'Opening Balance' having amount >= 0 
-           )
-           UNION ALL
            ( 
              SELECT 
-             i.created date, 
+             i.payment_date date, 
              'Payment Received' transaction_type,
              i.invoice_no details, 
              i.paid_amount payments, 
