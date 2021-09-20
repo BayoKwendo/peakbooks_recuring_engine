@@ -843,10 +843,10 @@ export default {
              DESC 
              LIMIT 1000 
            )
-           UNION ALL 
+            UNION ALL 
            (
             SELECT 
-            i.due_date date,
+            i.invoice_date date,
             'Invoice' transaction_type,
             i.invoice_no details, 
             0 payments,

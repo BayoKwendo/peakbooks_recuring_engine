@@ -513,10 +513,6 @@ export default {
         return result;
     },
 
-
-
-
-
     //aging summary
 
     getAgingSummaryInvoice: async ({ offset, created_by, page_size, estimate, startDate, endDate }: Invoices) => {
