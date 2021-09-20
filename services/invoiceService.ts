@@ -4,7 +4,7 @@ import Invoices from "../interfaces/Invoices.ts";
 
 export default {
     createInvoice: async ({ customer_id, invoice_no, currency_type, sales_order_no, terms, due_date, invoice_date, message_invoice, sub_total, statement_invoice, amount,
-        due_amount, tax_amount, discount_amount, recurring, created_by, estimate, reference,agnaist_ksh, tax_exclusive, sales_person_id, approved }: Invoices) => {
+        due_amount, tax_amount, discount_amount, recurring, created_by, estimate, reference, agnaist_ksh, tax_exclusive, sales_person_id, approved }: Invoices) => {
         const result = await client.query(`INSERT INTO ${TABLE.INVOICES}  SET
         customer_id=?, invoice_no = ?, terms=?, due_date =?, invoice_date =?, message_invoice=?,sub_total=?,
         statement_invoice=?,
@@ -726,6 +726,16 @@ export default {
             i.customer_id = ? AND i.status=0 AND i.approved=1 AND i.estimate=0 AND i.created_by  = ? LIMIT 100`, [filter_value, created_by]);
         return result;
     },
+
+
+    getInvoiceCustomer_last_invoice: async ({ filter_value }: Invoices) => {
+        const result = await client.query(
+            `SELECT IFNULL(amount_inexcess, 0) amount FROM 
+              ${TABLE.PAYMENT_RECEIVED_PAY} WHERE
+              customer_id = ? AND status=1 order by id DESC limit 1`, [filter_value,]);
+        return result;
+    },
+
 
 
     getInvoiceFilterPaidReceipt: async ({ filter_value }: Invoices) => {

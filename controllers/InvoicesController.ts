@@ -460,7 +460,7 @@ export default {
   /**
   * @description Get all Taxra
   */
-   getGeneralNotes: async (ctx: any) => {
+  getGeneralNotes: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
       // console.log("bayo", kw)
@@ -1769,15 +1769,31 @@ export default {
         created_by: Number(created_by),
       });
 
-      console.log(filter_value, "||| params");
+      const last_payment = await invoiceService.getInvoiceCustomer_last_invoice({
+        filter_value: filter_value,
+        created_by: Number(created_by)
+      });
+      let payment_amt;
 
+      // check if amount is null
+      if (last_payment.length > 0) {
+        if (Number(last_payment[0].amount) > 0) {
+          payment_amt = Number(last_payment[0].amount);
+        } else {
+          payment_amt = 0;
+        }
+      } else {
+        payment_amt = 0;
+      }
       const data = await invoiceService.getInvoiceFilterUnpaid({
         filter_value: filter_value,
         created_by: Number(created_by),
       });
+
       ctx.response.body = {
         status: true,
         status_code: 200,
+        last_payment: payment_amt,
         total: total,
         data: data,
       };
@@ -1823,33 +1839,33 @@ export default {
   },
 
 
-    /**
-   * @description Get all Invoices List
-   */
-     getInvoicesPay: async (ctx: any) => {
-      try {
-        // let kw = request.url.searchParams.get('page_number');
-        // console.log("bayo", kw)
-        let { filter_value, created_by } = getQuery(ctx, { mergeParams: true });
-        const data = await invoiceService.getInvoiceFilterPaidTransactions({
-          filter_value: filter_value,
-          created_by: Number(created_by)
-        });
-        ctx.response.body = {
-          status: true,
-          status_code: 200,
-          data: data
-        };
-      } catch (error) {
-        ctx.response.status = 400;
-        ctx.response.body = {
-          success: false,
-          message: `Error: ${error}`,
-        };
-      }
-    },
+  /**
+ * @description Get all Invoices List
+ */
+  getInvoicesPay: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      // console.log("bayo", kw)
+      let { filter_value, created_by } = getQuery(ctx, { mergeParams: true });
+      const data = await invoiceService.getInvoiceFilterPaidTransactions({
+        filter_value: filter_value,
+        created_by: Number(created_by)
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
 
-  
+
 
   /**
    * @description Get all Estimates List

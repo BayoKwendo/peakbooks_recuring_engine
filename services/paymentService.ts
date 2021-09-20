@@ -837,7 +837,7 @@ export default {
              customer_unique details,
              0 payments,
              IFNULL(SUM(IFNULL(balance_opening_balance, 0)), 0) amount
-             FROM  ${TABLE.CUSTOMER} WHERE
+             FROM ${TABLE.CUSTOMER} WHERE
              id = ${id} AND
              client_id = ${created_by} AND
              created_at BETWEEN ${startDate} AND ${endDate} GROUP BY 'Opening Balance' having amount >= 0 
@@ -859,7 +859,7 @@ export default {
            UNION ALL 
            (
             SELECT 
-            i.created_at date,
+            i.due_date date,
             'Invoice' transaction_type,
             i.invoice_no details, 
             0 payments,
