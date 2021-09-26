@@ -6,7 +6,7 @@ export const MYSQL ={
     user: "root",
     password: "VF3ax6geGdfg32dufgf8",
     database: "peakbooks",
-    port: 10330
+    port: 3306
 
 }
 export const TABLE = {
