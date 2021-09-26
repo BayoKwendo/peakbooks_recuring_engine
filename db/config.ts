@@ -1,8 +1,8 @@
 export const DATABASE: string = "";
 
 export const MYSQL ={
-    host: "157.230.229.119",
-    // host: "strange_cohen",
+    // host: "157.230.229.119",
+    host: "localhost",
     user: "root",
     password: "VF3ax6geGdfg32dufgf8",
     database: "peakbooks",
