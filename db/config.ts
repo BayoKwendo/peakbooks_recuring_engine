@@ -1,4 +1,14 @@
-export const DATABASE: string = "peakbooks";
+export const DATABASE: string = "";
+
+export const MYSQL ={
+    // host: "157.230.229.119",
+    host: "strange_cohen",
+    user: "root",
+    password: "VF3ax6geGdfg32dufgf8",
+    database: "peakbooks",
+    port: 10330
+
+}
 export const TABLE = {
   CUSTOMER: "customers",
   CUSTOMER_MORE: "customers_more",

@@ -1,17 +1,16 @@
 import { Client, ClientConfig } from "https://deno.land/x/mysql/mod.ts";
 // config
-import { DATABASE, TABLE } from "./config.ts";
+import { DATABASE, MYSQL, TABLE } from "./config.ts";
 import { SmtpClient } from "https://deno.land/x/smtp/mod.ts";
 
 
 
 const config: ClientConfig = {
-  hostname: "157.230.229.119",
-  username: "root",
-  password: "VF3ax6geGdfg32dufgf8",
-  db: "peakbooks",
-  port: 10330,
-
+  hostname: MYSQL.host,
+  username: MYSQL.user,
+  password: MYSQL.password,
+  db: MYSQL.database,
+  port: MYSQL.port,
   debug: true
 }
 const client = await new Client().connect(config);
