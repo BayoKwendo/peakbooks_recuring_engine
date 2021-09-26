@@ -1,12 +1,11 @@
 export const DATABASE: string = "";
 
 export const MYSQL ={
-    // host: "157.230.229.119",
-    host: "localhost",
+    host: "157.230.229.119",
     user: "root",
     password: "VF3ax6geGdfg32dufgf8",
     database: "peakbooks",
-    port: 10330
+    port:10330
 
 }
 export const TABLE = {
