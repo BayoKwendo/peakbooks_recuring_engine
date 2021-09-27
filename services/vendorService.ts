@@ -386,8 +386,7 @@ export default {
                 WHERE e.client_id = ${created_by}
                 AND e.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY c.vendor_display_name
                 ) c
-               )   
-              LIMIT ${offset},${page_size}`);
+               )   `);
         return result;
     },
 
@@ -416,8 +415,7 @@ export default {
                 WHERE e.client_id = ${created_by}
                 AND e.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY c.customer_display_name
                 ) c
-               )
-              LIMIT ${offset},${page_size}`);
+               )`);
         return result;
     },
 

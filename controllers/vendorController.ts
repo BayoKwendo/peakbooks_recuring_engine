@@ -1516,7 +1516,7 @@ export default {
 
       if (page_number == null) {
         page_number = "1";
-        page_size = "100";
+        page_size = "10000";
         const offset = (Number(page_number) - 1) * 100;
         const data = await vendorService.getExpensesCustomer({
           offset: Number(offset),
@@ -1577,7 +1577,7 @@ export default {
 
       if (page_number == null) {
         page_number = "1";
-        page_size = "100";
+        page_size = "10000";
         const offset = (Number(page_number) - 1) * 100;
         const data = await vendorService.getExpensesVendor({
           offset: Number(offset),
