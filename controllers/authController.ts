@@ -207,6 +207,11 @@ export default {
 				admin_role: values.admin_role,
 			});
 
+			console.log(JSON.stringify({
+				email: values.email,
+				admin_role: values.admin_role,
+			}) +  phoneIsAvailable);
+
 			let checkClientIDExistWithEmail;
 
 			if (values.client_id !== null) {
