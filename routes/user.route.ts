@@ -12,6 +12,9 @@ router
   .post("/forgot_username", authController.getUsernames)
   .put("/clientactivate/:id", authorize, authController.activateAccount)
   .put("/clientdeactivate/:id", authorize, authController.deactiveAccount)
+
+  .delete("/client/:id", authorize, authController.deleteAccount)
+
   .put("/updateUserClient", authorize, authController.updateClientUser)
   .put("/useractivate/:id", authorize, authController.activateAccountUser)
   .put("/userdeactivate/:id", authorize, authController.deactiveAccountUser)

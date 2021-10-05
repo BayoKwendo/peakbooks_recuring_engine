@@ -210,7 +210,7 @@ export default {
 			console.log(JSON.stringify({
 				email: values.email,
 				admin_role: values.admin_role,
-			}) +  phoneIsAvailable);
+			}) + phoneIsAvailable);
 
 			let checkClientIDExistWithEmail;
 
@@ -457,6 +457,36 @@ export default {
 					status: true,
 					status_code: 200,
 					message: 'User Account has been deactivated',
+				};
+			}
+		} catch (error) {
+			response.status = 400;
+			response.body = {
+				success: false,
+				message: `${error}`,
+			};
+		}
+	},
+
+	// delete user acco
+
+	deleteAccount: async ({ params, response }: { params: { id: string }, response: any }) => {
+		try {
+			console.log(params.id);
+			const data = await userService.deleteAccount({ id: params.id });
+			if (data.affectedRows > 0) {
+				response.status = 200;
+				response.body = {
+					status: true,
+					status_code: 200,
+					message: 'Account has been deleted',
+				};
+			} else {
+				response.status = 201;
+				response.body = {
+					status: true,
+					status_code: 200,
+					message: 'Error deleting the account',
 				};
 			}
 		} catch (error) {

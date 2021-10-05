@@ -259,7 +259,7 @@ export default {
 
   getClientFilter: async ({ filter_value }: User) => {
     const result = await client.query(
-      `SELECT * FROM  ${TABLE.USERS} WHERE email LIKE ? or username LIKE ? or msisdn LIKE ? or client_id = ?`, [filter_value,filter_value, filter_value, filter_value]);
+      `SELECT * FROM  ${TABLE.USERS} WHERE email LIKE ? or username LIKE ? or msisdn LIKE ? or client_id = ?`, [filter_value, filter_value, filter_value, filter_value]);
     return result;
   },
 
@@ -294,6 +294,12 @@ export default {
 
   deactiveAccount: async ({ id }: User,) => {
     const query = await client.query(`UPDATE  ${TABLE.USERS} SET status = 0 WHERE client_id = ? `, [id]);
+    return query;
+  },
+
+  // user delete account
+  deleteAccount: async ({ id }: User,) => {
+    const query = await client.query(`DELETE FROM  ${TABLE.USERS} WHERE id = ? AND admin_role != 1`, [id]);
     return query;
   },
 
