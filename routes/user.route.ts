@@ -14,6 +14,8 @@ router
   .put("/clientdeactivate/:id", authorize, authController.deactiveAccount)
 
   .delete("/client/:id", authorize, authController.deleteAccount)
+  
+  .get("/lost_user", authorize, authController.getUserLost)
 
   .put("/updateUserClient", authorize, authController.updateClientUser)
   .put("/useractivate/:id", authorize, authController.activateAccountUser)

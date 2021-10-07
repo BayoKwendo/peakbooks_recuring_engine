@@ -6,6 +6,8 @@ import { create, getNumericDate } from 'https://deno.land/x/djwt/mod.ts';
 import * as bcrypt from 'https://deno.land/x/bcrypt@v0.2.4/mod.ts';
 import { key } from '../exports.ts'
 import axiod from 'https://deno.land/x/axiod/mod.ts';
+import { SMS, CONFIG, SMS_BaseUrl } from "../db/config.ts";
+
 
 
 // const header: Jose = ;
@@ -696,9 +698,43 @@ export default {
 		}
 	},
 
+
 	/**
-   * @description Get all Clients Documents List
+   * @description Get all lost user who never renewed their plans after trial period
    */
+
+	getUserLost: async (ctx: any) => {
+		try {
+			let { filter_value } = getQuery(ctx, {
+				mergeParams: true,
+			});
+			if (filter_value = "lost_users") { }
+
+			const text_m = `text`;
+			let formData_m = {
+				"msisdn": "+254717629732",
+				"text": text_m
+			}
+			await axiod.post(`${SMS_BaseUrl}`, formData_m, CONFIG);
+
+			ctx.response.status = 200;
+			ctx.response.body = {
+				success: true,
+				message: `SUccess!`,
+			};
+			// console.log(startDate);
+		} catch (error) {
+			ctx.response.status = 400;
+			ctx.response.body = {
+				success: false,
+				message: `Error: ${error}`,
+			};
+		}
+	},
+
+	/**
+	* @description Get all Clients Documents List
+	*/
 	getDocumets: async (ctx: any) => {
 		try {
 			let { filter_value, created_by, page_number, page_size, startDate, id, endDate } = getQuery(ctx, {

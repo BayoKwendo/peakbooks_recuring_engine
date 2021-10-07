@@ -8,6 +8,24 @@ export const MYSQL ={
     port:10330
 
 }
+export const SMS_BaseUrl: string = "http://sms_service:1200/send_sms"; // base url for sms services
+
+export const SMS = {
+	URL: 'https://api.vaspro.co.ke/v3/BulkSMS/api/create',
+	APIKEY: '8f15430edfeb253fb0961c36e0fee0cc',
+	SENDERID: 'PEAKBOOKS',
+	CALL_BACK: 'https://api.vaspro.co.ke'
+};
+
+export const CONFIG = {
+	method: 'POST',
+	headers: {
+		'Content-Type': 'application/json',
+		'Accept': 'application/json',
+	}
+}
+
+
 export const TABLE = {
   CUSTOMER: "customers",
   CUSTOMER_MORE: "customers_more",

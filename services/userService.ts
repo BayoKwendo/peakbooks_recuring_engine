@@ -186,6 +186,16 @@ export default {
     return result;
   },
 
+
+  // get users who never renew their subscription after trial expiry
+  getForgotUsers: async () => {
+
+    const result = await client.query(`SELECT  DATEDIFF (DATE_FORMAT(subscription, '%Y-%m-%d'), DATE_FORMAT(NOW(), '%Y-%m-%d')) days, msisdn phone, company_name, email
+    FROM  users WHERE role_id = 2 AND paid = 0 AND DATEDIFF (DATE_FORMAT(subscription, '%Y-%m-%d'), DATE_FORMAT(NOW(), '%Y-%m-%d')) < 0`)
+
+    return result;
+
+  },
   usermpesacode: async ({ client_id }: User) => {
     const result = await client.query(
       `SELECT * FROM  ${TABLE.MPESA_PAYMENT} WHERE userid = ? AND Status = 0 AND TransID <> "" LIMIT 1`,
