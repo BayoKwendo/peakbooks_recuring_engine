@@ -6,7 +6,7 @@ import { create, getNumericDate } from 'https://deno.land/x/djwt/mod.ts';
 import * as bcrypt from 'https://deno.land/x/bcrypt@v0.2.4/mod.ts';
 import { key } from '../exports.ts'
 import axiod from 'https://deno.land/x/axiod/mod.ts';
-import { SMS, CONFIG, SMS_BaseUrl,SMS_BaseUrl_2 } from "../db/config.ts";
+import { SMS, CONFIG, SMS_BaseUrl, SMS_BaseUrl_2 } from "../db/config.ts";
 
 
 
@@ -708,22 +708,44 @@ export default {
 			let { filter_value } = getQuery(ctx, {
 				mergeParams: true,
 			});
-			if (filter_value = "lost_users") { }
 
-			const text_m = `text`;
-			let formData_m = {
-				"msisdn": "254717629732",
-				"text": text_m
+			// sms engine
+			if (filter_value = "lost_users") {
+				const getNumber = await userService.getForgotUsers()
+				for (let i = 0; i < getNumber.length; i++) {
+					if (i % 20 === 0) {
+						await task(i);
+					}
+
+					let formData_m = {
+						"msisdn": getNumber[i].phone,
+						"text": `Dear ${getNumber[i].first_name},\nThank you for signing up with PeakBooks.\nWe hope you had a great experience with your PeakBooks trial. We welcome you to login at https://www.peakbooks.biz and select the plan that suits your business.\nWe look forward to helping you digitize accounting for your business.\n\nRegards,\nPeakBooks`
+					}
+					await axiod.post(`${SMS_BaseUrl}`, formData_m, CONFIG);
+
+					console.log(`Task ${i} done!`);
+				}
+				async function task(i: any) {
+					await timer(1000);
+					console.log(`Task ${i} done!`);
+				}
+				function timer(ms: any) {
+					return new Promise((res) => setTimeout(res, ms));
+				}
+
+			} else if (filter_value = "sms_test") {
+
+				const text_m = `text`;
+				let formData_m = {
+					"msisdn": "254717629732",
+					"text": text_m
+				}
+				await axiod.post(`${SMS_BaseUrl} `, formData_m, CONFIG);
+				await axiod.post(`${SMS_BaseUrl_2} `, formData_m, CONFIG);
 			}
-			await axiod.post(`${SMS_BaseUrl}`, formData_m, CONFIG);
 
-		
-			// const text_m = `text`;
-			// let formData_m = {
-			// 	"msisdn": "+254717629732",
-			// 	"text": text_m
-			// }
-			await axiod.post(`${SMS_BaseUrl_2}`, formData_m, CONFIG);
+
+
 
 			ctx.response.status = 200;
 			ctx.response.body = {
@@ -735,7 +757,7 @@ export default {
 			ctx.response.status = 400;
 			ctx.response.body = {
 				success: false,
-				message: `Error: ${error}`,
+				message: `Error: ${error} `,
 			};
 		}
 	},
@@ -816,7 +838,7 @@ export default {
 			ctx.response.status = 400;
 			ctx.response.body = {
 				success: false,
-				message: `Error: ${error}`,
+				message: `Error: ${error} `,
 			};
 		}
 	},
@@ -841,7 +863,7 @@ export default {
 			ctx.response.status = 400;
 			ctx.response.body = {
 				success: false,
-				message: `Error: ${error}`,
+				message: `Error: ${error} `,
 			};
 		}
 	},
@@ -897,7 +919,7 @@ export default {
 			ctx.response.status = 400;
 			ctx.response.body = {
 				success: false,
-				message: `Error: ${error}`,
+				message: `Error: ${error} `,
 			};
 		}
 	},
@@ -920,7 +942,7 @@ export default {
 			ctx.response.status = 400;
 			ctx.response.body = {
 				success: false,
-				message: `Error: ${error}`,
+				message: `Error: ${error} `,
 			};
 		}
 	},
@@ -949,37 +971,24 @@ export default {
 
 			if (otpSave) {
 				// console.log(data3)
-				const postRequest = await fetch('https://api.vaspro.co.ke/v3/BulkSMS/api/create', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({
-						apiKey: '8f15430edfeb253fb0961c36e0fee0cc',
-						shortCode: 'PEAKBOOKS',
-						message:
-							'Your verification code is \n\n' + values.code.toString() + '\n\n Expire in 2 minutes time',
-						recipient: values.msisdn.toString(),
-						callbackURL: 'https://api.vaspro.co.ke',
-						enqueue: 0,
-					}),
-				});
-
-				console.log(postRequest);
-
-				if (postRequest) {
-					response.body = {
-						status: true,
-						status_code: 200,
-						message: 'Success! code has been send',
-					};
+				let formData_m = {
+					"msisdn": values.msisdn.toString(),
+					"text": 'Your verification code is \n\n' + values.code.toString() + '\n\n Expire in 2 minutes time'
 				}
+				await axiod.post(`${SMS_BaseUrl} `, formData_m, CONFIG);
+
+				response.body = {
+					status: true,
+					status_code: 200,
+					message: 'Success! code has been send',
+				};
+
 			}
 		} catch (error) {
 			response.status = 400;
 			response.body = {
 				success: false,
-				message: `${error}`,
+				message: `${error} `,
 			};
 		}
 	},
@@ -1036,7 +1045,7 @@ export default {
 			response.status = 400;
 			response.body = {
 				success: false,
-				message: `${error}`,
+				message: `${error} `,
 			};
 		}
 	},
@@ -1090,7 +1099,7 @@ export default {
 			response.status = 400;
 			response.body = {
 				success: false,
-				message: `${error}`,
+				message: `${error} `,
 			};
 		}
 	},
@@ -1129,7 +1138,7 @@ export default {
 			ctx.response.status = 400;
 			ctx.response.body = {
 				success: false,
-				message: `Error: ${error}`,
+				message: `Error: ${error} `,
 			};
 		}
 	},
@@ -1158,55 +1167,41 @@ export default {
 			console.log(data.affectedRows);
 
 			if (data.affectedRows > 0) {
-				const postRequest = await fetch('https://api.vaspro.co.ke/v3/BulkSMS/api/create', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({
-						apiKey: '8f15430edfeb253fb0961c36e0fee0cc',
-						shortCode: 'PEAKBOOKS',
-						message:
-							'Dear ' +
-							values.name +
-							'\n\nThis is to confirm that your subscription to ' +
-							values.plan_type +
-							' plan was succesfully. \n\nYour plan is due on ' +
-							values.subscription,
-						recipient: values.msisdn.toString(),
-						callbackURL: 'https://api.vaspro.co.ke',
-						enqueue: 0,
-					}),
-				});
-				if (postRequest) {
-					const postRequest = await fetch(
-						'https://www.peakbooks.biz:9000/insightphp/peakBooksEmailPaymentAcknowledgemnt.php',
-						{
-							method: 'POST',
-							headers: {
-								'Content-Type': 'application/json',
-							},
-							body: JSON.stringify({
-								company_name: values.name,
-								email: values.email,
-								subscription: values.subscription,
-							}),
-						}
-					);
-					if (postRequest) {
-						ctx.response.body = {
-							status: true,
-							status_code: 200,
-							message: 'SUCCESS!!',
-						};
-					} else {
-						ctx.response.body = {
-							status: true,
-							status_code: 200,
-							message: 'SUCCESS!!',
-						};
-					}
+
+				let formData_m = {
+					"msisdn": values.msisdn.toString(),
+					"text": 'Dear ' + values.name + '\n\nThis is to confirm that your subscription to ' + values.plan_type + ' plan was succesfully.\n\nYour plan is due on ' + values.subscription,
 				}
+				await axiod.post(`${SMS_BaseUrl} `, formData_m, CONFIG);
+
+				const postRequest = await fetch(
+					'https://www.peakbooks.biz:9000/insightphp/peakBooksEmailPaymentAcknowledgemnt.php',
+					{
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify({
+							company_name: values.name,
+							email: values.email,
+							subscription: values.subscription,
+						}),
+					}
+				);
+				if (postRequest) {
+					ctx.response.body = {
+						status: true,
+						status_code: 200,
+						message: 'SUCCESS!!',
+					};
+				} else {
+					ctx.response.body = {
+						status: true,
+						status_code: 200,
+						message: 'SUCCESS!!',
+					};
+				}
+
 			} else {
 				ctx.response.body = {
 					status: false,
@@ -1218,7 +1213,7 @@ export default {
 			ctx.response.status = 400;
 			ctx.response.body = {
 				success: false,
-				message: `${error}`,
+				message: `${error} `,
 			};
 		}
 	},
@@ -1304,7 +1299,7 @@ export default {
 			ctx.response.status = 400;
 			ctx.response.body = {
 				success: false,
-				message: `Error: ${error}`,
+				message: `Error: ${error} `,
 			};
 		}
 	},
@@ -1359,7 +1354,7 @@ export default {
 			response.status = 400;
 			response.body = {
 				success: false,
-				message: `${error}`,
+				message: `${error} `,
 			};
 		}
 	},
@@ -1431,7 +1426,7 @@ export default {
 			response.status = 400;
 			response.body = {
 				success: false,
-				message: `${error}`,
+				message: `${error} `,
 			};
 		}
 	},
@@ -1468,7 +1463,7 @@ export default {
 			ctx.response.status = 400;
 			ctx.response.body = {
 				success: false,
-				message: `Error: ${error}`,
+				message: `Error: ${error} `,
 			};
 		}
 	},
@@ -1505,7 +1500,7 @@ export default {
 			response.status = 400;
 			response.body = {
 				success: false,
-				message: `${error}`,
+				message: `${error} `,
 			};
 		}
 	},

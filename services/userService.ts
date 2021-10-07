@@ -190,9 +190,8 @@ export default {
   // get users who never renew their subscription after trial expiry
   getForgotUsers: async () => {
 
-    const result = await client.query(`SELECT  DATEDIFF (DATE_FORMAT(subscription, '%Y-%m-%d'), DATE_FORMAT(NOW(), '%Y-%m-%d')) days, msisdn phone, company_name, email
+    const result = await client.query(`SELECT  DATEDIFF (DATE_FORMAT(subscription, '%Y-%m-%d'), DATE_FORMAT(NOW(), '%Y-%m-%d')) days, msisdn phone, company_name, first_name, email
     FROM  users WHERE role_id = 2 AND paid = 0 AND DATEDIFF (DATE_FORMAT(subscription, '%Y-%m-%d'), DATE_FORMAT(NOW(), '%Y-%m-%d')) < 0`)
-
     return result;
 
   },
