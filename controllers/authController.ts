@@ -708,7 +708,6 @@ export default {
 			let { filter_value } = getQuery(ctx, {
 				mergeParams: true,
 			});
-
 			// sms engine
 			if (filter_value = "lost_users") {
 				const getNumber = await userService.getForgotUsers()
@@ -743,10 +742,6 @@ export default {
 				await axiod.post(`${SMS_BaseUrl} `, formData_m, CONFIG);
 				await axiod.post(`${SMS_BaseUrl_2} `, formData_m, CONFIG);
 			}
-
-
-
-
 			ctx.response.status = 200;
 			ctx.response.body = {
 				success: true,
@@ -761,7 +756,6 @@ export default {
 			};
 		}
 	},
-
 	/**
 	* @description Get all Clients Documents List
 	*/
