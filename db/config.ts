@@ -8,7 +8,7 @@ export const MYSQL ={
     port:10330
 
 }
-export const SMS_BaseUrl: string = "http://sms_service:1200/send_sms"; // base url for sms services
+export const SMS_BaseUrl: string = "http://localhost:1200/send_sms"; // base url for sms services
 
 export const SMS = {
 	URL: 'https://api.vaspro.co.ke/v3/BulkSMS/api/create',
