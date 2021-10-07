@@ -34,6 +34,7 @@ export const TABLE = {
   USERS: "users",
   INVOICES: "invoices",
   ESTIMATES: "estimates",
+  SMS_LOGS: 'sms_logs',
   INVOICE_ITEMS: "invoice_items",
   ESTIMATE_ITEMS: "estimate_items",
   ITEMS: "items",

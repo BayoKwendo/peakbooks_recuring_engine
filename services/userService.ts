@@ -251,6 +251,28 @@ export default {
   },
 
 
+  //get all sms
+	getSMSLog: async ({ offset, page_size }: User) => {
+		return await client.query(`SELECT * 
+        FROM ${TABLE.SMS_LOGS} WHERE id ORDER BY id DESC LIMIT ${offset},${page_size}`);
+	},
+
+	//get sms count
+
+	getSMSCount: async () => {
+		const [result] = await client.query(`SELECT COUNT(id) count FROM ${TABLE.SMS_LOGS}`);
+		return result.count;
+	},
+
+	//filter sms details
+	getSMSFilter: async ({ filter_value }: User) => {
+		return await client.query(`SELECT * 
+        FROM ${TABLE.SMS_LOGS} WHERE  origin =${filter_value} OR
+        destination=${filter_value}`);
+	},
+
+
+
 
   getClients: async ({ offset, status, page_size }: User) => {
     const result = await client.query(

@@ -28,6 +28,7 @@ router
   .post("/mpesa_update", authController.mpesaUpdate)
   .post("/mpesa_update_other_no", authController.mpesaUpdateOtherNo)
   .get("/get_mpesa", authController.usermpesacode)
+  .get("/sms", authController.getSMS)
 
 
 

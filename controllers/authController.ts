@@ -1298,6 +1298,60 @@ export default {
 		}
 	},
 
+	//get All SMS
+	getSMS: async (ctx: any) => {
+		try {
+			// let kw = request.url.searchParams.get('page_number');
+			let { page_number, page_size, filter_value } = getQuery(ctx, { mergeParams: true });
+			const total = await userService.getSMSCount();
+			// console.log(total)
+			if (filter_value == null || filter_value == '') {
+				if (page_number == null) {
+					page_number = '1';
+					page_size = '100';
+					const offset = (Number(page_number) - 1) * Number(page_size);
+					const data = await userService.getSMSLog({
+						offset: Number(offset),
+						page_size: Number(page_size),
+					});
+					ctx.response.body = {
+						status: true,
+						status_code: 200,
+						total: total,
+						data: data,
+					};
+				} else {
+					const offset = (Number(page_number) - 1) * Number(page_size);
+					const data = await userService.getSMSLog({
+						offset: Number(offset),
+						page_size: Number(page_size),
+					});
+					ctx.response.body = {
+						status: true,
+						status_code: 200,
+						total: total,
+						data: data,
+					};
+				}
+			} else {
+				// console.log(filter_value, '||| params');
+				const data = await userService.getSMSFilter({ filter_value: filter_value });
+				ctx.response.body = {
+					status: true,
+					status_code: 200,
+					data: data,
+				};
+			}
+		} catch (error) {
+			ctx.response.status = 400;
+			ctx.response.body = {
+				success: false,
+				message: `${error}`,
+			};
+		}
+	},
+
+
 	/**
    * @description Get all Generate opt and send
    */
