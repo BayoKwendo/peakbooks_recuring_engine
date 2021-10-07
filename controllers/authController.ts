@@ -712,7 +712,7 @@ export default {
 
 			const text_m = `text`;
 			let formData_m = {
-				"msisdn": "+254717629732",
+				"msisdn": "254717629732",
 				"text": text_m
 			}
 			await axiod.post(`${SMS_BaseUrl}`, formData_m, CONFIG);
