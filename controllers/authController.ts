@@ -6,7 +6,7 @@ import { create, getNumericDate } from 'https://deno.land/x/djwt/mod.ts';
 import * as bcrypt from 'https://deno.land/x/bcrypt@v0.2.4/mod.ts';
 import { key } from '../exports.ts'
 import axiod from 'https://deno.land/x/axiod/mod.ts';
-import { SMS, CONFIG, SMS_BaseUrl } from "../db/config.ts";
+import { SMS, CONFIG, SMS_BaseUrl,SMS_BaseUrl_2 } from "../db/config.ts";
 
 
 
@@ -717,10 +717,18 @@ export default {
 			}
 			await axiod.post(`${SMS_BaseUrl}`, formData_m, CONFIG);
 
+		
+			// const text_m = `text`;
+			// let formData_m = {
+			// 	"msisdn": "+254717629732",
+			// 	"text": text_m
+			// }
+			await axiod.post(`${SMS_BaseUrl_2}`, formData_m, CONFIG);
+
 			ctx.response.status = 200;
 			ctx.response.body = {
 				success: true,
-				message: `SUccess!`,
+				message: `Success!`,
 			};
 			// console.log(startDate);
 		} catch (error) {

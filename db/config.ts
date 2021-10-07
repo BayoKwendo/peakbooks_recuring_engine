@@ -10,6 +10,8 @@ export const MYSQL ={
 }
 export const SMS_BaseUrl: string = "http://localhost:1200/send_sms"; // base url for sms services
 
+export const SMS_BaseUrl_2: string = "http://localhost:1200/send_sms_mobitech"; // base url for sms services mobitech
+
 export const SMS = {
 	URL: 'https://api.vaspro.co.ke/v3/BulkSMS/api/create',
 	APIKEY: '8f15430edfeb253fb0961c36e0fee0cc',
