@@ -928,9 +928,14 @@ export default {
 			const body = await request.body();
 			const values = await body.value;
 
+			const data = await userService.updateReminder({
+				// code: values.code,
+				invoice_no: values.invoice_no,
+				client_id: values.client_id
+			});
 			let formData_m = {
 				"msisdn": values.msisdn,
-				"text": `Dear ${values.first_name}, we are kindly reminding you that your invoice  ${values.invoice_no} will be due in ${values.due_period} days time.\n\nOutstanding balance: ${values.due_amount}.\nDue date ${values.due_date}.\n\nKindly pay the outstanding balance to avoid late payment penalties.\n\nThank you.\n\nRegards,\n\n${values.company_name}`,
+				"text": `Dear ${values.first_name}, we are kindly reminding you that your invoice  ${values.invoice_no} will be due in ${values.period} days time.\n\nOutstanding balance: ${values.due_amount}.\nDue date ${values.due_date}.\n\nKindly pay the outstanding balance to avoid late payment penalties.\n\nThank you.\n\nRegards,\n\n${values.company_name}`,
 			}
 			await axiod.post(`${SMS_BaseUrl}`, formData_m, CONFIG);
 			response.body = {

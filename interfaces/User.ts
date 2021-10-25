@@ -5,6 +5,8 @@ export default interface User {
   role_id?: number,
   industry?: string,
   email?: string,
+  
+  invoice_no?: string,
   company_name?: string,
   postal_address?: string,
   page_number?: number,

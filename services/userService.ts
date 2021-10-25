@@ -228,6 +228,14 @@ export default {
     );
     return result;
   },
+
+  updateReminder: async ({ invoice_no, client_id}: User) => {
+    const result = await client.query(
+      `UPDATE ${TABLE.INVOICES} SET  reminder = 1 WHERE invoice_no=? AND created_by=?`,
+      [invoice_no, client_id],
+    );
+    return result;
+  },
   //Audit trail
   getAudit: async ({ client_id }: User) => {
     const result = await client.query(
