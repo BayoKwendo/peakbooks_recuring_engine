@@ -918,6 +918,35 @@ export default {
 		}
 	},
 
+
+	/**
+* @description sendinvoice
+*/
+	getInvoiceReminder: async ({ request, response }: { request: any, response: any }) => {
+		try {
+
+			const body = await request.body();
+			const values = await body.value;
+
+			let formData_m = {
+				"msisdn": values.msisdn,
+				"text": `Dear ${values.first_name}, we are kindly reminding you that your invoice  ${values.invoice_no} will be due in ${values.due_period} days time.\n\nOutstanding balance: ${values.due_amount}.\nDue date ${values.due_date}.\n\nKindly pay the outstanding balance to avoid late payment penalties.\n\nThank you.\n\nRegards,\n\n${values.company_name}`,
+			}
+			await axiod.post(`${SMS_BaseUrl}`, formData_m, CONFIG);
+			response.body = {
+				status: true,
+				status_code: 200,
+				message: "success",
+			};
+		} catch (error) {
+			response.status = 400;
+			response.body = {
+				success: false,
+				message: `Error: ${error} `,
+			};
+		}
+	},
+
 	/**
 * @description Get all sign in audit trail
 */

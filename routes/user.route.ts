@@ -17,6 +17,8 @@ router
   
   .get("/lost_user", authorize, authController.getUserLost)
 
+  .post("/sendReminders", authorize, authController.getInvoiceReminder)
+
   .put("/updateUserClient", authorize, authController.updateClientUser)
   .put("/useractivate/:id", authorize, authController.activateAccountUser)
   .put("/userdeactivate/:id", authorize, authController.deactiveAccountUser)
