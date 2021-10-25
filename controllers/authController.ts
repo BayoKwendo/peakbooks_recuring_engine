@@ -931,7 +931,7 @@ export default {
 			const data = await userService.updateReminder({
 				// code: values.code,
 				invoice_no: values.invoice_no,
-				client_id: values.client_id
+				client_id: values.created_by
 			});
 			let formData_m = {
 				"msisdn": values.msisdn,
