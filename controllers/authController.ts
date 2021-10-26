@@ -207,6 +207,7 @@ export default {
 			const phoneIsAvailable = await userService.userExist({
 				email: values.email,
 				admin_role: values.admin_role,
+				client_id: values.client_id
 			});
 
 			console.log(JSON.stringify({
@@ -242,14 +243,15 @@ export default {
 				};
 				return;
 			}
+
 			if (phoneIsAvailable) {
-				response.status = 404;
-				response.body = {
-					status: false,
-					status_code: 400,
-					message: 'Error! you can not register with the same email address as an admin',
-				};
-				return;
+					response.status = 404;
+					response.body = {
+						status: false,
+						status_code: 400,
+						message: 'Error! you can not register with the same email address as an admin',
+					};
+					return;
 			} else {
 				const hashedPassword = await bcrypt.hash(values.password);
 				const hashedPassword1 = await bcrypt.hash(values.repeat_password);
