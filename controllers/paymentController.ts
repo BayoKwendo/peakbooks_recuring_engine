@@ -442,12 +442,12 @@ export default {
 	},
 
 	/* let {
-        page_number,
-        page_size,
-        startDate,
-        endDate,
-        created_by,
-      } = getQuery(ctx, { mergeParams: true });
+		page_number,
+		page_size,
+		startDate,
+		endDate,
+		created_by,
+	  } = getQuery(ctx, { mergeParams: true });
 *
   * @description Bankings
   */
@@ -623,41 +623,85 @@ export default {
 		try {
 			const values = await body.value;
 
+			console.log(values.open_type);
 
+			if (values.open_type == 'update') {
+				if (values.account_type == 'Petty Cash' || values.account_type == 'Undeposited Funds') {
+					// values.amount_received = 0;
+					console.log("Bayo", values.amount_received)
 
-			if (values.account_type == 'Petty Cash' || values.account_type == 'Undeposited Funds') {
-				// values.amount_received = 0;
-				console.log("Bayo", values.amount_received)
+					await paymentService.editPaymentAmountDefault({
+						amount_received: values.amount_received,
+						created_by: values.created_by,
+						account_type: values.account_type,
+					});
+					response.body = {
+						status: true,
+						status_code: 200,
+						message: 'Success!',
+					};
+				}
 
-				await paymentService.editPaymentAmountDefault({
-					amount_received: values.amount_received,
-					created_by: values.created_by,
-					account_type: values.account_type,
-				});
-				response.body = {
-					status: true,
-					status_code: 200,
-					message: 'Success!',
-				};
-			} 
-			
-			else {
-				await paymentService.editPaymentAmountDefault({
-					amount_received: values.amount_received,
-					created_by: values.created_by,
-					account_type: values.account_type,
-				});
+				else {
+					await paymentService.editPaymentAmount({
+						amount_received: values.amount_received,
+						created_by: values.created_by,
+						account_type: values.account_type,
+					});
 
-				console.log({
-					amount_received: values.amount_received,
-					created_by: values.created_by,
-					account_type: values.account_type,
-				})
-				response.body = {
-					status: true,
-					status_code: 200,
-					message: 'Success!',
-				};
+					console.log({
+						amount_received: values.amount_received,
+						created_by: values.created_by,
+						account_type: values.account_type,
+					})
+					response.body = {
+						status: true,
+						status_code: 200,
+						message: 'Success!',
+					};
+				}
+			} else {
+
+				if (values.account_type == 'Petty Cash' || values.account_type == 'Undeposited Funds') {
+					// values.amount_received = 0;
+					console.log("Bayo", values.amount_received)
+
+					await paymentService.deleteBankDetails({
+						amount_received: values.amount_received,
+						created_by: values.created_by,
+						account_type: values.account_type,
+					});
+
+					await paymentService.updateBankDetails({
+						amount_received: values.amount_received,
+						created_by: values.created_by,
+						account_type: values.account_type,
+					});
+					response.body = {
+						status: true,
+						status_code: 200,
+						message: 'Success!',
+					};
+				}
+
+				else {
+					await paymentService.resetPaymentAmount({
+						amount_received: values.amount_received,
+						created_by: values.created_by,
+						account_type: values.account_type,
+					});
+
+					console.log({
+						amount_received: values.amount_received,
+						created_by: values.created_by,
+						account_type: values.account_type,
+					})
+					response.body = {
+						status: true,
+						status_code: 200,
+						message: 'Success!',
+					};
+				}
 			}
 		} catch (error) {
 			response.status = 400;

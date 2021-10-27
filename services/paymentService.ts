@@ -171,18 +171,29 @@ export default {
 	},
 
 	// bank account
+	editPaymentAmount: async ({ amount_received, account_type, created_by }: Payment) => {
+		const result = await client.query(
+			`UPDATE ${TABLE.BANK}  SET
+	         account_balance=  IFNULL(account_balance, 0)  + ${amount_received}
+		 WHERE created_by =? AND account_name =? `,
+			[created_by, account_type]
+		);
+		return result;
+	},
 
-	// editPaymentAmount: async ({ amount_received, account_type, created_by }: Payment) => {
-	// 	const result = await client.query(
-	// 		`UPDATE ${TABLE.BANK}  SET
-	//          account_balance=  IFNULL(account_balance, 0)  + ${amount_received}
-	// 	 WHERE created_by =? AND account_name =? `,
-	// 		[created_by, account_type]
-	// 	);
-	// 	return result;
-	// },
 
-	// bank account
+	// reset bank account
+	resetPaymentAmount: async ({ amount_received, account_type, created_by }: Payment) => {
+		const result = await client.query(
+			`UPDATE ${TABLE.BANK}  SET
+	         account_balance= ${amount_received}
+		 WHERE created_by =? AND account_name =? `,
+			[created_by, account_type]
+		);
+		return result;
+	},
+
+	//recurring bank account
 	editPaymentAmountDefault: async ({ amount_received, account_type, created_by }: Payment) => {
 		const result = await client.query(
 			`INSERT INTO ${TABLE.CASH_BANK}  SET
@@ -193,6 +204,33 @@ export default {
 		);
 		return result;
 	},
+
+
+
+	// update bank balance to zero first account
+	deleteBankDetails: async ({ amount_received, account_type, created_by }: Payment) => {
+		const result = await client.query(
+			`UPDATE ${TABLE.CASH_BANK}  SET
+				 account_balance = 0 WHERE 
+				 account_name = ? AND
+				 created_by = ?`,
+			[account_type, created_by]
+		);
+		return result;
+	},
+
+	// update bank balance to zero first account
+	updateBankDetails: async ({ amount_received, account_type, created_by }: Payment) => {
+		const result = await client.query(
+			`UPDATE ${TABLE.CASH_BANK}  SET
+			 account_balance = ${amount_received} WHERE 
+			 account_name = ? AND
+			 created_by = ?  ORDER BY id DESC LIMIT 1`,
+			[account_type, created_by]
+		);
+		return result;
+	},
+
 
 	editPaymentReceived: async ({
 		invoice_no,
