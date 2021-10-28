@@ -71,6 +71,7 @@ router
   
 
   .get("/agingsummarybill", paymentController.getAgingSummaryBills)
+  .put("/update_amount", paymentController.updateBankAmount)
 
 
   // expense account

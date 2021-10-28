@@ -164,7 +164,7 @@ export default {
 
   userExist: async ({ email, client_id, admin_role }: User) => {
     const [result] = await client.query(
-      `SELECT * FROM  ${TABLE.USERS} WHERE email = ? AND client_id =?  AND admin_role = 1`,
+      `SELECT * FROM  ${TABLE.USERS} WHERE email = ? AND admin_role = 1`,
       [email, client_id, admin_role],
     );
     return result;

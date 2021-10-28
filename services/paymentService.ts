@@ -182,6 +182,16 @@ export default {
 	},
 
 
+	//recurring bank account for petty cash and undesposit
+	updateBankCashBank: async ({ amount_received, id }: Payment) => {
+		const result = await client.query(
+			`UPDATE ${TABLE.BANK}  SET
+		 account_balance = ${amount_received} WHERE id = ${id}`,
+		);
+		return result;
+	},
+
+
 	// reset bank account
 	resetPaymentAmount: async ({ amount_received, account_type, created_by }: Payment) => {
 		const result = await client.query(
@@ -205,6 +215,14 @@ export default {
 		return result;
 	},
 
+	//recurring bank account for petty cash and undesposit
+	updateBankCash: async ({ amount_received, id }: Payment) => {
+		const result = await client.query(
+			`UPDATE ${TABLE.CASH_BANK}  SET
+		 account_balance = ${amount_received} WHERE id = ${id}`,
+		);
+		return result;
+	},
 
 
 	// update bank balance to zero first account
@@ -916,7 +934,7 @@ export default {
 	getBankDetails: async ({ filter_value, page_size, offset, created_by }: Payment) => {
 		const result = await client.query(
 			`
-		SELECT r.reference, r.amount_received, r.amount_made, r.type, r.dates 
+		SELECT r.reference, r.id, r.amount_received, r.amount_made, r.type, r.dates 
            
            FROM
 		   (
@@ -926,6 +944,7 @@ export default {
 				"-" reference,
 				IFNULL(account_balance, 0) amount_received,
 				0 amount_made,
+				id id,
 			    account_name type,
 				created dates 
 				 
@@ -940,6 +959,7 @@ export default {
 				"-" reference,
 				IFNULL(account_balance, 0) amount_received,
 				0 amount_made,
+				id id,
 			    account_name type,
 				created dates 
 				FROM ${TABLE.CASH_BANK} 
@@ -952,6 +972,7 @@ export default {
 			i.reference reference,
             IFNULL(i.paid_amount, 0) amount_received,
 			0 amount_made,
+			0 id,
            'Payment Received' type,
 		    i.created dates 
             FROM ${TABLE.PAYMENT_RECEIVED_PAY} i 
@@ -965,6 +986,7 @@ export default {
 		  SELECT	   
             i.reference reference,
         	0 amount_received,
+			0 id,
 			IFNULL(i.paid_amount, 0) amount_made,
 		    'Payment Made' type,
 		    i.created dates     
@@ -979,6 +1001,7 @@ export default {
 		    SELECT 
             c.id reference,
         	0 amount_received,
+			0 id,
 		    IFNULL(c.amount, 0) amount_made,
 		    'Expense' type,
 		    c.created_at dates    

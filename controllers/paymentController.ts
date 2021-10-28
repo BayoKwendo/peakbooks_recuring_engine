@@ -607,6 +607,61 @@ export default {
 		}
 	},
 
+
+
+	//edit banks amount
+
+	updateBankAmount: async ({ request, response }: { request: any, response: any }) => {
+		try {
+			const body = await request.body();
+
+			const values = await body.value;
+
+			if (values.account_type == 'Petty Cash' || values.account_type == 'Undeposited Funds') {
+				// values.amount_received = 0;
+				console.log("Bayo", values.account_type);
+
+				const mlet = await paymentService.updateBankCash({
+					amount_received: values.amount_received,
+					id: values.id,
+					account_type: values.account_type,
+				});
+				console.log("Bayo", mlet)
+				response.body = {
+					status: true,
+					status_code: 200,
+					message: 'Success!',
+				};
+			}
+
+			else {
+				await paymentService.updateBankCashBank({
+					amount_received: values.amount_received,
+					created_by: values.created_by,
+					id: values.id,
+					account_type: values.account_type,
+				});
+
+				console.log({
+					amount_received: values.amount_received,
+					created_by: values.created_by,
+					account_type: values.account_type,
+				})
+				response.body = {
+					status: true,
+					status_code: 200,
+					message: 'Success!',
+				};
+			}
+		} catch (error) {
+			response.status = 400;
+			response.body = {
+				status: false,
+				message: `${error}`,
+			};
+		}
+	},
+
 	/**
    * @description payment received edit
    */
@@ -621,6 +676,7 @@ export default {
 			return;
 		}
 		try {
+			
 			const values = await body.value;
 
 			console.log(values.open_type);
