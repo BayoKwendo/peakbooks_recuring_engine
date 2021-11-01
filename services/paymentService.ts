@@ -225,6 +225,14 @@ export default {
 	},
 
 
+	//delete bank account for petty cash and undesposit
+	deleteBankCash: async ({id }: Payment) => {
+		const result = await client.query(
+			`DELETE FROM ${TABLE.CASH_BANK} WHERE id = ${id}`,
+		);
+		return result;
+	},
+
 	// update bank balance to zero first account
 	deleteBankDetails: async ({ amount_received, account_type, created_by }: Payment) => {
 		const result = await client.query(
