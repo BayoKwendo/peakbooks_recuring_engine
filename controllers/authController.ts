@@ -214,7 +214,7 @@ export default {
 				email: values.email,
 				admin_role: values.admin_role,
 			}) + phoneIsAvailable);
-			
+
 			let checkClientIDExistWithEmail;
 
 			if (values.client_id !== null) {
@@ -245,13 +245,13 @@ export default {
 			}
 
 			if (phoneIsAvailable) {
-					response.status = 404;
-					response.body = {
-						status: false,
-						status_code: 400,
-						message: 'Error! you can not register with the same email address as an admin',
-					};
-					return;
+				response.status = 404;
+				response.body = {
+					status: false,
+					status_code: 400,
+					message: 'Error! you can not register with the same email address as an admin',
+				};
+				return;
 			} else {
 				const hashedPassword = await bcrypt.hash(values.password);
 				const hashedPassword1 = await bcrypt.hash(values.repeat_password);
@@ -321,30 +321,30 @@ export default {
 			const values = await body.value;
 
 			const isAvailable1 = await userService.usernameExist({ username: values.username });
-			const phoneIsAvailable = await userService.userExist({
-				email: values.email,
-				admin_role: values.admin_role,
-			});
+			// const phoneIsAvailable = await userService.userExist({
+			// 	email: values.email,
+			// 	admin_role: values.admin_role,
+			// });
 
 			let checkClientIDExistWithEmail;
 
-			if (values.client_id !== null) {
-				checkClientIDExistWithEmail = await userService.userClientID({
-					email: values.email,
-					client_id: values.client_id,
-				});
-				console.log(values.client_id);
-			}
+			// if (values.client_id !== null) {
+			// 	checkClientIDExistWithEmail = await userService.userClientID({
+			// 		email: values.email,
+			// 		client_id: values.client_id,
+			// 	});
+			// 	console.log(values.client_id);
+			// }
 
-			if (checkClientIDExistWithEmail) {
-				response.status = 404;
-				response.body = {
-					status: false,
-					status_code: 400,
-					message: 'Error! you can not add user with the same email address twice for the same account',
-				};
-				return;
-			}
+			// if (checkClientIDExistWithEmail) {
+			// 	response.status = 404;
+			// 	response.body = {
+			// 		status: false,
+			// 		status_code: 400,
+			// 		message: 'Error! you can not add user with the same email address twice for the same account',
+			// 	};
+			// 	return;
+			// }
 			if (isAvailable1) {
 				response.status = 404;
 				response.body = {
@@ -354,15 +354,16 @@ export default {
 				};
 				return;
 			}
-			if (phoneIsAvailable) {
-				response.status = 404;
-				response.body = {
-					status: false,
-					status_code: 400,
-					message: 'Error! you can not register with the same email address as an admin',
-				};
-				return;
-			} else {
+			// if (phoneIsAvailable) {
+			// 	response.status = 404;
+			// 	response.body = {
+			// 		status: false,
+			// 		status_code: 400,
+			// 		message: 'Error! you can not register with the same email address as an admin',
+			// 	};
+			// 	return;
+			// } 
+			else {
 				const updateUserData = await userService.updateCLientUser({
 					first_name: values.first_name,
 					last_name: values.last_name,
