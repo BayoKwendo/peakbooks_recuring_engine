@@ -144,7 +144,7 @@ let task = cron('*/.5 * * * * *', async () => {
           agnaist_ksh: data[0].agnist_ksh,
           currency_type: data[0].currency_type,
           estimate: data[0].estimate,
-          due_amount: data[0].due_amount,
+          due_amount: data[0].amount,
           discount_amount: data[0].discount_amount,
           sales_order_no: data[0].sales_order_no,
           sub_total: data[0].sub_total,
