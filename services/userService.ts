@@ -107,7 +107,7 @@ export default {
              documents = ?,
              url=?, 
              status=1 WHERE
-             id = ?`, [
+             id = ${id}`, [
       approval,
       first_name,
       username,

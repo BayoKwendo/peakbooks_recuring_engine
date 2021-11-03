@@ -320,7 +320,7 @@ export default {
 		try {
 			const values = await body.value;
 
-			const isAvailable1 = await userService.usernameExist({ username: values.username });
+			// const isAvailable1 = await userService.usernameExist({ username: values.username });
 			// const phoneIsAvailable = await userService.userExist({
 			// 	email: values.email,
 			// 	admin_role: values.admin_role,
@@ -364,6 +364,32 @@ export default {
 			// 	return;
 			// // } 
 			// else {
+
+			console.log({
+				first_name: values.first_name,
+				last_name: values.last_name,
+				msisdn: values.msisdn,
+				username: values.username,
+				email: values.email,
+				first_time: values.first_time,
+				url: values.url,
+				industry: values.industry,
+				subscription: values.subscription,
+				company_name: values.company_name,
+				currency: values.currency,
+				admin_role: values.admin_role,
+				currency_against_kenya: values.currency_against_kenya,
+				inventory: values.inventory,
+				bank: values.bank,
+				approval: values.approval,
+				sales: values.sales,
+				purchase: values.purchase,
+				investment: values.investment,
+				accountant: values.accountant,
+				reports: values.reports,
+				documents: values.documents,
+				id: values.id
+			})
 			const updateUserData = await userService.updateCLientUser({
 				first_name: values.first_name,
 				last_name: values.last_name,
