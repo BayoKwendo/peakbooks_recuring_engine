@@ -387,6 +387,7 @@ export default {
 				accountant: values.accountant,
 				reports: values.reports,
 				documents: values.documents,
+				id: values.id
 			});
 
 			if (updateUserData) {

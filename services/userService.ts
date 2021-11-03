@@ -81,7 +81,7 @@ export default {
     investment,
     accountant,
     reports,
-    documents }: User,) => {
+    documents, id }: User,) => {
     const result = await client.query(`UPDATE ${TABLE.USERS} SET
              approval =?,
              first_name =?,
@@ -107,7 +107,7 @@ export default {
              documents = ?,
              url=?, 
              status=1 WHERE
-             email = ?`, [
+             id = ?`, [
       approval,
       first_name,
       username,
@@ -131,7 +131,7 @@ export default {
       reports,
       documents,
       url,
-      email
+      id
     ]);
     return result;
   },
@@ -180,7 +180,7 @@ export default {
 
   usernameExist: async ({ username }: User) => {
     const [result] = await client.query(
-      `SELECT * FROM  ${TABLE.USERS} WHERE username = ?`,
+      `SELECT * FROM  ${TABLE.USERS} WHERE username = ? AND `,
       [username],
     );
     return result;
