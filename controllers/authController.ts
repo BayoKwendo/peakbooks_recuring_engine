@@ -362,41 +362,41 @@ export default {
 			// 		message: 'Error! you can not register with the same email address as an admin',
 			// 	};
 			// 	return;
-			// } 
-			else {
-				const updateUserData = await userService.updateCLientUser({
-					first_name: values.first_name,
-					last_name: values.last_name,
-					msisdn: values.msisdn,
-					username: values.username,
-					email: values.email,
-					first_time: values.first_time,
-					url: values.url,
-					industry: values.industry,
-					subscription: values.subscription,
-					company_name: values.company_name,
-					currency: values.currency,
-					admin_role: values.admin_role,
-					currency_against_kenya: values.currency_against_kenya,
-					inventory: values.inventory,
-					bank: values.bank,
-					approval: values.approval,
-					sales: values.sales,
-					purchase: values.purchase,
-					investment: values.investment,
-					accountant: values.accountant,
-					reports: values.reports,
-					documents: values.documents,
-				});
+			// // } 
+			// else {
+			const updateUserData = await userService.updateCLientUser({
+				first_name: values.first_name,
+				last_name: values.last_name,
+				msisdn: values.msisdn,
+				username: values.username,
+				email: values.email,
+				first_time: values.first_time,
+				url: values.url,
+				industry: values.industry,
+				subscription: values.subscription,
+				company_name: values.company_name,
+				currency: values.currency,
+				admin_role: values.admin_role,
+				currency_against_kenya: values.currency_against_kenya,
+				inventory: values.inventory,
+				bank: values.bank,
+				approval: values.approval,
+				sales: values.sales,
+				purchase: values.purchase,
+				investment: values.investment,
+				accountant: values.accountant,
+				reports: values.reports,
+				documents: values.documents,
+			});
 
-				if (updateUserData) {
-					response.body = {
-						status: true,
-						status_code: 200,
-						message: 'User has been updated Successfully!',
-					};
-				}
+			if (updateUserData) {
+				response.body = {
+					status: true,
+					status_code: 200,
+					message: 'User has been updated Successfully!',
+				};
 			}
+			// }
 		} catch (error) {
 			response.status = 400;
 			response.body = {
