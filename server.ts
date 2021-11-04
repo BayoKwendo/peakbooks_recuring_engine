@@ -435,7 +435,7 @@ let task = cron('*/.5 * * * * *', async () => {
       }
     } else {
       start()
-      console.log("")
+      // console.log("")
     }
 
   }

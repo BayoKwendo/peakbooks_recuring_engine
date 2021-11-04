@@ -15,18 +15,22 @@ router
 
   .put("/convertesalesorder", authorize, InvoicesController.convertSalesOrder)
 
-  //notes
+  //invocie notes
   .post("/notes", authorize, InvoicesController.creatNotes)
   .put("/notes", authorize, InvoicesController.updateNotes)
   .get("/notes", authorize, InvoicesController.getGeneralNotes)
-  
+
+  //receipt notes
+  .post("/receipt_notes", authorize, InvoicesController.createReceiptNotes)
+  .put("/receipt_notes", authorize, InvoicesController.updateReceiptNotes)
+  .get("/receipt_notes", authorize, InvoicesController.getReceiptNotes)
 
   .get("/invoiceitem", authorize, InvoicesController.getInvoiceItem)
   .get("/estimateitem", authorize, InvoicesController.getEstimateItem)
   .get("/invoiceunpaid", authorize, InvoicesController.getInvoicesUnpaid)
-  .get("/invoicepaid",  InvoicesController.getInvoicesPaidReceipt)
+  .get("/invoicepaid", InvoicesController.getInvoicesPaidReceipt)
 
-  .get("/invoicepaid_record",  InvoicesController.getInvoicesPay)
+  .get("/invoicepaid_record", InvoicesController.getInvoicesPay)
 
   .get("/invoiceEmail", InvoicesController.getOneInvoices)
   .get("/invoicerecurring", authorize, InvoicesController.getFrequencyInvoices)
@@ -66,7 +70,7 @@ router
   .delete("/tax", authorize, InvoicesController.deleteTaxRates)
 
   .delete("/invoice", authorize, InvoicesController.deleteInvoices)
-  
+
 
   .delete("/recurringinvoice", authorize, InvoicesController.deleteRecurringInvoices)
 

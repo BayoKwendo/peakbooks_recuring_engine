@@ -119,6 +119,7 @@ export default {
         return result;
     },
 
+
     editNotes: async ({ invoice_notes, created_by }: Invoices) => {
         const result = await client.query(`UPDATE invoice_notes 
         SET
@@ -135,6 +136,38 @@ export default {
         WHERE user_id = ? LIMIT 10000`, [created_by]);
         return query;
     },
+
+    //Receipt Notes
+
+    //Generate receipt Notes
+    createReceiptNotes: async ({ invoice_notes, created_by }: Invoices) => {
+        const result = await client.query(`INSERT INTO receipt_notes  SET
+        receipt_notes = ?, 
+        user_id = ?`, [
+            invoice_notes,
+            created_by
+        ]);
+        return result;
+    },
+
+
+    editReceiptNotes: async ({ invoice_notes, created_by }: Invoices) => {
+        const result = await client.query(`UPDATE receipt_notes 
+        SET
+        receipt_notes =?
+        WHERE user_id = ?`, [
+            invoice_notes,
+            created_by
+        ]);
+        return result;
+    },
+
+    getReceiptNotes: async ({ created_by }: Invoices,) => {
+        const query = await client.query(`SELECT * FROM  receipt_notes
+        WHERE user_id = ? LIMIT 10000`, [created_by]);
+        return query;
+    },
+
 
 
     deleteTaxRates: async ({ id }: Invoices,) => {
