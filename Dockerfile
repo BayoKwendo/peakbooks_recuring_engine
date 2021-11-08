@@ -1,4 +1,4 @@
-FROM denoland/deno:1.14.0
+FROM denoland/deno:1.15.2
 
 EXPOSE 8091
 
@@ -16,7 +16,6 @@ ADD . .
 RUN deno cache --unstable server.ts
 
 CMD [ "run", "--unstable", "--allow-net", "--allow-env", "--watch", "--allow-read", "server.ts" ]
-
 
 
 
