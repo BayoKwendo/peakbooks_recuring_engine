@@ -1,21 +1,21 @@
 export const DATABASE: string = "";
 
-// export const MYSQL ={
-//     host: "157.230.229.119",
-//     user: "root",
-//     password: "VF3ax6geGdfg32dufgf8",
-//     database: "peakbooks",
-//     port:10330
-
-// }
-
 export const MYSQL ={
-  host: "157.230.229.119",
-  user: "root",
-  password: "part@^yr9053",
-  database: "peakbooks",
-  port:3306
+    host: "157.230.229.119",
+    user: "root",
+    password: "VF3ax6geGdfg32dufgf8",
+    database: "peakbooks",
+    port:10330
+
 }
+
+// export const MYSQL ={
+//   host: "157.230.229.119",
+//   user: "root",
+//   password: "part@^yr9053",
+//   database: "peakbooks",
+//   port:3306
+// }
 export const SMS_BaseUrl: string = "http://localhost:1200/send_sms"; // base url for sms services
 
 export const SMS_BaseUrl_2: string = "http://localhost:1200/send_sms_mobitech"; // base url for sms services mobitech
