@@ -964,10 +964,16 @@ export default {
 				client_id: values.created_by
 			});
 			let formData_m = {
-				"msisdn": values.msisdn,
-				"text": `Dear ${values.first_name}, we are kindly reminding you that your invoice  ${values.invoice_no} will be due in ${values.period} days time.\n\nOutstanding balance: ${values.due_amount}.\nDue date ${values.due_date}.\n\nKindly pay the outstanding balance to avoid late payment penalties.\n\nThank you.\n\nRegards,\n\n${values.company_name}`,
+				"email": values.customer_email,
+				"invoice_no": values.invoice_no,
+				"due_date": values.due_date,
+				"company_name": values.customer_name,
+				"due_amount": values.due_amount,
+				"client_email": values.client_email
 			}
-			await axiod.post(`${SMS_BaseUrl}`, formData_m, CONFIG);
+
+			
+			await axiod.post(`https://www.peakbooks.biz:9000/insightphp/sendEmailInvoice.php`, formData_m, CONFIG);
 			response.body = {
 				status: true,
 				status_code: 200,
