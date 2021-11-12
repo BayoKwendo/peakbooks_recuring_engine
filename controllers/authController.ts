@@ -972,13 +972,17 @@ export default {
 				"client_email": values.client_email
 			}
 
+
+			console.log("formData_m", formData_m);
 			
-			await axiod.post(`https://www.peakbooks.biz:9000/insightphp/sendEmailInvoice.php`, formData_m, CONFIG);
+			const send = await axiod.post(`https://www.peakbooks.biz:9000/insightphp/sendEmailInvoice.php`, formData_m, CONFIG);
 			response.body = {
 				status: true,
 				status_code: 200,
 				message: "success",
 			};
+
+			console.log("send", send);
 		} catch (error) {
 			response.status = 400;
 			response.body = {
