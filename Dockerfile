@@ -1,4 +1,4 @@
-FROM denoland/deno:1.15.2
+FROM denoland/deno:1.16.0
 
 EXPOSE 8091
 
