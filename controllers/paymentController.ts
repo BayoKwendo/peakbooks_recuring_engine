@@ -368,6 +368,8 @@ export default {
 
 	//vendor statement
 
+
+	
 	getVendorStatements: async (ctx: any) => {
 		try {
 			let { client_id, startDate, id, endDate } = getQuery(ctx, {
