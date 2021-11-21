@@ -22,6 +22,7 @@ router
   .put("/payment_status_bill", authorize, paymentController.updatePaymentBillUnpaidrecord)
 
   .get("/customer_statement", authorize, paymentController.getCustomerStatements)
+  .get("/vendor_statement", paymentController.getVendorStatements)
 
 
   .put("/payment_status", authorize, paymentController.updatePaymentUnpaidrecord)

@@ -366,6 +366,34 @@ export default {
 		}
 	},
 
+	//vendor statement
+
+	getVendorStatements: async (ctx: any) => {
+		try {
+			let { client_id, startDate, id, endDate } = getQuery(ctx, {
+				mergeParams: true,
+			});
+
+			const data = await paymentService.getVendorStatements({
+				created_by: Number(client_id),
+				startDate: startDate,
+				id: id,
+				endDate: endDate,
+			});
+			ctx.response.body = {
+				status: true,
+				status_code: 200,
+				data: data,
+			};
+		} catch (error) {
+			ctx.response.status = 400;
+			ctx.response.body = {
+				success: false,
+				message: `Error: ${error}`,
+			};
+		}
+	},
+
 	getBankings: async (ctx: any) => {
 		try {
 			let { client_id, startDate, endDate } = getQuery(ctx, {

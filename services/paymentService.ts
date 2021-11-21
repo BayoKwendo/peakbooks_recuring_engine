@@ -226,7 +226,7 @@ export default {
 
 
 	//delete bank account for petty cash and undesposit
-	deleteBankCash: async ({id }: Payment) => {
+	deleteBankCash: async ({ id }: Payment) => {
 		const result = await client.query(
 			`DELETE FROM ${TABLE.CASH_BANK} WHERE id = ${id}`,
 		);
@@ -928,6 +928,55 @@ export default {
             0 amount
             FROM
             ${TABLE.CREDIT_NOTE} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
+            WHERE i.created_by = ${created_by} AND c.id = ${id} AND i.created_at BETWEEN ${startDate} AND ${endDate}
+           )
+
+           
+           ) AS f ORDER BY f.date `
+		);
+		return result;
+	},
+
+	getVendorStatements: async ({ startDate, id, endDate, created_by }: Payment) => {
+		const result = await client.query(
+			`SELECT f.transaction_type, f.amount, f.payments, f.date, f.details
+             FROM
+           (
+           ( 
+             SELECT 
+             i.payment_date date, 
+             'Payment Made' transaction_type,
+             i.bill_no details, 
+             i.paid_amount payments, 
+             0 amount
+             FROM
+             ${TABLE.PAYMENT_RECEIVED_PAY_BILL} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id WHERE
+             c.client_id = ${created_by} AND i.status = 1 AND i.vendor_id = ${id} 
+			 AND i.created BETWEEN ${startDate} AND ${endDate} order by i.id
+             DESC 
+             LIMIT 1000 
+           )
+            UNION ALL 
+           (
+            SELECT 
+            i.bill_date date,
+            'Bill' transaction_type,
+            i.bill_no details, 
+            0 payments,
+            IFNULL(CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)), 0) amount
+            FROM ${TABLE.BILLS} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id
+            WHERE created_by = ${created_by} AND c.id = ${id} AND i.created_at BETWEEN ${startDate} AND ${endDate}
+           )
+		   UNION ALL 
+           (
+            SELECT
+            i.created_at date,
+            'Credit Note' transaction_type,
+            i.credit_no details,
+            CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)) payments,
+            0 amount
+            FROM
+            ${TABLE.CREDIT_NOTE_VENDOR} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id 
             WHERE i.created_by = ${created_by} AND c.id = ${id} AND i.created_at BETWEEN ${startDate} AND ${endDate}
            )
 
