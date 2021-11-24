@@ -731,7 +731,8 @@ export default {
             ( SELECT
              IFNULL(sum(amount), 0) amount from ${TABLE.EXPENSES} WHERE
             (
-                expense_account = "Other Expenses" 
+                expense_account NOT IN ("Furniture Fittings","Land", "Equipments","Computers & peripherals","Motor Vehicles","Revaluation Reserves","Tax Payable","Advance Tax","Prepaid Expenses","Furniture and Equipment", "Employee Reimbursements", "Intangible Assets","Other non-current assets","Other current assets","Short term loan","Long term loan", "Short term related parties", "Long term related parties", "Other current liability", "Other non-current liability", "Cost of Goods Sold", "Prepaid Expenses","Advertising And Marketing","Bad Debt","Automatic Expense","IT and Internet Expenses","Janitorial Expense","Lodging","Meals and Entertainment","Office and Supplies","Postage","Printing and Stationary","Repair and Maintenance","Salaries and Employee Wages","Travel Expenses","Telephone Expense","Bank Fees and Charges","Credit Card Charges","Depreciation Expense","Consultant Expense","Rent Expense","Employee Advance") 
+         
             ) AND
             client_id= ${client_id} AND created_at BETWEEN ${startDate} AND ${endDate}
             )

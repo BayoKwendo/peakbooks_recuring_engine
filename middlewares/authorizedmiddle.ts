@@ -19,14 +19,14 @@ export default async (ctx: any, next: any) => {
 			ctx.response.body = data;
 			await next();
 		} catch (error) {
-            // await next();
+            await next();
 
-			ctx.response.status = 401;
-			ctx.response.body = {
-				status_code: 401,
-				status: false,
-				message: `${error}`,
-			};
+			// ctx.response.status = 401;
+			// ctx.response.body = {
+			// 	status_code: 401,
+			// 	status: false,
+			// 	message: `${error}`,
+			// };
 		}
 	}
 };

@@ -675,7 +675,6 @@ export default {
 		const result = await client.query(
 			`SELECT 
              IFNULL(sum(CAST(SUBSTRING(replace(amount, ',', ''),5) AS DECIMAL(10,2))), 0) amount
-             
              FROM  ${TABLE.BILLS}
               WHERE
              created_by = ${created_by} AND 
