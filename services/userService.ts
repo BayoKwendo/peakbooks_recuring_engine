@@ -180,7 +180,7 @@ export default {
 
   usernameExist: async ({ username }: User) => {
     const [result] = await client.query(
-      `SELECT * FROM  ${TABLE.USERS} WHERE username = ? AND `,
+      `SELECT * FROM  ${TABLE.USERS} WHERE username = ?`,
       [username],
     );
     return result;

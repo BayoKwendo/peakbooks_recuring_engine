@@ -203,7 +203,12 @@ export default {
 		}
 		try {
 			const values = await body.value;
+
+			
 			const isAvailable1 = await userService.usernameExist({ username: values.username });
+
+			console.log("vv",isAvailable1);
+			
 			const phoneIsAvailable = await userService.userExist({
 				email: values.email,
 				admin_role: values.admin_role,
