@@ -428,11 +428,6 @@ export default {
           };
 
         }
-
-
-
-
-
       }
     } catch (error) {
       response.status = 400;

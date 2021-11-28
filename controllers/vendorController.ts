@@ -1177,6 +1177,9 @@ export default {
   },
 
 
+
+
+
   getLiability: async (ctx: any) => {
     try {
       let { client_id, startDate, endDate } = getQuery(ctx, {
@@ -1742,6 +1745,110 @@ export default {
       };
     }
   },
+
+
+  // update out of balance purchase
+
+
+
+
+  /**
+   * @description Get Update Customer open balace
+   */
+  updateOutofBalance: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
+    const body = await request.body();
+    if (!request.hasBody) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      const update = await vendorService.updateOutofBalance({
+        customer_id: values.customer_id,
+        opening_balance: values.out_of_balance
+      });
+
+      if (update) {
+        const insert = await vendorService.insertOutofBalance({
+          filter_value: values.payment_received_id,
+          opening_balance: values.out_of_balance,
+          client_id: values.client_id,
+          amount: values.amount
+        });
+
+
+        // const balance = Number(values.amount) - Number(values.out_of_balance);
+        if (insert) {
+          // alert(balance.toString())
+          await vendorService.updatePaymentReceiveRecipt({
+            filter_value: values.payment_received_id,
+            opening_balance: values.openbalance_received,
+            amount: values.amount_2
+          });
+
+
+          console.log({
+
+            filter_value: values.payment_received_id,
+            out_of_balance: values.openbalance_received,
+            amount: values.amount
+          })
+
+
+          response.body = {
+            status: true,
+            status_code: 200,
+            message: "Vendor Updated Successfully",
+          };
+
+        }
+      }
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+
+  /**
+ * @description Get all pAid bills List
+ */
+  getBillsPay: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      // console.log("bayo", kw)
+      let { filter_value, created_by } = getQuery(ctx, { mergeParams: true });
+      const data = await vendorService.getPaidFilterPaidTransactions({
+        filter_value: filter_value,
+        created_by: created_by
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
 
   //   /**
   //    * @description Get One Customers List

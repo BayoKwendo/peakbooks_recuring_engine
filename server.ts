@@ -47,7 +47,7 @@ app.use(logger.responseTime);
 //   // console.log('This method will run on 60 seconds')
 // })
 
-console.log(new Date())
+// console.log(new Date())
 
 let task = cron('*/.5 * * * * *', async () => {
   stop()
@@ -123,7 +123,8 @@ let task = cron('*/.5 * * * * *', async () => {
       mdue_date = yearly.toString()
     }
      else{
-      mdue_date =  (moment.unix(mfrequency).format('YYYY-MM-DD HH:mm:ss')).toString()
+
+      mdue_date = (moment(new Date(Date.now())).format('YYYY-MM-DD HH:mm:ss')).toString()
     }     
 
     try {

@@ -32,6 +32,11 @@ router
 
   .get("/expensesamount", authorize, vendorController.getExpenseReport)
 
+  .put("/updatevendorbalance", authorize, vendorController.updateOutofBalance)
+
+  .get("/vendor_payment_record", authorize, vendorController.getBillsPay)
+
+
   .get("/operationexpense", authorize, vendorController.getExpenseReportExpenseCost)
   .get("/vendorbalance", authorize, vendorController.getVendorBalance)
   .get("/advancetax", authorize, vendorController.getAdvanceTax)

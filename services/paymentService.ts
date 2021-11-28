@@ -305,7 +305,7 @@ export default {
 
 	getPaymentUnpaidrecordbill: async ({ vendor_id }: Payment) => {
 		const result = await client.query(
-			`SELECT id FROM  ${TABLE.PAYMENT_RECEIVED_PAY_BILL} WHERE status = 0 and vendor_id = ?`,
+			`SELECT id FROM  ${TABLE.PAYMENT_RECEIVED_PAY_BILL} WHERE status = 0 and vendor_id = ? ORDER BY id desc limit 1`,
 			[vendor_id]
 		);
 		return result;
@@ -432,6 +432,79 @@ export default {
 		);
 		return result.count;
 	},
+
+
+	// get paid bills 
+	getBillPaid: async ({ id, created_by }: Payment) => {
+		const query = await client.query(
+			` 	 SELECT
+			s.bill_no invoice_no,
+			s.client_id client_id,
+			i.bill_date invoice_date,
+			i.currency_type currency_type,
+			s.payment_received_id payment_received_id,
+			i.due_amount due_amount,
+			s.amount amount
+			FROM
+			bill_paymentreceived_sales s inner join ${TABLE.BILLS} i on s.bill_no = i.bill_no  WHERE
+		  s.payment_received_id = ${id} AND i.created_by = ${created_by} `
+		);
+		return query;
+	},
+
+	gerVendorBalance: async ({ id }: Payment) => {
+		const query = await client.query(
+			`SELECT
+			*
+			FROM
+			opening_balances_purchase   WHERE
+		  payment_made_id = ${id}`
+		);
+		return query;
+	},
+
+
+	updateInvoicePaidBill: async ({ id, client_id, invoice_no, balance_amount }: Payment) => {
+		const query = await client.query(
+			`UPDATE ${TABLE.BILLS} SET 
+        due_amount = "${balance_amount}",
+		status = 0 
+        WHERE
+		created_by = ${client_id} AND bill_no = "${invoice_no}"`
+		);
+		return query;
+	},
+
+
+	updateVendorBalance: async ({ id, balance_amount }: Payment) => {
+		const query = await client.query(
+			`UPDATE ${TABLE.VENDORS} SET 
+			opening_balance = ${balance_amount}
+	        WHERE id = ${id}`
+		);
+		return query;
+	},
+
+	updateBillPaid: async ({ id }: Payment) => {
+		const query = await client.query(
+			`UPDATE ${TABLE.BILLS} SET 
+        due_amount = amount,
+		status =0
+        WHERE payment_received_id = ${id}`
+		);
+		return query;
+	},
+
+
+
+    getInvoiceVendor_last_Bill: async ({ filter_value }: Payment) => {
+        const result = await client.query(
+            `SELECT IFNULL(amount_inexcess, 0) amount FROM 
+              ${TABLE.PAYMENT_RECEIVED_PAY_BILL} WHERE
+              vendor_id = ? AND status=1 order by id DESC limit 1`, [filter_value,]);
+        return result;
+    },
+
 
 	createBill: async ({
 		vendor_id,
@@ -642,6 +715,15 @@ export default {
 		);
 		return query;
 	},
+
+	deletePaymentMade: async ({ id }: Invoices) => {
+		const query = await client.query(
+			`DELETE FROM  ${TABLE.PAYMENT_RECEIVED_PAY_BILL}
+        WHERE id = ?`,
+			[id]
+		);
+		return query;
+	},
 	getPageSizeFrequencyBills: async ({ created_by }: Invoices) => {
 		const [
 			result,
@@ -778,6 +860,7 @@ export default {
         bill_no=?,
         order_no=?,
         amount_received=?,
+        original_amount=?,
         payment_date =?,
         payment_mode =?,
         reference=?,
@@ -788,6 +871,7 @@ export default {
 				vendor_id,
 				bill_no,
 				order_no,
+				amount_received,
 				amount_received,
 				payment_date,
 				payment_mode,
@@ -804,17 +888,16 @@ export default {
 	getPaymentReceivedpaidbills: async ({ offset, created_by }: Payment) => {
 		const result = await client.query(
 			`SELECT i.created, i.reference, i.id, i.paid_amount,i.payment_date, c.vendor_display_name, i.bill_no, i.payment_mode, i.amount_inexcess,
-			 i.amount_received FROM 
-        ${TABLE.PAYMENT_RECEIVED_PAY_BILL} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id WHERE
-         c.client_id = ? AND i.status = 1 order by i.id DESC LIMIT ?,10`,
-			[created_by, offset]
-		);
+			 i.amount_received 
+			 FROM 
+			 payment_received_bills i inner join vendors c on c.id = i.vendor_id WHERE
+         c.client_id = ${created_by} AND i.status = 1 order by i.id DESC LIMIT ${offset}, 10`);
 		return result;
 	},
 	getReceivedFilterBills: async ({ filter_value }: Payment) => {
 		const result = await client.query(
 			`SELECT i.created, i.reference, c.vendor_display_name, i.bill_no, i.payment_mode,i.amount_inexcess,i.amount_received FROM 
-         ${TABLE.PAYMENT_RECEIVED_PAY_BILL} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id WHERE i.bill_no = ?`,
+			payment_received_bills i inner join vendors c on c.id = i.vendor_id WHERE i.bill_no = ?`,
 			[filter_value]
 		);
 		return result;

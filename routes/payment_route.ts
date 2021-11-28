@@ -48,6 +48,9 @@ router
   .get("/billunpaid", authorize, paymentController.getBillUnpaid)
   .post("/payment_received_bill", authorize, paymentController.createPaymentReceivedBillPay)
   .get("/payment_received_bill", authorize, paymentController.getPaymentReceivedPaidbILLS)
+  .delete("/payment_received_bill", authorize, paymentController.deleteDeletePaymentMade)
+
+  
   .get("/getbillamount", authorize, paymentController.getBillingsAmount)
   .get("/getamountreceived", authorize, paymentController.getPaymentReceivable)
   .get("/pettycashdebit", authorize, paymentController.getPaymentPettyCash)

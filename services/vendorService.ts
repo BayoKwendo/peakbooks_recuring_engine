@@ -1037,6 +1037,100 @@ export default {
 
 
 
+    // vendor payment made
+
+
+    updateOutofBalance: async ({ opening_balance, customer_id }: Vendor) => {
+        const query = await client.query(
+            `UPDATE ${TABLE.VENDORS} SET 
+            opening_balance=?
+        WHERE id = ?`,
+            [opening_balance, customer_id]
+        );
+        return query;
+    },
+
+    insertOutofBalance: async ({ opening_balance, client_id, filter_value, amount }: Vendor) => {
+        const query = await client.query(
+            `INSERT INTO opening_balances_purchase
+      SET
+       payment_made_id = ?,
+	   client_id = ?,
+       amount = ?,
+       balance = ?`,
+            [filter_value, client_id, amount, opening_balance]
+        );
+        return query;
+    },
+
+    updatePaymentReceiveRecipt: async ({ opening_balance, amount, filter_value }: Vendor) => {
+        const query = await client.query(
+            `UPDATE payment_received_bills 
+       SET
+        amount_received=?,
+        paid_amount= ?,
+        status=1
+        WHERE id = ?`,
+            [opening_balance, amount, filter_value]
+        );
+        return query;
+    },
+
+
+    // paid bills
+    getPaidFilterPaidTransactions: async ({ filter_value, created_by }: Vendor) => {
+        const result = await client.query(
+            `SELECT t.invoice_no,t.payment_received_id,t.invoice_amount, t.invoice_date, t.due_amount, t.amount
+             FROM (
+
+             (
+                SELECT
+                open_balance_id invoice_no,
+                created_on invoice_date,
+                balance due_amount,
+                payment_made_id payment_received_id,
+                amount amount,
+                amount invoice_amount,
+                client_id created_by
+                FROM
+                opening_balances_purchase
+                WHERE
+                payment_made_id = ${filter_value}
+            )
+                            UNION All
+            (
+                SELECT
+                i.bill_no invoice_no,
+                i.bill_date invoice_date,
+                s.balance due_amount,
+                s.payment_received_id payment_received_id,
+                s.amount amount,
+                i.amount invoice_amount,
+                i.created_by created_by
+                FROM
+                bill_paymentreceived_sales s inner join ${TABLE.BILLS} i on s.bill_no = i.bill_no WHERE
+              s.payment_received_id = ${filter_value} AND i.created_by = ${created_by}
+            )
+            UNION All
+
+            (
+                SELECT
+                bill_no invoice_no,
+                bill_date invoice_date ,
+                due_amount due_amount,
+                payment_received_id payment_received_id,
+                amount amount,
+                amount invoice_amount,
+                created_by created_by
+                FROM
+                ${TABLE.BILLS} WHERE
+              payment_received_id = ${filter_value} AND created_by = ${created_by} 
+            )             
+            ) AS t`);
+        return result;
+    },
+
+
 
 
 };

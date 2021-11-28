@@ -369,7 +369,7 @@ export default {
 	//vendor statement
 
 
-	
+
 	getVendorStatements: async (ctx: any) => {
 		try {
 			let { client_id, startDate, id, endDate } = getQuery(ctx, {
@@ -596,6 +596,9 @@ export default {
 		}
 	},
 
+
+
+
 	/**
    * @description Add a new payment received
    */
@@ -638,6 +641,95 @@ export default {
 	},
 
 
+
+	/**
+* @description Delete payment received
+*/
+	deleteDeletePaymentMade: async (ctx: any) => {
+		try {
+			// let kw = request.url.searchParams.get('page_number');
+			// console.log("bayo", kw)
+			let { id, customer_id, created_by } = getQuery(ctx, {
+				mergeParams: true,
+			});
+			const data = await paymentService.deletePaymentMade({
+				id: Number(id),
+			});
+			if (data) {
+				const data_length = await paymentService.getBillPaid({
+					id: id,
+					created_by: Number(created_by),
+				});
+				const c_data_length = await paymentService.gerVendorBalance({
+					id: id,
+				});
+
+				console.log(JSON.stringify(data_length));
+				if (data_length.length > 0) {
+					for (let i = 0; i < data_length.length; i++) {
+						const formatCurrency = (amount: any) => {
+							return new Intl.NumberFormat('en-US', {
+								style: 'currency',
+								currency: 'ABS',
+								minimumFractionDigits: 2,
+								maximumFractionDigits: 2,
+							})
+								.format(amount)
+								.replaceAll('ABS', data_length[i].currency_type);
+						};
+						let str = data_length[i].due_amount;
+						str = str.toString().replace(/[^\d\.\-]/g, ''); // You might also include + if you want them to be able to type it
+						const mbalance = parseFloat(str);
+						const newBalance = formatCurrency(mbalance + parseFloat(data_length[i].amount));
+
+						// console.log(customer_id+" "+c_data_length[0].amount)
+						// console.log(mbalance + parseFloat(data_length[i].amount))
+
+						if (data_length[i].amount > 0) {
+							const data_2 = await paymentService.updateInvoicePaidBill({
+								id: id,
+								invoice_no: data_length[i].invoice_no,
+								client_id: data_length[i].client_id,
+								balance_amount: newBalance,
+							});
+
+							const data_3 = await paymentService.updateVendorBalance({
+								id: customer_id,
+								balance_amount: c_data_length[0].amount,
+							});
+						}
+						ctx.response.body = {
+							status: true,
+							status_code: 200,
+							message: 'Delete successfully',
+						};
+					}
+				} else {
+					const data_2 = await paymentService.updateInvoicePaid({
+						id: id,
+					});
+					const data_3 = await paymentService.updateVendorBalance({
+						id: customer_id,
+						balance_amount: c_data_length[0].amount,
+					});
+
+					if (data_2) {
+						ctx.response.body = {
+							status: true,
+							status_code: 200,
+							message: 'Delete successfully',
+						};
+					}
+				}
+			}
+		} catch (error) {
+			ctx.response.status = 400;
+			ctx.response.body = {
+				success: false,
+				message: `Error: ${error}`,
+			};
+		}
+	},
 
 	//edit banks amount
 	updateBankAmount: async ({ request, response }: { request: any, response: any }) => {
@@ -1092,6 +1184,7 @@ export default {
 			if (filter_value == null || filter_value == '') {
 				if (page_number == null) {
 					page_number = '1';
+					page_size = '100';
 
 					const offset = (Number(page_number) - 1) * Number(page_size);
 					const data = await paymentService.getPaymentReceivedpaidbills({
@@ -1645,6 +1738,24 @@ export default {
 				created_by: Number(created_by),
 			});
 
+
+			const last_payment = await paymentService.getInvoiceVendor_last_Bill({
+				filter_value: filter_value,
+				created_by: Number(created_by)
+			});
+			let payment_amt;
+
+			// check if amount is null
+			if (last_payment.length > 0) {
+				if (Number(last_payment[0].amount) > 0) {
+					payment_amt = Number(last_payment[0].amount);
+				} else {
+					payment_amt = 0;
+				}
+			} else {
+				payment_amt = 0;
+			}
+
 			console.log(filter_value, '||| params');
 
 			const data = await paymentService.getFilterBillsUnpaid({
@@ -1655,6 +1766,7 @@ export default {
 				status: true,
 				status_code: 200,
 				total: total,
+				last_payment: payment_amt,
 				data: data,
 			};
 		} catch (error) {
