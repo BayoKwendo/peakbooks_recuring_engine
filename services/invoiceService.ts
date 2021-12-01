@@ -179,7 +179,7 @@ export default {
 
     deleteRecurringInvoices: async ({ id }: Invoices,) => {
         const query = await client.query(`DELETE FROM  ${TABLE.RECURRING_INVOICE}
-        WHERE customer_id = ?`, [id]);
+        WHERE id = ?`, [id]);
         return query;
     },
 

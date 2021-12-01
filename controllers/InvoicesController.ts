@@ -2061,6 +2061,8 @@ export default {
       let { id } = getQuery(ctx, {
         mergeParams: true,
       });
+
+      console.log(id, "||| params");
       const data = await invoiceService.deleteRecurringInvoices({
         id: Number(id),
       });
