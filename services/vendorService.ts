@@ -982,7 +982,7 @@ export default {
 
     getVendorFilter: async ({ filter_value }: Vendor) => {
         const result = await client.query(
-            `SELECT * FROM  ${TABLE.VENDORS} WHERE id =?`, [filter_value]);
+            `SELECT * FROM  ${TABLE.VENDORS} WHERE vendor_display_name like "%${filter_value}%"`, [filter_value]);
         return result;
     },
     getPageSizeVendor: async ({ client_id }: Vendor) => {

@@ -479,7 +479,7 @@ export default {
 	updateVendorBalance: async ({ id, balance_amount }: Payment) => {
 		const query = await client.query(
 			`UPDATE ${TABLE.VENDORS} SET 
-			opening_balance = ${balance_amount}
+			opening_balance = opening_balance + ${balance_amount}
 	        WHERE id = ${id}`
 		);
 		return query;
@@ -887,7 +887,7 @@ export default {
 	//return paid payment for bils
 	getPaymentReceivedpaidbills: async ({ offset, created_by }: Payment) => {
 		const result = await client.query(
-			`SELECT i.created, i.reference, i.id, i.paid_amount,i.payment_date, c.vendor_display_name, i.bill_no, i.payment_mode, i.amount_inexcess,
+			`SELECT i.created, i.reference,i.vendor_id, i.id, i.paid_amount,i.payment_date, c.vendor_display_name, i.bill_no, i.payment_mode, i.amount_inexcess,
 			 i.amount_received 
 			 FROM 
 			 payment_received_bills i inner join vendors c on c.id = i.vendor_id WHERE
@@ -896,7 +896,7 @@ export default {
 	},
 	getReceivedFilterBills: async ({ filter_value }: Payment) => {
 		const result = await client.query(
-			`SELECT i.created, i.reference, c.vendor_display_name, i.bill_no, i.payment_mode,i.amount_inexcess,i.amount_received FROM 
+			`SELECT i.created,i.vendor_id,i.reference, c.vendor_display_name, i.bill_no, i.payment_mode,i.amount_inexcess,i.amount_received FROM 
 			payment_received_bills i inner join vendors c on c.id = i.vendor_id WHERE i.bill_no = ?`,
 			[filter_value]
 		);
