@@ -1095,9 +1095,9 @@ export default {
 						'Content-Type': 'application/json',
 					},
 					body: JSON.stringify({
-						api_key: '606586cd2d772',
-						username: 'peak',
-						sender_id: '22136',
+						api_key: '61c6cc5486c1c',
+						username: 'peakbooks',
+						sender_id: '23107',
 						message:
 							'Your verification code is \n\n' + values.code.toString() + '\n\nExpire in 2 minutes time',
 						phone: values.msisdn.toString(),
@@ -1319,9 +1319,9 @@ export default {
 						'Content-Type': 'application/json',
 					},
 					body: JSON.stringify({
-						api_key: '606586cd2d772',
-						username: 'peak',
-						sender_id: '22136',
+						api_key: '61c6cc5486c1c',
+						username: 'peakbooks',
+						sender_id: '23107',
 						message:
 							'Dear ' +
 							values.name +

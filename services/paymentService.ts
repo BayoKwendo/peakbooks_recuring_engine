@@ -987,7 +987,6 @@ export default {
              ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
              c.client_id = ${created_by} AND i.status = 1 AND i.customer_id = ${id} AND i.created BETWEEN ${startDate} AND ${endDate} order by i.id
              DESC 
-             LIMIT 1000 
            )
             UNION ALL 
            (
@@ -998,7 +997,9 @@ export default {
             0 payments,
             IFNULL(CAST(SUBSTRING(replace(i.amount, ',', ''),5) AS DECIMAL(10,2)), 0) amount
             FROM ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id
-            WHERE created_by = ${created_by} AND c.id = ${id} AND i.sales_order_no = 0  AND i.estimate=0 AND i.approved = 1 AND i.created_at BETWEEN ${startDate} AND ${endDate}
+            WHERE created_by = ${created_by} AND c.id = ${id} AND i.sales_order_no = 0  AND i.estimate=0 AND i.approved = 1 AND i.created_at
+			
+			BETWEEN ${startDate} AND ${endDate}
            )
            UNION ALL 
            (
