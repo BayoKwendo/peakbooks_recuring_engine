@@ -552,34 +552,36 @@ export default {
         const result = await client.query(
             `SELECT c.customer_display_name, 
             
-             sum(CAST(SUBSTRING(replace(i.due_amount, ',', ''),5) AS DECIMAL(10,2))) total_amount,
+             sum(if(i.status=0 OR i.status=3,CAST(SUBSTRING(replace(i.due_amount, ',', ''),5) AS DECIMAL(10,2)),0)) total_amount,
 
-             sum( if ( DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) <= 0,
-             CAST(SUBSTRING(replace(i.due_amount, ',', ''),5) AS DECIMAL(10,2)),0)) as current_amount,
+             sum( if(i.status=0 OR i.status=3,if ( DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) <= 0,
+             CAST(SUBSTRING(replace(i.due_amount, ',', ''),5) AS DECIMAL(10,2)),0),0)) as current_amount,
 
-             sum( if ( (DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) < 16  
+             sum( if(i.status=0 OR i.status=3,if ( (DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) < 16  
              AND
              DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) > 0),
-             CAST(SUBSTRING(replace(i.due_amount, ',', ''),5) AS DECIMAL(10,2)),0)) as overdue_15,
+             CAST(SUBSTRING(replace(i.due_amount, ',', ''),5) AS DECIMAL(10,2)),0),0)) as overdue_15,
 
 
-             sum( if ( (DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) < 31  
+             sum( if(i.status=0 OR i.status=3, if ( (DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) < 31  
              AND
              DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) > 15),
-             CAST(SUBSTRING(replace(i.due_amount, ',', ''),5) AS DECIMAL(10,2)),0)) as overdue_15_30,
+             CAST(SUBSTRING(replace(i.due_amount, ',', ''),5) AS DECIMAL(10,2)),0),0)) as overdue_15_30,
 
-             sum( if ( (DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) < 46  
+             sum( if(i.status=0 OR i.status=3,if( (DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) < 46  
              AND
              DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) > 30),
-             CAST(SUBSTRING(replace(i.due_amount, ',', ''),5) AS DECIMAL(10,2)),0))  as overdue_30_45,
+             CAST(SUBSTRING(replace(i.due_amount, ',', ''),5) AS DECIMAL(10,2)),0),0))  as overdue_30_45,
 
-             sum( if ( (DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) > 45 ),
-             CAST(SUBSTRING(replace(i.due_amount, ',', ''),5) AS DECIMAL(10,2)),0)) as overdue_45
+
+             sum( if(i.status=0 OR i.status=3,if((DATEDIFF (DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(i.due_date, '%Y-%m-%d')) > 45 ),
+             CAST(SUBSTRING(replace(i.due_amount, ',', ''),5) AS DECIMAL(10,2)),0),0)) as overdue_45
+
 
              FROM 
             ${TABLE.INVOICES} i
             inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id  
-            WHERE i.created_by = ${created_by} AND i.status = '0' AND i.approved = 1 AND i.sales_order_no = 0 AND i.estimate = '0'
+            WHERE i.created_by = ${created_by} AND i.invoice_no AND i.approved = 1 AND i.sales_order_no = 0 AND i.estimate = '0'
             AND i.created_at BETWEEN ${startDate} AND ${endDate} GROUP BY c.customer_display_name 
             order by i.date_modified DESC LIMIT ${offset},${page_size}`);
         return result;
@@ -752,7 +754,7 @@ export default {
         const result = await client.query(
             `SELECT * FROM 
            ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
-            i.customer_id = ? AND i.status=0 AND i.approved=1 AND i.estimate=0 AND i.created_by  = ? LIMIT 100`, [filter_value, created_by]);
+            i.customer_id = ? AND (i.status=0 OR i.status=3) AND i.approved=1 AND i.estimate=0 AND i.created_by  = ? LIMIT 100`, [filter_value, created_by]);
         return result;
     },
 
