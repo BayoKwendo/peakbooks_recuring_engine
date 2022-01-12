@@ -48,6 +48,145 @@ export default {
 		return result;
 	},
 
+
+	// get budget category
+	getBudget: async ({ client_id }: Payment) => {
+		const result = await client.query(
+			`SELECT * FROM ${TABLE.BUDGET} WHERE client_id = ${client_id}`
+		);
+		return result;
+	},
+
+	createBudget: async ({ sales,
+		cost_of_goods,
+		profession_expe,
+		admin_exp,
+		staff_exp,
+		asset_imp,
+		finance_cost,
+		other_exp,
+		est_exp,
+		cash_bank,
+		account_receivable,
+		closing_stock,
+		other_current,
+		furniture,
+		intangible_asset,
+		other_non_current,
+		account_payable,
+		short_term_loans,
+		short_term_related,
+		tax_payable,
+		other_current_libility,
+		long_term,
+		long_term_related,
+		non_current_liability,
+		share_capital,
+		related_earnings,
+		direct_account,
+		other_equities,
+		client_id }: Payment) => {
+		const result = await client.query(
+			`INSERT INTO ${TABLE.BUDGET}  SET
+			sales = ${sales},
+			cost_of_goods = ${cost_of_goods},
+			profession_expe = ${profession_expe},
+			admin_exp = ${admin_exp},
+			staff_exp = ${staff_exp},
+			asset_imp = ${asset_imp},
+			finance_cost = ${finance_cost},
+			other_exp = ${other_exp},
+			est_exp = ${est_exp},
+			cash_bank = ${cash_bank},
+			account_receivable = ${account_receivable},
+			closing_stock = ${closing_stock},
+			other_current = ${other_current},
+			furniture = ${furniture},
+			intangible_asset = ${intangible_asset},
+			other_non_current = ${other_non_current},
+			account_payable = ${account_payable},
+			short_term_loans = ${short_term_loans},
+			short_term_related = ${short_term_related},
+			tax_payable = ${tax_payable},
+			other_current_libility = ${other_current_libility},
+			long_term = ${long_term},
+			long_term_related = ${long_term_related},
+			non_current_liability = ${non_current_liability},
+			share_capital = ${share_capital},
+			related_earnings = ${related_earnings},
+			direct_account = ${direct_account},
+			other_equities = ${other_equities},
+			client_id = ${client_id}`
+		);
+		return result;
+
+	},
+	updateBudget: async ({ sales,
+		cost_of_goods,
+		profession_expe,
+		admin_exp,
+		staff_exp,
+		asset_imp,
+		finance_cost,
+		other_exp,
+		est_exp,
+		cash_bank,
+		account_receivable,
+		closing_stock,
+		other_current,
+		furniture,
+		intangible_asset,
+		other_non_current,
+		account_payable,
+		short_term_loans,
+		short_term_related,
+		tax_payable,
+		other_current_libility,
+		long_term,
+		long_term_related,
+		non_current_liability,
+		share_capital,
+		related_earnings,
+		direct_account,
+		other_equities,
+		client_id }: Payment) => {
+		const result = await client.query(
+			`UPDATE ${TABLE.BUDGET}  SET
+			sales = ${sales},
+			cost_of_goods = ${cost_of_goods},
+			profession_expe = ${profession_expe},
+			admin_exp = ${admin_exp},
+			staff_exp = ${staff_exp},
+			asset_imp = ${asset_imp},
+			finance_cost = ${finance_cost},
+			other_exp = ${other_exp},
+			est_exp = ${est_exp},
+			cash_bank = ${cash_bank},
+			account_receivable = ${account_receivable},
+			closing_stock = ${closing_stock},
+			other_current = ${other_current},
+			furniture = ${furniture},
+			intangible_asset = ${intangible_asset},
+			other_non_current = ${other_non_current},
+			account_payable = ${account_payable},
+			short_term_loans = ${short_term_loans},
+			short_term_related = ${short_term_related},
+			tax_payable = ${tax_payable},
+			other_current_libility = ${other_current_libility},
+			long_term = ${long_term},
+			long_term_related = ${long_term_related},
+			non_current_liability = ${non_current_liability},
+			share_capital = ${share_capital},
+			related_earnings = ${related_earnings},
+			direct_account = ${direct_account},
+			other_equities = ${other_equities} 
+			WHERE
+			client_id = ${client_id}`
+		);
+		return result;
+
+	},
+
 	createBank: async ({
 		account_name,
 		account_balance,
@@ -101,6 +240,7 @@ export default {
 		return result;
 	},
 
+	
 	getPaymentFilter: async ({ filter_value }: Payment) => {
 		const result = await client.query(`SELECT name FROM  ${TABLE.ITEMS} WHERE name = ?`, [filter_value]);
 		return result;
@@ -339,6 +479,31 @@ export default {
 		return query;
 	},
 
+	getPaymentReceivedPrevious: async ({ created_by }: Payment) => {
+		const result = await client.query(
+			`SELECT i.amount_inexcess,
+			i.paid_amount amount_received FROM 
+        ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
+         c.client_id = ? AND i.status = 1 order by i.id DESC LIMIT 1`,
+		 [created_by]
+
+		);
+		return result;
+	},
+
+	getPaymentReceivedPreviousBills: async ({ created_by }: Payment) => {
+		const result = await client.query(
+			`SELECT i.amount_inexcess,
+			i.paid_amount amount_received FROM 
+        ${TABLE.PAYMENT_RECEIVED_PAY_BILL} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id WHERE
+         c.client_id = ? AND i.status = 1 order by i.id DESC LIMIT 1`,
+		 [created_by]
+
+		);
+		return result;
+	},
+
+
 	gerCustomerBalance: async ({ id }: Payment) => {
 		const query = await client.query(
 			`SELECT
@@ -497,13 +662,13 @@ export default {
 
 
 
-    getInvoiceVendor_last_Bill: async ({ filter_value }: Payment) => {
-        const result = await client.query(
-            `SELECT IFNULL(amount_inexcess, 0) amount FROM 
+	getInvoiceVendor_last_Bill: async ({ filter_value }: Payment) => {
+		const result = await client.query(
+			`SELECT IFNULL(amount_inexcess, 0) amount FROM 
               ${TABLE.PAYMENT_RECEIVED_PAY_BILL} WHERE
               vendor_id = ? AND status=1 order by id DESC limit 1`, [filter_value,]);
-        return result;
-    },
+		return result;
+	},
 
 
 	createBill: async ({
@@ -1430,10 +1595,14 @@ export default {
           ) AS r
         )
     ) AS f GROUP BY f.account_type
-
         `
 		);
 
 		return result;
 	},
 };
+
+
+
+
+

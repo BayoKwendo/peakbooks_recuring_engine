@@ -72,6 +72,157 @@ export default {
 	},
 
 	/**
+ * @description Add/Update Buget
+ */
+
+	createBugdet: async ({ request, response }: { request: any, response: any }) => {
+		const body = await request.body();
+		if (!request.hasBody) {
+			response.status = 400;
+			response.body = {
+				success: false,
+				message: 'No data provided',
+			};
+			return;
+		}
+		try {
+			const values = await body.value;
+			await paymentService.createBudget({
+				sales: values.sales,
+				cost_of_goods: values.cost_of_goods,
+				profession_expe: values.profession_expe,
+				admin_exp: values.admin_exp,
+				staff_exp: values.staff_exp,
+				asset_imp: values.asset_imp,
+				finance_cost: values.finance_cost,
+				other_exp: values.other_exp,
+				est_exp: values.est_exp,
+				cash_bank: values.cash_bank,
+				account_receivable: values.account_receivable,
+				closing_stock: values.closing_stock,
+				other_current: values.other_current,
+				furniture: values.furniture,
+				intangible_asset: values.intangible_asset,
+				other_non_current: values.other_non_current,
+				account_payable: values.account_payable,
+				short_term_loans: values.short_term_loans,
+				short_term_related: values.short_term_related,
+				tax_payable: values.tax_payable,
+				other_current_libility: values.other_current_libility,
+				long_term: values.long_term,
+				long_term_related: values.long_term_related,
+				non_current_liability: values.non_current_liability,
+				share_capital: values.share_capital,
+				related_earnings: values.related_earnings,
+				direct_account: values.direct_account,
+				other_equities: values.other_equities,
+				client_id: values.client_id
+			});
+			response.body = {
+				status: true,
+				status_code: 200,
+				message: `Buget added successfully to the List`,
+			};
+		}
+		catch (error) {
+			response.status = 400;
+			response.body = {
+				status: false,
+				message: `${error}`,
+			};
+		}
+	},
+
+
+	// update budget
+	updateBugdet: async ({ request, response }: { request: any, response: any }) => {
+		const body = await request.body();
+		if (!request.hasBody) {
+			response.status = 400;
+			response.body = {
+				success: false,
+				message: 'No data provided',
+			};
+			return;
+		}
+		try {
+			const values = await body.value;
+			await paymentService.updateBudget({
+				sales: values.sales,
+				cost_of_goods: values.cost_of_goods,
+				profession_expe: values.profession_expe,
+				admin_exp: values.admin_exp,
+				staff_exp: values.staff_exp,
+				asset_imp: values.asset_imp,
+				finance_cost: values.finance_cost,
+				other_exp: values.other_exp,
+				est_exp: values.est_exp,
+				cash_bank: values.cash_bank,
+				account_receivable: values.account_receivable,
+				closing_stock: values.closing_stock,
+				other_current: values.other_current,
+				furniture: values.furniture,
+				intangible_asset: values.intangible_asset,
+				other_non_current: values.other_non_current,
+				account_payable: values.account_payable,
+				short_term_loans: values.short_term_loans,
+				short_term_related: values.short_term_related,
+				tax_payable: values.tax_payable,
+				other_current_libility: values.other_current_libility,
+				long_term: values.long_term,
+				long_term_related: values.long_term_related,
+				non_current_liability: values.non_current_liability,
+				share_capital: values.share_capital,
+				related_earnings: values.related_earnings,
+				direct_account: values.direct_account,
+				other_equities: values.other_equities,
+				client_id: values.client_id
+			});
+			response.body = {
+				status: true,
+				status_code: 200,
+				message: `Buget edited successfully to the List`,
+			};
+		}
+		catch (error) {
+			response.status = 400;
+			response.body = {
+				status: false,
+				message: `${error}`,
+			};
+		}
+	},
+
+
+	/**
+	* @description Get all receipt noted
+	*/
+	getBudget: async (ctx: any) => {
+		try {
+			// let kw = request.url.searchParams.get('page_number');
+			// console.log("bayo", kw)
+			let { client_id } = getQuery(ctx, {
+				mergeParams: true,
+			});
+			const data = await paymentService.getBudget({
+				client_id: Number(client_id),
+			});
+			ctx.response.body = {
+				status: true,
+				status_code: 200,
+				data: data,
+			};
+		} catch (error) {
+			ctx.response.status = 400;
+			ctx.response.body = {
+				success: false,
+				message: `Error: ${error}`,
+			};
+		}
+	},
+
+
+	/**
  * @description Add a new Item
  */
 	createBank: async ({ request, response }: { request: any, response: any }) => {
@@ -1312,6 +1463,61 @@ export default {
 		}
 	},
 
+
+	// get payment received amount in excess
+
+
+	getPaymentExcess: async (ctx: any) => {
+		try {
+
+			let { created_by } = getQuery(ctx, { mergeParams: true });
+
+			console.log(created_by)
+			const data = await paymentService.getPaymentReceivedPrevious({
+				created_by: Number(created_by)
+			})
+			ctx.response.status_code = 200;
+			ctx.response.body = {
+				status: true,
+				data: data
+			}
+		}
+		catch (error) {
+			ctx.response.status = 400;
+			ctx.response.body = {
+				success: false,
+				message: `Error: ${error}`,
+			};
+		}
+	},
+
+
+	getPaymentExcessBills: async (ctx: any) => {
+		try {
+
+			let { created_by } = getQuery(ctx, { mergeParams: true });
+
+			console.log(created_by)
+			const data = await paymentService.getPaymentReceivedPreviousBills({
+				created_by: Number(created_by)
+			})
+			ctx.response.status_code = 200;
+			ctx.response.body = {
+				status: true,
+				data: data
+			}
+		}
+		catch (error) {
+			ctx.response.status = 400;
+			ctx.response.body = {
+				success: false,
+				message: `Error: ${error}`,
+			};
+		}
+	},
+
+
+	
 	/**
    * @description Get all Payment Reports List
    */

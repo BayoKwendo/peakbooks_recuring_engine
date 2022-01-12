@@ -394,6 +394,10 @@ export default {
         out_of_balance: values.out_of_balance
       });
 
+      console.log({
+        customer_id: values.customer_id,
+        out_of_balance: values.out_of_balance
+      });
       if (update) {
         const insert = await customerServices.insertOutofBalance({
           filter_value: values.payment_received_id,

@@ -10,7 +10,7 @@ export const DATABASE: string = "";
 // }
 
 export const MYSQL ={
-  host: "157.230.229.119",
+   host: "157.230.229.119",
   user: "root",
   password: "part@^yr9053",
   database: "peakbooks",
@@ -48,6 +48,7 @@ export const TABLE = {
   ESTIMATE_ITEMS: "estimate_items",
   ITEMS: "items",
   INCOME: "Uscers",
+  BUDGET: "budget",
   PAYMENT_RECEIVED: "payment_method",
   CASH_BANK: "cash_bank",
   BANK: "bank",
