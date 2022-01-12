@@ -204,11 +204,11 @@ export default {
 		try {
 			const values = await body.value;
 
-			
+
 			const isAvailable1 = await userService.usernameExist({ username: values.username });
 
-			console.log("vv",isAvailable1);
-			
+			console.log("vv", isAvailable1);
+
 			const phoneIsAvailable = await userService.userExist({
 				email: values.email,
 				admin_role: values.admin_role,
@@ -775,7 +775,7 @@ export default {
 					"text": text_m
 				}
 				await axiod.post(`${SMS_BaseUrl} `, formData_m, CONFIG);
-				await axiod.post(`${SMS_BaseUrl_2} `, formData_m, CONFIG);
+				await axiod.post(`${SMS_BaseUrl} `, formData_m, CONFIG);
 			}
 			ctx.response.status = 200;
 			ctx.response.body = {
@@ -1089,22 +1089,30 @@ export default {
 			});
 
 			if (otpSave) {
-				const postRequest = await fetch('http://bulksms.mobitechtechnologies.com/api/sendsms', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({
-						api_key: '61c6cc5486c1c',
-						username: 'peakbooks',
-						sender_id: '23107',
-						message:
-							'Your verification code is \n\n' + values.code.toString() + '\n\nExpire in 2 minutes time',
-						phone: values.msisdn.toString(),
-					}),
-				});
 
-				console.log(postRequest);
+
+				let formData_m = {
+					"msisdn": values.msisdn.toString(),
+					"text": 'Your verification code is \n\n' + values.code.toString() + '\n\nExpire in 2 minutes time'
+				}
+				const postRequest = await axiod.post(`${SMS_BaseUrl}`, formData_m, CONFIG);
+
+				//  = await fetch('http://bulksms.mobitechtechnologies.com/api/sendsms', {
+				// 	method: 'POST',
+				// 	headers: {
+				// 		'Content-Type': 'application/json',
+				// 	},
+				// 	body: JSON.stringify({
+				// 		api_key: '61c6cc5486c1c',
+				// 		username: 'peakbooks',
+				// 		sender_id: '23107',
+				// 		message:
+				// 			'Your verification code is \n\n' + values.code.toString() + '\n\nExpire in 2 minutes time',
+				// 		phone: values.msisdn.toString(),
+				// 	}),
+				// });
+
+				// console.log(postRequest);
 
 				if (postRequest) {
 					response.body = {
@@ -1313,25 +1321,38 @@ export default {
 			});
 
 			if (data.affectedRows > 0) {
-				const postRequest = await fetch('http://bulksms.mobitechtechnologies.com/api/sendsms', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({
-						api_key: '61c6cc5486c1c',
-						username: 'peakbooks',
-						sender_id: '23107',
-						message:
-							'Dear ' +
-							values.name +
-							'\n\nThis is to confirm that your subscription to ' +
-							values.plan_type +
-							' plan was succesfully. \n\nYour plan is due on ' +
-							values.subscription,
-						phone: values.msisdn.toString(),
-					}),
-				});
+
+
+				let formData_m = {
+					"msisdn": values.msisdn.toString(),
+					"text": 'Dear ' +
+						values.name +
+						'\n\nThis is to confirm that your subscription to ' +
+						values.plan_type +
+						' plan was succesfully. \n\nYour plan is due on'
+				}
+				const postRequest = await axiod.post(`${SMS_BaseUrl}`, formData_m, CONFIG);
+
+
+				// const postRequest = await fetch('http://bulksms.mobitechtechnologies.com/api/sendsms', {
+				// 	method: 'POST',
+				// 	headers: {
+				// 		'Content-Type': 'application/json',
+				// 	},
+				// 	body: JSON.stringify({
+				// 		api_key: '61c6cc5486c1c',
+				// 		username: 'peakbooks',
+				// 		sender_id: '23107',
+				// 		message:
+				// 			'Dear ' +
+				// 			values.name +
+				// 			'\n\nThis is to confirm that your subscription to ' +
+				// 			values.plan_type +
+				// 			' plan was succesfully. \n\nYour plan is due on ' +
+				// 			values.subscription,
+				// 		phone: values.msisdn.toString(),
+				// 	}),
+				// });
 				if (postRequest) {
 					const postRequest = await fetch(
 						'https://www.peakbooks.biz:9000/insightphp/peakBooksEmailPaymentAcknowledgemnt.php',
