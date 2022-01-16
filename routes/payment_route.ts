@@ -97,6 +97,10 @@ router
   .get("/budget", authorize, paymentController.getBudget)
   .put("/budget", authorize, paymentController.updateBugdet)
 
+  // trial period
+
+  .put('/extend_trial', authorize, paymentController.updatePayments)
+
 
 
 

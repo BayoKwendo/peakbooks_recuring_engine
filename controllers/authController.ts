@@ -72,6 +72,7 @@ export default {
 							admin_role: Number(isAvailable.admin_role),
 							client_id: Number(isAvailable.client_id),
 							first_time: isAvailable.first_time,
+							check_trial: isAvailable.check_trial,
 							url: isAvailable.url,
 							business_pin: isAvailable.business_pin,
 							financial_year: isAvailable.financial_year,

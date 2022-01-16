@@ -1835,6 +1835,38 @@ export default {
 		}
 	},
 
+
+	// update trial period
+	updatePayments: async ({ request, response }: { request: any, response: any }) => {
+		const body = await request.body();
+		if (!request.hasBody) {
+			response.body = {
+				success: false,
+				message: 'No data provided',
+			};
+			return;
+		}
+		try {
+			const values = await body.value;
+			await paymentService.updatePayments({
+				id: values.client_id,
+				subscription: values.subscription
+			});
+			response.body = {
+				status: true,
+				status_code: 200,
+				message: 'Updated Successfully',
+			};
+		} catch (error) {
+			response.status = 400;
+			response.body = {
+				success: false,
+				message: `${error}`,
+			};
+		}
+	},
+
+	
 	/**
    * @description Get all paid bill List
    */

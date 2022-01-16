@@ -25,6 +25,11 @@ router
   .put("/receipt_notes", authorize, InvoicesController.updateReceiptNotes)
   .get("/receipt_notes", authorize, InvoicesController.getReceiptNotes)
 
+  // footer ads
+  .post("/footer_ads", authorize, InvoicesController.createFooter)
+  .put("/footer_ads", authorize, InvoicesController.updateFooter)
+  .get("/footer_adwwws",  InvoicesController.getFooter)
+
   .get("/invoiceitem", authorize, InvoicesController.getInvoiceItem)
   .get("/estimateitem", authorize, InvoicesController.getEstimateItem)
   .get("/invoiceunpaid", authorize, InvoicesController.getInvoicesUnpaid)

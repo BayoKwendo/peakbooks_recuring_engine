@@ -7,6 +7,8 @@ export default interface Payment {
   customer_id?: string,
   name?: string,
   filter_value?: any,
+
+  subscription?: string,
   invoice_no?: string,
   category_type?: string,
   category?: string,

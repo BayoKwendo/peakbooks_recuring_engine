@@ -240,7 +240,7 @@ export default {
 		return result;
 	},
 
-	
+
 	getPaymentFilter: async ({ filter_value }: Payment) => {
 		const result = await client.query(`SELECT name FROM  ${TABLE.ITEMS} WHERE name = ?`, [filter_value]);
 		return result;
@@ -485,7 +485,7 @@ export default {
 			i.paid_amount amount_received FROM 
         ${TABLE.PAYMENT_RECEIVED_PAY} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id WHERE
          c.client_id = ? AND i.status = 1 order by i.id DESC LIMIT 1`,
-		 [created_by]
+			[created_by]
 
 		);
 		return result;
@@ -497,7 +497,7 @@ export default {
 			i.paid_amount amount_received FROM 
         ${TABLE.PAYMENT_RECEIVED_PAY_BILL} i inner join ${TABLE.VENDORS} c on c.id = i.vendor_id WHERE
          c.client_id = ? AND i.status = 1 order by i.id DESC LIMIT 1`,
-		 [created_by]
+			[created_by]
 
 		);
 		return result;
@@ -521,6 +521,20 @@ export default {
         due_amount = amount,
 		status =0
         WHERE payment_received_id = ${id}`
+		);
+		return query;
+	},
+
+
+	// update payments
+	updatePayments: async ({ id, subscription }: Payment) => {
+		const query = await client.query(
+			`UPDATE ${TABLE.USERS} SET 
+			subscription = '${subscription}',
+			check_trial = 1,
+			first_time =1,
+			paid=0
+        WHERE client_id = ${id}`
 		);
 		return query;
 	},

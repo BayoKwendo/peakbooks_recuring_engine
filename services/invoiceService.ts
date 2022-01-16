@@ -170,6 +170,36 @@ export default {
 
 
 
+     //Generate Footer Ads
+     creatFooter: async ({ invoice_notes, created_by }: Invoices) => {
+        const result = await client.query(`INSERT INTO footer_notes  SET
+        footer_notes = ?, 
+        user_id = ?`, [
+            invoice_notes,
+            created_by
+        ]);
+        return result;
+    },
+
+
+    editFooter: async ({ invoice_notes, created_by }: Invoices) => {
+        const result = await client.query(`UPDATE footer_notes 
+        SET
+        footer_notes =?
+        WHERE user_id = ?`, [
+            invoice_notes,
+            created_by
+        ]);
+        return result;
+    },
+
+    getFooter: async ({ created_by }: Invoices,) => {
+        const query = await client.query(`SELECT * FROM  footer_notes
+        WHERE user_id = ? LIMIT 10000`, [created_by]);
+        return query;
+    },
+
+
     deleteTaxRates: async ({ id }: Invoices,) => {
         const query = await client.query(`DELETE FROM  ${TABLE.TAX_RATES}
         WHERE id = ?`, [id]);

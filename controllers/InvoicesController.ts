@@ -459,6 +459,118 @@ export default {
   },
 
 
+  // add footer notes
+  createFooter: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
+    const body = await request.body();
+    const values = await body.value;
+    if (!request.hasBody) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      //
+      const body222 = await invoiceService.creatFooter({
+        invoice_notes: values.invoice_notes,
+        created_by: values.created_by
+      });
+      if (body222) {
+        response.body = {
+          status: true,
+          status_code: 200,
+          message: "Added Successfully",
+        };
+      }
+
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        status: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+  updateFooter: async ({
+    request,
+    response,
+  }: {
+    request: any;
+    response: any;
+  }) => {
+    const body = await request.body();
+    const values = await body.value;
+    if (!request.hasBody) {
+      response.status = 400;
+      response.body = {
+        success: false,
+        message: "No data provided",
+      };
+      return;
+    }
+    try {
+      const values = await body.value;
+      //
+      const body222 = await invoiceService.editFooter({
+        invoice_notes: values.invoice_notes,
+        created_by: values.created_by
+      });
+      if (body222) {
+        response.body = {
+          status: true,
+          status_code: 200,
+          message: "Edited Successfully",
+        };
+      }
+
+    } catch (error) {
+      response.status = 400;
+      response.body = {
+        status: false,
+        message: `${error}`,
+      };
+    }
+  },
+
+  /**
+  * @description Get Footer
+  */
+  getFooter: async (ctx: any) => {
+    try {
+      // let kw = request.url.searchParams.get('page_number');
+      // console.log("bayo", kw)
+      let { created_by } = getQuery(ctx, {
+        mergeParams: true,
+      });
+      const data = await invoiceService.getFooter({
+        created_by: Number(created_by),
+      });
+      
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data,
+      };
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
   updateNotes: async ({
     request,
     response,
@@ -537,6 +649,8 @@ export default {
 
     } catch (error) {
       response.status = 400;
+
+      console.log("error", error)
       response.body = {
         status: false,
         message: `${error}`,
