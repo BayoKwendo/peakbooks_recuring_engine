@@ -5,7 +5,7 @@ export default interface User {
   role_id?: number,
   industry?: string,
   email?: string,
-  
+
   invoice_no?: string,
   company_name?: string,
   postal_address?: string,
@@ -45,5 +45,6 @@ export default interface User {
   documents?: number,
   investment?: number,
   status?: string,
-  client_id?: number
+  client_id?: number,
+  type?: string
 }

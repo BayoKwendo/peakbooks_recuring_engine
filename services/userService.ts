@@ -16,6 +16,7 @@ export default {
     inventory,
     username,
     bank,
+    type,
     sales,
     purchase,
     investment,
@@ -30,7 +31,7 @@ export default {
              last_name =?, msisdn=?, email =?, industry=?, company_name=?, postal_address =?, 
              role_id=?, password=?, first_time=?, our_client=?, paid=?,subscription=?, 
              currency=?,currency_against_kenya=?, 
-             admin_role = ?, inventory = ?, bank =?, sales = ?, purchase =?, investment = ?, accountant = ?,reports = ?, documents = ?,url= ?,client_id = ?, status=1`, [
+             admin_role = ?, inventory = ?, bank =?, type=?, sales = ?, purchase =?, investment = ?, accountant = ?,reports = ?, documents = ?,url= ?,client_id = ?, status=1`, [
       approval,
       first_name,
       username,
@@ -51,6 +52,7 @@ export default {
       admin_role,
       inventory,
       bank,
+      type,
       sales,
       purchase,
       investment,
@@ -75,6 +77,7 @@ export default {
     admin_role,
     inventory,
     bank,
+    type,
     approval,
     sales,
     purchase,
@@ -99,6 +102,7 @@ export default {
              admin_role = ?, 
              inventory = ?, 
              bank =?, 
+             type=?,
              sales = ?, 
              purchase =?, 
              investment = ?, 
@@ -124,6 +128,7 @@ export default {
       admin_role,
       inventory,
       bank,
+      type,
       sales,
       purchase,
       investment,
@@ -227,7 +232,7 @@ export default {
     return result;
   },
 
-  updateReminder: async ({ invoice_no, client_id}: User) => {
+  updateReminder: async ({ invoice_no, client_id }: User) => {
     const result = await client.query(
       `UPDATE ${TABLE.INVOICES} SET  reminder = 1 WHERE invoice_no=? AND created_by=?`,
       [invoice_no, client_id],
@@ -258,24 +263,24 @@ export default {
 
 
   //get all sms
-	getSMSLog: async ({ offset, page_size }: User) => {
-		return await client.query(`SELECT * 
+  getSMSLog: async ({ offset, page_size }: User) => {
+    return await client.query(`SELECT * 
         FROM ${TABLE.SMS_LOGS} WHERE id ORDER BY id DESC LIMIT ${offset},${page_size}`);
-	},
+  },
 
-	//get sms count
+  //get sms count
 
-	getSMSCount: async () => {
-		const [result] = await client.query(`SELECT COUNT(id) count FROM ${TABLE.SMS_LOGS}`);
-		return result.count;
-	},
+  getSMSCount: async () => {
+    const [result] = await client.query(`SELECT COUNT(id) count FROM ${TABLE.SMS_LOGS}`);
+    return result.count;
+  },
 
-	//filter sms details
-	getSMSFilter: async ({ filter_value }: User) => {
-		return await client.query(`SELECT * 
+  //filter sms details
+  getSMSFilter: async ({ filter_value }: User) => {
+    return await client.query(`SELECT * 
         FROM ${TABLE.SMS_LOGS} WHERE  origin =${filter_value} OR
         destination=${filter_value}`);
-	},
+  },
 
 
 

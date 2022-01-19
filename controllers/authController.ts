@@ -81,6 +81,7 @@ export default {
 							postal_address: isAvailable.postal_address,
 							inventory: isAvailable.inventory,
 							bank: isAvailable.bank,
+							type: isAvailable.type,
 							sales: isAvailable.sales,
 							purchase: isAvailable.purchase,
 							investment: isAvailable.investment,
@@ -283,6 +284,7 @@ export default {
 					postal_address: values.postal_address,
 					inventory: values.inventory,
 					bank: values.bank,
+					type: values.type,
 					sales: values.sales,
 					client_id: values.client_id,
 					purchase: values.purchase,
@@ -414,6 +416,7 @@ export default {
 				bank: values.bank,
 				approval: values.approval,
 				sales: values.sales,
+				type: values.type,
 				purchase: values.purchase,
 				investment: values.investment,
 				accountant: values.accountant,
@@ -1196,6 +1199,9 @@ export default {
 				msisdn: values.msisdn,
 			});
 
+			console.log(total);
+
+
 			if (total > 0) {
 				const data = await userService.updateVerify({
 					code: values.code,
@@ -1203,12 +1209,14 @@ export default {
 					client_id: values.client_id,
 					login_expiry: values.login_expiry,
 				});
+			
 				console.log(total);
 				ctx.response.body = {
 					status: true,
 					message: 'Verified! Redirecting',
 					status_code: 200,
 				};
+
 			} else {
 				ctx.response.body = {
 					status: false,
