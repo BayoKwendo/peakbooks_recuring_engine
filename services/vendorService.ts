@@ -485,7 +485,7 @@ export default {
 
     getAll: async ({ offset, client_id, page_size }: Vendor) => {
         const query = await client.query(`SELECT * FROM ${TABLE.VENDORS} 
-        WHERE client_id = ? ORDER BY id DESC LIMIT ?,?`, [client_id, offset, page_size]);
+        WHERE client_id = ? ORDER BY vendor_display_name LIMIT ?,?`, [client_id, offset, page_size]);
         return query;
     },
 
@@ -851,10 +851,11 @@ export default {
     },
 
     getExpenses: async ({ offset, client_id, page_size }: Vendor) => {
-        const query = await client.query(`SELECT i.date,i.tax_amount,i.id,i.created_at,i.recurring,  i.expense_account,  c.customer_display_name, v.vendor_display_name, i.paid_through,i.reference, i.billable,i.product,i.notes, i.amount
+        const query = await client.query(`SELECT i.date,i.tax_amount,i.id,i.created_at,i.recurring,  i.expense_account, 
+         c.customer_display_name, v.vendor_display_name, i.paid_through,i.reference, i.billable,i.product,i.notes, i.amount
         FROM (( ${TABLE.EXPENSES} i
         left join ${TABLE.VENDORS} v ON i.vendor_id = v.id)
-        left join ${TABLE.CUSTOMER} c ON i.customer_id = c.id) WHERE i.client_id = ? order by i.id DESC LIMIT ?,?`, [client_id, offset, page_size]);
+        left join ${TABLE.CUSTOMER} c ON i.customer_id = c.id) WHERE i.client_id = ? order by i.expense_account DESC LIMIT ?,?`, [client_id, offset, page_size]);
         return query;
     },
 
@@ -878,7 +879,13 @@ export default {
          c.customer_display_name, v.vendor_display_name, i.paid_through,i.reference, i.billable,i.product,i.notes, i.amount
         FROM (( ${TABLE.EXPENSES} i
         INNER JOIN ${TABLE.VENDORS} v ON i.vendor_id = v.id)
-        INNER JOIN ${TABLE.CUSTOMER} c ON i.customer_id = c.id) WHERE i.reference = ?`, [filter_value]);
+        INNER JOIN ${TABLE.CUSTOMER} c ON i.customer_id = c.id) 
+        
+        WHERE i.reference like "%${filter_value}"
+        OR i.paid_through like "%${filter_value}"
+        OR i.expense_account like "%${filter_value}"
+        OR i.product like "%${filter_value}"
+        OR i.customer_display_name like "%${filter_value}"`);
         return query;
     },
 
@@ -982,7 +989,12 @@ export default {
 
     getVendorFilter: async ({ filter_value }: Vendor) => {
         const result = await client.query(
-            `SELECT * FROM  ${TABLE.VENDORS} WHERE vendor_display_name like "%${filter_value}%"`, [filter_value]);
+            `SELECT * FROM  ${TABLE.VENDORS} WHERE 
+            email like "%${filter_value}%"
+            OR msisdn like "%${filter_value}%"
+            OR company_name like "%${filter_value}%"
+            OR vendor_display_name like "%${filter_value}%"    
+            `, [filter_value]);
         return result;
     },
     getPageSizeVendor: async ({ client_id }: Vendor) => {

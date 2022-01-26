@@ -84,7 +84,7 @@ export default {
 
 	getAll: async ({ offset, client_id, page_size }: Customers) => {
 		const query = await client.query(
-			`SELECT * FROM ${TABLE.CUSTOMER} WHERE client_id = ? order by id DESC LIMIT ?,?`,
+			`SELECT * FROM ${TABLE.CUSTOMER} WHERE client_id = ? order by customer_display_name LIMIT ?,?`,
 			[ client_id, offset, page_size ]
 		);
 		return query;
@@ -212,7 +212,13 @@ export default {
 
 	getCustomerFilter: async ({ filter_value, client_id }: Customers) => {
 		const result = await client.query(
-			`SELECT * FROM  ${TABLE.CUSTOMER} WHERE company_name like "%${filter_value}%" AND client_id = ${client_id}`
+			`SELECT * FROM  ${TABLE.CUSTOMER} WHERE 
+			(company_name like "%${filter_value}%"  
+			OR customer_display_name like "%${filter_value}"
+			OR email like "%${filter_value}"
+			OR msisdn like "%${filter_value}"
+			)
+			AND client_id = ${client_id}`
 		);
 		return result;
 	},
