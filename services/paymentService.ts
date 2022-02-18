@@ -85,6 +85,8 @@ export default {
 		related_earnings,
 		direct_account,
 		other_equities,
+		startDate,
+		endDate,
 		client_id }: Payment) => {
 		const result = await client.query(
 			`INSERT INTO ${TABLE.BUDGET}  SET
@@ -116,6 +118,8 @@ export default {
 			related_earnings = ${related_earnings},
 			direct_account = ${direct_account},
 			other_equities = ${other_equities},
+			start_date = '${startDate}',
+			end_date = '${endDate}',
 			client_id = ${client_id}`
 		);
 		return result;
@@ -149,6 +153,8 @@ export default {
 		related_earnings,
 		direct_account,
 		other_equities,
+		startDate,
+		endDate,
 		client_id }: Payment) => {
 		const result = await client.query(
 			`UPDATE ${TABLE.BUDGET}  SET
@@ -179,7 +185,9 @@ export default {
 			share_capital = ${share_capital},
 			related_earnings = ${related_earnings},
 			direct_account = ${direct_account},
-			other_equities = ${other_equities} 
+			other_equities = ${other_equities},
+			start_date = '${startDate}',
+			end_date = '${endDate}'
 			WHERE
 			client_id = ${client_id}`
 		);
@@ -1179,9 +1187,7 @@ export default {
             WHERE created_by = ${created_by} AND c.id = ${id} AND 
 			i.sales_order_no = 0 
 			 AND i.estimate=0 AND 
-			 i.approved = 1 AND i.created_at
-			
-			BETWEEN ${startDate} AND ${endDate}
+			 i.approved = 1 AND i.created_at BETWEEN ${startDate} AND ${endDate}
            )
            UNION ALL 
            (
@@ -1195,9 +1201,7 @@ export default {
             ${TABLE.CREDIT_NOTE} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
             WHERE i.created_by = ${created_by} AND c.id = ${id} AND i.created_at BETWEEN ${startDate} AND ${endDate}
            )
-
-           
-           ) AS f ORDER BY f.date `
+         ) AS f ORDER BY f.date `
 		);
 		return result;
 	},

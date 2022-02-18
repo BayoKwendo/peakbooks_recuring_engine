@@ -116,6 +116,8 @@ export default {
 				related_earnings: values.related_earnings,
 				direct_account: values.direct_account,
 				other_equities: values.other_equities,
+				startDate: values.start_date,
+				endDate: values.end_date,
 				client_id: values.client_id
 			});
 			response.body = {
@@ -176,6 +178,8 @@ export default {
 				related_earnings: values.related_earnings,
 				direct_account: values.direct_account,
 				other_equities: values.other_equities,
+				startDate: values.start_date,
+				endDate: values.end_date,
 				client_id: values.client_id
 			});
 			response.body = {
@@ -1517,7 +1521,7 @@ export default {
 	},
 
 
-	
+
 	/**
    * @description Get all Payment Reports List
    */
@@ -1866,7 +1870,7 @@ export default {
 		}
 	},
 
-	
+
 	/**
    * @description Get all paid bill List
    */
