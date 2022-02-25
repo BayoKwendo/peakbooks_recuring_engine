@@ -341,7 +341,7 @@ export default {
 
   // user delete account
   deleteAccount: async ({ id }: User,) => {
-    const query = await client.query(`DELETE FROM  ${TABLE.USERS} WHERE id = ? AND admin_role != 1`, [id]);
+    const query = await client.query(`DELETE FROM  users WHERE id = ? AND admin_role`, [id]);
     return query;
   },
 
