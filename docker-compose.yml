@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 services:
   web:
@@ -6,4 +6,4 @@ services:
     build: .
     network_mode: host
     # command: ["run", "--allow-env", "--allow-net", "--unstable", "server.ts"]
-    container_name: PeakInsights_apis
+    container_name: peakbooks_recurrrings

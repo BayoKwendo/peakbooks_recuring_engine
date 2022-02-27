@@ -1,59 +1,27 @@
 import { Application, Context, Router } from "https://deno.land/x/oak/mod.ts";
 import { green, yellow } from "https://deno.land/std@0.53.0/fmt/colors.ts";
 import { oakCors } from "https://deno.land/x/cors/mod.ts";
-import customerRoutes from "./routes/customer.route.ts";
-import vendorRouter from "./routes/vendor_route.ts";
-import incomeRouter from "./routes/income.route.ts";
-import depositRouter from "./routes/deposit.route.ts";
-import invoiceRouter from "./routes/invoice.route.ts";
-import reportRouter from "./routes/report.route.ts";
-import creditRouter from "./routes/credit.route.ts";
-import testRouter from "./routes/connect.route.ts";
-import userRouter from "./routes/user.route.ts";
-import itemRouter from "./routes/item.route.ts";
 
 import moment from "https://deno.land/x/momentjs@2.29.1-deno/mod.ts";
 
-import accoutantRouter from "./routes/accountant.route.ts";
-
-
-import paymentRouter from "./routes/payment_route.ts";
-import itemService from "./services/itemService.ts ";
 import invoiceService from "./services/invoiceService.ts ";
 
 import expenseService from "./services/vendorService.ts";
 
-import logger from './middlewares/logger.ts';
-import notFound from './middlewares/notFound.ts';
 import { cron, start, stop, everyMinute, daily, weekly } from 'https://deno.land/x/deno_cron/cron.ts';
 const app = new Application();
 const router = new Router()
-const port: number = 8091;
+const port: number = 8088;
 app.use(
   oakCors({
     origin: "*",
     maxAge: 8640033
   }),
 );
-app.use(logger.logger);
-app.use(logger.responseTime);
-// daily(() => {
-//   console.log('I run on daily basis')
-// });
-// weekly(() => {
-//   console.log('This method will run on weekly bases')
-// });
-// everyMinute(() => {
-//   // console.log('This method will run on 60 seconds')
-// })
 
-// console.log(new Date())
-
-let task = cron('*/.5 * * * * *', async () => {
+let task = everyMinute( async () => {
   stop()
   const invoice_no = await invoiceService.getfrequency();
-
-  // console.log(invoice_no)
 
   if (invoice_no) {
 
@@ -288,44 +256,6 @@ let task = cron('*/.5 * * * * *', async () => {
       const data = await expenseService.getRecurringExpeFilter({
         filter_value: recur_expense.expense_ref,
       });
-      // console.log(data)
-
-
-      // let mfrequency;
-
-      // if (recur_expense.frequency_type === "Daily") {
-      //   mfrequency = ((Date.now() / 1000) + (1 * 24 * 60 * 60))
-      // }
-      // else if (recur_expense.frequency_type === "Weekly") {
-      //   mfrequency = ((Date.now() / 1000) + (7 * 24 * 60 * 60))
-      // }
-      // else if (recur_expense.frequency_type === "After 2 Weeks") {
-      //   mfrequency = ((Date.now() / 1000) + (14 * 24 * 60 * 60))
-      // }
-      // else if (recur_expense.frequency_type === "Monthly") {
-      //   mfrequency = ((Date.now() / 1000) + (30 * 24 * 60 * 60))
-      // }
-      // else if (recur_expense.frequency_type === "After 2 Months") {
-      //   mfrequency = ((Date.now() / 1000) + (60 * 24 * 60 * 60))
-
-      // }
-      // else if (recur_expense.frequency_type === "After 3 Months") {
-      //   mfrequency = ((Date.now() / 1000) + (90 * 24 * 60 * 60))
-      // }
-      // else if (recur_expense.frequency_type === "After 6 Months") {
-      //   mfrequency = ((Date.now() / 1000) + (180 * 24 * 60 * 60))
-      // }
-      // else if (recur_expense.frequency_type === "Yearly") {
-      //   mfrequency = ((Date.now() / 1000) + (365 * 24 * 60 * 60))
-
-      // }
-      // else {
-      //   mfrequency = ((Date.now() / 1000) + (730 * 24 * 60 * 60))
-      // }
-
-
-
-
       try {
         const submitedexpense = await expenseService.createExpense(
           {
@@ -442,36 +372,6 @@ let task = cron('*/.5 * * * * *', async () => {
   }
 });
 
-
-app.use(creditRouter.routes());
-app.use(creditRouter.allowedMethods());
-app.use(router.routes());
-app.use(router.allowedMethods());
-app.use(userRouter.routes());
-app.use(userRouter.allowedMethods());
-app.use(itemRouter.routes());
-app.use(itemRouter.allowedMethods());
-app.use(customerRoutes.routes());
-app.use(customerRoutes.allowedMethods());
-app.use(vendorRouter.routes());
-app.use(vendorRouter.allowedMethods());
-app.use(testRouter.routes());
-app.use(testRouter.allowedMethods());
-app.use(reportRouter.routes());
-app.use(reportRouter.allowedMethods());
-app.use(paymentRouter.routes());
-app.use(paymentRouter.allowedMethods());
-app.use(incomeRouter.routes());
-app.use(incomeRouter.allowedMethods());
-app.use(invoiceRouter.routes());
-app.use(invoiceRouter.allowedMethods());
-app.use(depositRouter.routes());
-app.use(depositRouter.allowedMethods());
-
-app.use(accoutantRouter.routes());
-app.use(accoutantRouter.allowedMethods());
-// 404 page
-app.use(notFound);
 app.addEventListener("error", (evt) => {
   console.log(evt.error);
 });
