@@ -8,6 +8,13 @@ router
   .post("/item",authorize, ItemController.createITEM)
   .put("/item",authorize, ItemController.updateItem)
   .delete("/item/:id",authorize, ItemController.deleteItem)
+  .get("/item_id",authorize, ItemController.getItemByID)
+
+  .get("/item_measurement",authorize, ItemController.getItemMeaurements)
+
+  .get("/item_breakdown",ItemController.getItemBreakDown)
+
+
   .get("/item",authorize, ItemController.getItems)
   .get("/salesbyitem", authorize, ItemController.getItemSales)
   .get("/purchasebyitem", authorize, ItemController.getItemPurchase)

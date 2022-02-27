@@ -48,6 +48,7 @@ export const TABLE = {
   ESTIMATE_ITEMS: "estimate_items",
   ITEMS: "items",
   INCOME: "Uscers",
+  MEASUREMENTS: "item_measurements",
   BUDGET: "budget",
   PAYMENT_RECEIVED: "payment_method",
   CASH_BANK: "cash_bank",

@@ -6,6 +6,10 @@ export default interface Item {
   client_id?: number,
   item_name?: string,
   filter_value?: any,
+
+  measurements?: string,
+
+  reference?: string,
   notes?: string,
   investment_type?: string,
   amount?: string,

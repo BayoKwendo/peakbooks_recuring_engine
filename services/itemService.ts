@@ -3,15 +3,19 @@ import { TABLE } from "../db/config.ts";
 import Item from "../interfaces/items.ts";
 
 export default {
-    createITEM: async ({ item_name, rate, quantity, client_id }: Item) => {
+    createITEM: async ({ item_name, rate, quantity, reference, measurements, client_id }: Item) => {
         const result = await client.query(`INSERT INTO ${TABLE.ITEMS} SET
              item_name =?,
              quantity = ?,
              rate = ?,
+             reference = ?,
+             measurements = ?,
              client_id=?`, [
             item_name,
             quantity,
             rate,
+            reference,
+            measurements,
             client_id
         ]);
         return result;
@@ -50,24 +54,105 @@ export default {
         return result;
     },
 
-    getItemFilter: async ({ filter_value, client_id }: Item) => {
+
+    getItemByID: async ({ filter_value }: Item) => {
         const result = await client.query(
-            `SELECT * FROM  ${TABLE.ITEMS} WHERE item_name = "${filter_value}" AND client_id = ?`, [client_id]);
+            `SELECT * FROM ${TABLE.ITEMS} WHERE id = ?`, [filter_value]);
         return result;
     },
 
 
-    
+
+    getItemMeaurements: async () => {
+        const result = await client.query(
+            `SELECT name label, id value, created_on FROM ${TABLE.MEASUREMENTS}`);
+        return result;
+    },
+
+    getItemFilter: async ({ filter_value, client_id }: Item) => {
+        const result = await client.query(
+            `SELECT * FROM  ${TABLE.ITEMS} WHERE item_name like "%${filter_value}%" AND client_id = ?`, [client_id]);
+        return result;
+    },
+
+
+
     getPageSizeItem: async ({ client_id }: Item) => {
         const [result] = await client.query(
             `SELECT COUNT(id) count FROM ${TABLE.ITEMS} WHERE client_id = ? `, [client_id]);
         return result.count;
     },
 
-    updateItem: async ({ id, item_name, quantity, rate }: Item,) => {
+
+
+    getItemBreakDown: async ({ id, item_name, client_id, offset, page_size }: Item) => {
+        const result = await client.query(
+            `SELECT  t.ref, t.name, t.price, t.quantity, t.discount_percentage, t.tax_percentage, t.created_at 
+            FROM 
+            (
+                (
+                  SELECT invoice_no ref, name, price, quantity,discount_percentage,tax_percentage,created_at from ${TABLE.INVOICE_ITEMS} 
+                  WHERE (item_id = ${id} OR name = '${item_name}') AND client_id=${client_id}
+                )
+                UNION ALL
+                (
+                    SELECT credit_no ref, name, price, quantity,discount_percentage,tax_percentage,created_at from ${TABLE.CREDIT_ITEMS} 
+                    WHERE (item_id = ${id} OR name = '${item_name}') AND client_id=${client_id}
+                )
+
+                UNION ALL
+                (
+                    SELECT credit_no ref, name, price, quantity,discount_percentage,tax_percentage,created_at from ${TABLE.CREDIT_NOTE_ITEMS} 
+                    WHERE (item_id = ${id} OR name = '${item_name}') AND client_id=${client_id}
+                )
+                UNION ALL
+                (
+                    SELECT bill_no ref, name, price, quantity,discount_percentage,tax_percentage,created_at from ${TABLE.BILL_ITEMS
+            } 
+                    WHERE (item_id = ${id} OR name = '${item_name}') AND client_id=${client_id}
+                )
+
+            ) AS t  ORDER BY t.created_at DESC LIMIT ?,?`, [offset, page_size]);
+        return result;
+    },
+
+
+    getItemBreakDownCount: async ({ id, item_name, client_id }: Item) => {
+        const [result] = await client.query(
+            `SELECT  count(t.name) count 
+            FROM 
+            (
+                (
+                  SELECT invoice_no ref, name, price, quantity,discount_percentage,tax_percentage,created_at from ${TABLE.INVOICE_ITEMS} 
+                  WHERE (item_id = ${id} OR name = '${item_name}') AND client_id=${client_id}
+                )
+                UNION ALL
+                (
+                    SELECT credit_no ref, name, price, quantity,discount_percentage,tax_percentage,created_at from ${TABLE.CREDIT_ITEMS} 
+                    WHERE (item_id = ${id} OR name = '${item_name}') AND client_id=${client_id}
+                )
+
+                UNION ALL
+                (
+                    SELECT credit_no ref, name, price, quantity,discount_percentage,tax_percentage,created_at from ${TABLE.CREDIT_NOTE_ITEMS} 
+                    WHERE (item_id = ${id} OR name = '${item_name}') AND client_id=${client_id}
+                )
+                UNION ALL
+                (
+                    SELECT bill_no ref, name, price, quantity,discount_percentage,tax_percentage,created_at from ${TABLE.BILL_ITEMS}
+                    WHERE (item_id = ${id} OR name = '${item_name}') AND client_id=${client_id}
+                )
+
+            ) AS t`);
+        return result.count;
+    },
+
+
+    updateItem: async ({ id, item_name, quantity, rate, measurements, reference }: Item,) => {
         const query = await client.query(`UPDATE ${TABLE.ITEMS} SET 
-        item_name = ?, quantity = ?, rate = ? 
-        WHERE id = ? `, [item_name, quantity, rate, id]);
+        item_name = ?, quantity = ?, rate = ?,reference =?,
+        measurements = ?
+        WHERE id = ? `, [item_name, quantity, rate, reference, measurements, id]);
         return query;
     },
 

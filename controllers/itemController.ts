@@ -42,6 +42,8 @@ export default {
             item_name: values.item_name,
             client_id: values.client_id,
             rate: values.rate,
+            measurements: values.measurements,
+            reference: values.reference,
             quantity: values.quantity
 
           }
@@ -183,10 +185,118 @@ export default {
 
 
 
+  getItemByID: async (ctx: any) => {
+    try {
+      // console.log("bayo", kw)
+      let { filter_value } = getQuery(ctx, { mergeParams: true });
+      const data = await itemService.getItemByID({
+        filter_value: filter_value,
+      });
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data
+      };
+
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
+
+
+  getItemBreakDown: async (ctx: any) => {
+    try {
+      // console.log("bayo", kw)
+      let { item_id, page_number, page_size, item_name, client_id } = getQuery(ctx, { mergeParams: true });
+
+      const total = await itemService.getItemBreakDownCount({
+        id: item_id,
+        item_name: item_name,
+        client_id: Number(client_id)
+      });
+
+      if (page_number == null) {
+        page_number = "1";
+        page_size = "100";
+        const offset = (Number(page_number) - 1) * Number(page_size);
+        const data = await itemService.getItemBreakDown({
+          id: item_id,
+          item_name: item_name,
+          client_id: Number(client_id),
+          offset: Number(offset),
+          page_size: Number(page_size),
+
+        });
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          total:total,
+          data: data
+        };
+      } else {
+        const offset = (Number(page_number) - 1) * Number(page_size);
+
+        const data = await itemService.getItemBreakDown({
+          id: item_id,
+          item_name: item_name,
+          client_id: Number(client_id),
+          offset: Number(offset),
+          page_size: Number(page_size),
+
+        });
+        ctx.response.body = {
+          status: true,
+          status_code: 200,
+          total:total,
+          data: data
+        };
+      }
+
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
+  getItemMeaurements: async (ctx: any) => {
+    try {
+      // console.log("bayo", kw)
+      let { filter_value } = getQuery(ctx, { mergeParams: true });
+      const data = await itemService.getItemMeaurements();
+      ctx.response.body = {
+        status: true,
+        status_code: 200,
+        data: data
+      };
+
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = {
+        success: false,
+        message: `Error: ${error}`,
+      };
+    }
+  },
+
+
+
+
+
+
 
   /**
-* @description Get all Items List
-*/
+  * @description Get all Items List
+  */
   getinvestment: async (ctx: any) => {
     try {
       // let kw = request.url.searchParams.get('page_number');
@@ -278,6 +388,8 @@ export default {
           item_name: values.item_name,
           quantity: values.quantity,
           rate: values.rate,
+          reference: values.reference,
+          measurements: values.measurements,
 
           // activation_key: values.activation_key
         },
