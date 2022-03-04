@@ -9,6 +9,7 @@ export default interface Bet {
   due_date?: string,
   created_by?: number,
   message_invoice?: string,
+  status?: number,
   invoice_date?: string,
   agnaist_ksh?: string,
   estimate_date?: string,

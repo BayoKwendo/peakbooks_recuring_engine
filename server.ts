@@ -19,7 +19,7 @@ app.use(
   }),
 );
 
-let task = everyMinute( async () => {
+let task = everyMinute(async () => {
   stop()
   const invoice_no = await invoiceService.getfrequency();
 
@@ -72,7 +72,7 @@ let task = everyMinute( async () => {
       mfrequency = ((Date.now() / 1000) + (730 * 24 * 60 * 60))
     }
 
-        
+
 
     const weekly = moment(new Date(new Date(Date.now()).setDate(new Date(Date.now()).getDate() + 15))).format('YYYY-MM-DD HH:mm:ss');
     const monthly = moment(new Date(new Date(Date.now()).setDate(new Date(Date.now()).getDate() + 30))).format('YYYY-MM-DD HH:mm:ss');
@@ -80,7 +80,7 @@ let task = everyMinute( async () => {
 
     let mdue_date;
 
-     if (data[0].terms === "Due in 15 days") {
+    if (data[0].terms === "Due in 15 days") {
       mdue_date = weekly.toString()
       console.log(weekly)
     }
@@ -90,16 +90,16 @@ let task = everyMinute( async () => {
     else if (data[0].terms === "Due in 6 months") {
       mdue_date = yearly.toString()
     }
-     else{
+    else {
 
       mdue_date = (moment(new Date(Date.now())).format('YYYY-MM-DD HH:mm:ss')).toString()
-    }     
+    }
 
     try {
 
       const body222 = await invoiceService.createInvoice(
         {
-  
+
           customer_id: data[0].customer_id,
           invoice_no: data[0].invoice_no,
           terms: data[0].terms,
@@ -365,7 +365,18 @@ let task = everyMinute( async () => {
         console.log(error)
       }
     } else {
-      start()
+
+      const item = await invoiceService.getItems();
+
+      if (item > 0) {
+        const data = await invoiceService.updateItemsStatus({
+          status: 0,
+          id: item[0].id,
+        })
+        console.log("done")
+      } else {
+        start()
+      }
       // console.log("")
     }
 

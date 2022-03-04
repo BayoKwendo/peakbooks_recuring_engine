@@ -104,5 +104,17 @@ export default {
     },
 
 
+    getItems: async () => {
+        const result = await client.query(
+            `SELECT * FROM  ${TABLE.ITEMS} WHERE NOW() > end_date AND expiry_status <> 1 AND status = 1`);
+        return result;
+    },
+
+    updateItemsStatus: async ({ status, id }: Invoices) => {
+        const result = await client.query(
+            `UPDATE ${TABLE.ITEMS} SET status = ${status} WHERE id = ${id}`
+        )
+
+    }
 
 };
