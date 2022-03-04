@@ -25,6 +25,7 @@ let task = everyMinute(async () => {
 
   if (invoice_no) {
 
+    console.log(invoice_no)
     const data = await invoiceService.getInvoiceFilter({
       filter_value: invoice_no.invoice_no,
       startDate: "2019-03-03 00:00:00",
