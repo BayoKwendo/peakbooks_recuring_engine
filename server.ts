@@ -34,6 +34,8 @@ let task = everyMinute(async () => {
     });
 
     if (data.length > 0) {
+      // console.log("here", data)
+
       const itemData = await invoiceService.getInvoiceItems({
 
         filter_value: invoice_no.invoice_no,
@@ -85,7 +87,7 @@ let task = everyMinute(async () => {
 
       let mdue_date;
 
-      console.log(data[0])
+      console.log("here", data[0])
 
       if (data[0].terms === "Due in 15 days") {
         mdue_date = weekly.toString()
@@ -256,12 +258,12 @@ let task = everyMinute(async () => {
       } catch (error) {
         console.log(error)
       }
+    } else {
+      console.log("No Data")
 
-    }else{
       await invoiceService.updateInvoiceStatus({
         id: invoice_no[0].id
       })
-      console.log("No Data")
     }
 
 
