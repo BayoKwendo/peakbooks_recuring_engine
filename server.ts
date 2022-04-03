@@ -32,56 +32,60 @@ let task = everyMinute(async () => {
       endDate: "2011-04-25 23:59:59",
       created_by: invoice_no.created_by
     });
-    const itemData = await invoiceService.getInvoiceItems({
 
-      filter_value: invoice_no.invoice_no,
-      created_by: invoice_no.created_by
+    if (data.length > 0) {
+      const itemData = await invoiceService.getInvoiceItems({
 
-    });
-    console.log(data)
+        filter_value: invoice_no.invoice_no,
+        created_by: invoice_no.created_by
 
-
-    // deno-lint-ignore camelcase
-
-    // deno-lint-ignore no-unused-vars
-    let mfrequency;
+      });
+      // console.log(data)
 
 
-    if (invoice_no.frequency_type === "Daily") {
-      mfrequency = ((Date.now() / 1000) + (1 * 24 * 60 * 60))
-    }
-    else if (invoice_no.frequency_type === "Weekly") {
-      mfrequency = ((Date.now() / 1000) + (7 * 24 * 60 * 60))
-    }
-    else if (invoice_no.frequency_type === "After 2 Weeks") {
-      mfrequency = ((Date.now() / 1000) + (14 * 24 * 60 * 60))
-    }
-    else if (invoice_no.frequency_type === "Monthly") {
-      mfrequency = ((Date.now() / 1000) + (30 * 24 * 60 * 60))
-    }
-    else if (invoice_no.frequency_type === "After 2 Months") {
-      mfrequency = ((Date.now() / 1000) + (60 * 24 * 60 * 60))
-    }
-    else if (invoice_no.frequency_type === "After 3 Months") {
-      mfrequency = ((Date.now() / 1000) + (90 * 24 * 60 * 60))
-    }
-    else if (invoice_no.frequency_type === "After 6 Months") {
-      mfrequency = ((Date.now() / 1000) + (180 * 24 * 60 * 60))
-    }
-    else if (invoice_no.frequency_type === "Yearly") {
-      mfrequency = ((Date.now() / 1000) + (365 * 24 * 60 * 60))
-    }
-    else {
-      mfrequency = ((Date.now() / 1000) + (730 * 24 * 60 * 60))
-    }
+      // deno-lint-ignore camelcase
+
+      // deno-lint-ignore no-unused-vars
+      let mfrequency;
+
+
+      if (invoice_no.frequency_type === "Daily") {
+        mfrequency = ((Date.now() / 1000) + (1 * 24 * 60 * 60))
+      }
+      else if (invoice_no.frequency_type === "Weekly") {
+        mfrequency = ((Date.now() / 1000) + (7 * 24 * 60 * 60))
+      }
+      else if (invoice_no.frequency_type === "After 2 Weeks") {
+        mfrequency = ((Date.now() / 1000) + (14 * 24 * 60 * 60))
+      }
+      else if (invoice_no.frequency_type === "Monthly") {
+        mfrequency = ((Date.now() / 1000) + (30 * 24 * 60 * 60))
+      }
+      else if (invoice_no.frequency_type === "After 2 Months") {
+        mfrequency = ((Date.now() / 1000) + (60 * 24 * 60 * 60))
+      }
+      else if (invoice_no.frequency_type === "After 3 Months") {
+        mfrequency = ((Date.now() / 1000) + (90 * 24 * 60 * 60))
+      }
+      else if (invoice_no.frequency_type === "After 6 Months") {
+        mfrequency = ((Date.now() / 1000) + (180 * 24 * 60 * 60))
+      }
+      else if (invoice_no.frequency_type === "Yearly") {
+        mfrequency = ((Date.now() / 1000) + (365 * 24 * 60 * 60))
+      }
+      else {
+        mfrequency = ((Date.now() / 1000) + (730 * 24 * 60 * 60))
+      }
 
 
 
-    const weekly = moment(new Date(new Date(Date.now()).setDate(new Date(Date.now()).getDate() + 15))).format('YYYY-MM-DD HH:mm:ss');
-    const monthly = moment(new Date(new Date(Date.now()).setDate(new Date(Date.now()).getDate() + 30))).format('YYYY-MM-DD HH:mm:ss');
-    const yearly = moment(new Date(new Date(Date.now()).setDate(new Date(Date.now()).getDate() + 133))).format('YYYY-MM-DD HH:mm:ss');
+      const weekly = moment(new Date(new Date(Date.now()).setDate(new Date(Date.now()).getDate() + 15))).format('YYYY-MM-DD HH:mm:ss');
+      const monthly = moment(new Date(new Date(Date.now()).setDate(new Date(Date.now()).getDate() + 30))).format('YYYY-MM-DD HH:mm:ss');
+      const yearly = moment(new Date(new Date(Date.now()).setDate(new Date(Date.now()).getDate() + 133))).format('YYYY-MM-DD HH:mm:ss');
 
-    let mdue_date;
+      let mdue_date;
+
+      console.log(data[0])
 
       if (data[0].terms === "Due in 15 days") {
         mdue_date = weekly.toString()
@@ -97,161 +101,171 @@ let task = everyMinute(async () => {
 
         mdue_date = (moment(new Date(Date.now())).format('YYYY-MM-DD HH:mm:ss')).toString()
       }
-   
-    try {
 
-      const body222 = await invoiceService.createInvoice(
-        {
+      try {
 
-          customer_id: data[0].customer_id,
-          invoice_no: data[0].invoice_no,
-          terms: data[0].terms,
-          due_date: mdue_date,
-          invoice_date: (moment.unix(Date.now() / 1000).format('YYYY-MM-DD HH:mm:ss')).toString(),
-          message_invoice: data[0].message_invoice,
-          statement_invoice: data[0].statement_invoice,
-          amount: data[0].amount,
-          reference: data[0].reference,
-          sales_person_id: data[0].sales_person_id,
-          agnaist_ksh: data[0].agnist_ksh,
-          currency_type: data[0].currency_type,
-          estimate: data[0].estimate,
-          due_amount: data[0].amount,
-          discount_amount: data[0].discount_amount,
-          sales_order_no: data[0].sales_order_no,
-          sub_total: data[0].sub_total,
-          tax_amount: data[0].tax_amount,
-          tax_exclusive: data[0].tax_exclusive,
-          approved: data[0].approved,
-          created_by: data[0].created_by,
-          recurring: data[0].recurring
+        const body222 = await invoiceService.createInvoice(
+          {
+
+            customer_id: data[0].customer_id,
+            invoice_no: data[0].invoice_no,
+            terms: data[0].terms,
+            due_date: mdue_date,
+            invoice_date: (moment.unix(Date.now() / 1000).format('YYYY-MM-DD HH:mm:ss')).toString(),
+            message_invoice: data[0].message_invoice,
+            statement_invoice: data[0].statement_invoice,
+            amount: data[0].amount,
+            reference: data[0].reference,
+            sales_person_id: data[0].sales_person_id,
+            agnaist_ksh: data[0].agnist_ksh,
+            currency_type: data[0].currency_type,
+            estimate: data[0].estimate,
+            due_amount: data[0].amount,
+            discount_amount: data[0].discount_amount,
+            sales_order_no: data[0].sales_order_no,
+            sub_total: data[0].sub_total,
+            tax_amount: data[0].tax_amount,
+            tax_exclusive: data[0].tax_exclusive,
+            approved: data[0].approved,
+            created_by: data[0].created_by,
+            recurring: data[0].recurring
+          }
+        );
+
+        if (body222) {
+
+          let page_number = "1"
+          const offset = (Number(page_number) - 1) * 2;
+          const dataInvoice = await invoiceService.getInvoices({
+            offset: offset,
+            estimate: "0",
+            page_size: Number("100"),
+            created_by: data[0].created_by,
+            startDate: `"${"2020-01-10 00:00:00"}"`,
+            sales_order_no: "0",
+            endDate: `"${"2023-01-10 00:00:00"}"`
+          });
+
+          // let innvoiceNo = { invoice_no: dataInvoice[0].invoice_no };
+          let data3 = [];
+
+
+          for (let i = 0; i < itemData.length; i++) {
+            let innvoiceNo = { invoice_no2: dataInvoice[0].invoice_no };
+            // let innvoiceNo = { invoice_no2: dataInvoice[0].invoice_no };
+            data3.push(Object.assign(innvoiceNo, itemData[i]));
+          }
+          // console.log(data3)
+          const postRequest = await fetch('https://www.peakbooks.biz:9000/insightphp/recurring_invoice.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data3),
+          })
+
+          if (postRequest) {
+
+            if (invoice_no.frequency_type === "Daily") {
+              const updateData = await invoiceService.updatefrequency({
+                invoice_no: invoice_no.invoice_no,
+                frequecy: ((Date.now() / 1000) + (1 * 24 * 60 * 60)).toString(),
+              });
+              if (updateData) {
+                start();
+                console.log('Done')
+              }
+            }
+            else if (invoice_no.frequency_type === "Weekly") {
+              const updateData = await invoiceService.updatefrequency({
+                invoice_no: invoice_no.invoice_no,
+                frequecy: ((Date.now() / 1000) + (7 * 24 * 60 * 60)).toString()
+              });
+              if (updateData) {
+                start();
+              }
+            }
+            else if (invoice_no.frequency_type === "After 2 Weeks") {
+              const updateData = await invoiceService.updatefrequency({
+                invoice_no: invoice_no.invoice_no,
+                frequecy: ((Date.now() / 1000) + (14 * 24 * 60 * 60)).toString()
+              });
+              if (updateData) {
+                start();
+              }
+            }
+            else if (invoice_no.frequency_type === "Monthly") {
+              const updateData = await invoiceService.updatefrequency({
+                invoice_no: invoice_no.invoice_no,
+                frequecy: ((Date.now() / 1000) + (30 * 24 * 60 * 60)).toString()
+              });
+              if (updateData) {
+                start();
+                // console.log(invoice_no)
+              }
+            }
+            else if (invoice_no.frequency_type === "After 2 Months") {
+              const updateData = await invoiceService.updatefrequency({
+                invoice_no: invoice_no.invoice_no,
+                frequecy: ((Date.now() / 1000) + (60 * 24 * 60 * 60)).toString()
+              });
+              if (updateData) {
+                start();
+                console.log('Done')
+              }
+            }
+            else if (invoice_no.frequency_type === "After 3 Months") {
+              const updateData = await invoiceService.updatefrequency({
+                invoice_no: invoice_no.invoice_no,
+                frequecy: ((Date.now() / 1000) + (90 * 24 * 60 * 60)).toString(),
+              });
+              if (updateData) {
+                start();
+              }
+            }
+            else if (invoice_no.frequency_type === "After 6 Months") {
+              const updateData = await invoiceService.updatefrequency({
+                invoice_no: invoice_no.invoice_no,
+                frequecy: ((Date.now() / 1000) + (180 * 24 * 60 * 60)).toString(),
+              });
+              if (updateData) {
+                start();
+              }
+            }
+            else if (invoice_no.frequency_type === "Yearly") {
+              const updateData = await invoiceService.updatefrequency({
+                invoice_no: invoice_no.invoice_no,
+                frequecy: ((Date.now() / 1000) + (365 * 24 * 60 * 60)).toString(),
+              });
+              if (updateData) {
+                start();
+              }
+            }
+            else if (invoice_no.frequency_type === "After 2 Years") {
+              const updateData = await invoiceService.updatefrequency({
+                invoice_no: invoice_no.invoice_no,
+                frequecy: ((Date.now() / 1000) + (730 * 24 * 60 * 60)).toString(),
+              });
+              if (updateData) {
+                start();
+              }
+            }
+            // start()
+          }
         }
-      );
-
-      if (body222) {
-
-        let page_number = "1"
-        const offset = (Number(page_number) - 1) * 2;
-        const dataInvoice = await invoiceService.getInvoices({
-          offset: offset,
-          estimate: "0",
-          page_size: Number("100"),
-          created_by: data[0].created_by,
-          startDate: `"${"2020-01-10 00:00:00"}"`,
-          sales_order_no: "0",
-          endDate: `"${"2023-01-10 00:00:00"}"`
-        });
-
-        // let innvoiceNo = { invoice_no: dataInvoice[0].invoice_no };
-        let data3 = [];
-
-
-        for (let i = 0; i < itemData.length; i++) {
-          let innvoiceNo = { invoice_no2: dataInvoice[0].invoice_no };
-          // let innvoiceNo = { invoice_no2: dataInvoice[0].invoice_no };
-          data3.push(Object.assign(innvoiceNo, itemData[i]));
-        }
-        // console.log(data3)
-        const postRequest = await fetch('https://www.peakbooks.biz:9000/insightphp/recurring_invoice.php', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data3),
-        })
-
-        if (postRequest) {
-
-          if (invoice_no.frequency_type === "Daily") {
-            const updateData = await invoiceService.updatefrequency({
-              invoice_no: invoice_no.invoice_no,
-              frequecy: ((Date.now() / 1000) + (1 * 24 * 60 * 60)).toString(),
-            });
-            if (updateData) {
-              start();
-              console.log('Done')
-            }
-          }
-          else if (invoice_no.frequency_type === "Weekly") {
-            const updateData = await invoiceService.updatefrequency({
-              invoice_no: invoice_no.invoice_no,
-              frequecy: ((Date.now() / 1000) + (7 * 24 * 60 * 60)).toString()
-            });
-            if (updateData) {
-              start();
-            }
-          }
-          else if (invoice_no.frequency_type === "After 2 Weeks") {
-            const updateData = await invoiceService.updatefrequency({
-              invoice_no: invoice_no.invoice_no,
-              frequecy: ((Date.now() / 1000) + (14 * 24 * 60 * 60)).toString()
-            });
-            if (updateData) {
-              start();
-            }
-          }
-          else if (invoice_no.frequency_type === "Monthly") {
-            const updateData = await invoiceService.updatefrequency({
-              invoice_no: invoice_no.invoice_no,
-              frequecy: ((Date.now() / 1000) + (30 * 24 * 60 * 60)).toString()
-            });
-            if (updateData) {
-              start();
-              // console.log(invoice_no)
-            }
-          }
-          else if (invoice_no.frequency_type === "After 2 Months") {
-            const updateData = await invoiceService.updatefrequency({
-              invoice_no: invoice_no.invoice_no,
-              frequecy: ((Date.now() / 1000) + (60 * 24 * 60 * 60)).toString()
-            });
-            if (updateData) {
-              start();
-              console.log('Done')
-            }
-          }
-          else if (invoice_no.frequency_type === "After 3 Months") {
-            const updateData = await invoiceService.updatefrequency({
-              invoice_no: invoice_no.invoice_no,
-              frequecy: ((Date.now() / 1000) + (90 * 24 * 60 * 60)).toString(),
-            });
-            if (updateData) {
-              start();
-            }
-          }
-          else if (invoice_no.frequency_type === "After 6 Months") {
-            const updateData = await invoiceService.updatefrequency({
-              invoice_no: invoice_no.invoice_no,
-              frequecy: ((Date.now() / 1000) + (180 * 24 * 60 * 60)).toString(),
-            });
-            if (updateData) {
-              start();
-            }
-          }
-          else if (invoice_no.frequency_type === "Yearly") {
-            const updateData = await invoiceService.updatefrequency({
-              invoice_no: invoice_no.invoice_no,
-              frequecy: ((Date.now() / 1000) + (365 * 24 * 60 * 60)).toString(),
-            });
-            if (updateData) {
-              start();
-            }
-          }
-          else if (invoice_no.frequency_type === "After 2 Years") {
-            const updateData = await invoiceService.updatefrequency({
-              invoice_no: invoice_no.invoice_no,
-              frequecy: ((Date.now() / 1000) + (730 * 24 * 60 * 60)).toString(),
-            });
-            if (updateData) {
-              start();
-            }
-          }
-          // start()
-        }
+      } catch (error) {
+        console.log(error)
       }
-    } catch (error) {
-      console.log(error)
+
+    }else{
+      await invoiceService.updateInvoiceStatus({
+        id: invoice_no[0].id
+      })
+      console.log("No Data")
     }
+
+
+
   } else {
 
     const recur_expense = await expenseService.getfrequencyExpense();

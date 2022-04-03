@@ -11,11 +11,17 @@ export default {
         return result;
     },
 
+    updateInvoiceStatus: async ({ status, id }: Invoices) => {
+        const result = await client.query(
+            `UPDATE ${TABLE.RECURRING_INVOICE} SET status = 0 WHERE id = ${id}`
+        )
+    },
+
     getInvoiceFilter: async ({ created_by, filter_value }: Invoices) => {
         const result = await client.query(
-            `SELECT * FROM 
-           ${TABLE.INVOICES} i inner join ${TABLE.CUSTOMER} c on c.id = i.customer_id 
-           WHERE i.estimate=0 and i.sales_order_no=0 and i.created_by = ? AND i.invoice_no = ?`, [created_by, filter_value]);
+            `SELECT invoice_no, client_id, terms FROM 
+           invoices i inner join customers c on c.id = i.customer_id 
+           WHERE i.estimate=0 and i.sales_order_no=0 and i.created_by = 699 AND i.invoice_no = 599;`, [created_by, filter_value]);
         return result;
     },
 
@@ -114,7 +120,6 @@ export default {
         const result = await client.query(
             `UPDATE ${TABLE.ITEMS} SET status = ${status} WHERE id = ${id}`
         )
-
     }
 
 };
