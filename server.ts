@@ -38,6 +38,8 @@ let task = everyMinute(async () => {
       created_by: invoice_no.created_by
 
     });
+    console.log(data)
+
 
     // deno-lint-ignore camelcase
 
@@ -81,21 +83,21 @@ let task = everyMinute(async () => {
 
     let mdue_date;
 
-    if (data[0].terms === "Due in 15 days") {
-      mdue_date = weekly.toString()
-      console.log(weekly)
-    }
-    else if (data[0].terms === "Due in 30 days") {
-      mdue_date = monthly.toString()
-    }
-    else if (data[0].terms === "Due in 6 months") {
-      mdue_date = yearly.toString()
-    }
-    else {
+      if (data[0].terms === "Due in 15 days") {
+        mdue_date = weekly.toString()
+        console.log(weekly)
+      }
+      else if (data[0].terms === "Due in 30 days") {
+        mdue_date = monthly.toString()
+      }
+      else if (data[0].terms === "Due in 6 months") {
+        mdue_date = yearly.toString()
+      }
+      else {
 
-      mdue_date = (moment(new Date(Date.now())).format('YYYY-MM-DD HH:mm:ss')).toString()
-    }
-
+        mdue_date = (moment(new Date(Date.now())).format('YYYY-MM-DD HH:mm:ss')).toString()
+      }
+   
     try {
 
       const body222 = await invoiceService.createInvoice(
@@ -370,11 +372,11 @@ let task = everyMinute(async () => {
       const item = await invoiceService.getItems();
 
       if (item > 0) {
-        const data = await invoiceService.updateItemsStatus({
-          status: 0,
-          id: item[0].id,
-        })
-        console.log("done")
+        // const data = await invoiceService.updateItemsStatus({
+        //   status: 0,
+        //   id: item[0].id,
+        // })
+        // console.log("done")
       } else {
         start()
       }
