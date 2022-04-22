@@ -1,0 +1,12 @@
+mysql:
+  host: 157.230.229.119
+  port: 3306
+  user: root
+  passwd: part@^yr9053
+  db: peakbooks
+
+config:
+  path: "./config.yml"
+
+main_app: 
+  name: "main_app"
