@@ -1,0 +1,19 @@
+mysql:
+  host: 157.230.229.119
+  port: 3306
+  user: root
+  passwd: part@^yr9053
+  db: peakbooks
+
+config:
+  path: "./config.yml"
+
+main_app: 
+  name: "main_app"
+
+sms: 
+  URL: https://api.vaspro.co.ke/v3/BulkSMS/api/create
+  APIKEY: 8f15430edfeb253fb0961c36e0fee0cc
+  SENDERID: PEAKBOOKS
+  CALL_BACK: https://api.vaspro.co.ke
+
