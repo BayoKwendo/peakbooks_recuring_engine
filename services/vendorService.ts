@@ -18,6 +18,13 @@ export default {
     },
 
 
+   deleteExpenseRecurring: async ({ filter_value }: Vendor) => {
+        const result = await client.query(
+            `DELETE FROM  ${TABLE.RECURRING_EXPENSE} WHERE id = '${filter_value}' `);
+        return result;
+    },
+
+
     createExpense: async ({ client_id, date, expense_account, amount, paid_through, recurring, reference, customer_id, vendor_id, billable, product_name, notes, tax_amount }: Vendor) => {
         const result = await client.query(`INSERT INTO ${TABLE.EXPENSES}  SET
               client_id=?, date =?,

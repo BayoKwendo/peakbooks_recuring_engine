@@ -7,7 +7,18 @@ export default {
 
     getfrequency: async () => {
         const [result] = await client.query(
-            `SELECT * FROM  ${TABLE.RECURRING_INVOICE} WHERE frequecy < UNIX_TIMESTAMP(NOW()) AND status = 1 order by id ASC limit 1`);
+            `SELECT * FROM  ${TABLE.RECURRING_INVOICE} WHERE 
+            frequecy < UNIX_TIMESTAMP(NOW()) AND status = 1 AND frequency_type NOT IN ('Monthly') order by id ASC limit 1;`);
+        return result;
+    },
+
+
+    getfreqmonthly: async () => {
+        const result = await client.query(
+            `SELECT *,timestampdiff(day,
+                concat(year(now()),'-',month(now()),'-01'),
+                date_add( concat(year(now()),'-',month(now()),'-01'), interval 1 month)) days FROM  ${TABLE.RECURRING_INVOICE} WHERE 
+             checked = 0 AND status = 1 AND frequency_type IN ('Monthly') order by id;`);
         return result;
     },
 
@@ -21,7 +32,7 @@ export default {
         const result = await client.query(
             `SELECT * FROM 
            invoices i inner join customers c on c.id = i.customer_id 
-           WHERE i.estimate=0 and i.sales_order_no=0 and i.created_by = 699 AND i.invoice_no = 599;`, [created_by, filter_value]);
+           WHERE i.estimate=0 and i.sales_order_no=0 and i.created_by = ? AND i.invoice_no = ?;`, [created_by, filter_value]);
         return result;
     },
 
@@ -103,7 +114,18 @@ export default {
             `UPDATE ${TABLE.RECURRING_INVOICE} SET 
             frequecy = ?, 
             start_time = DATE_FORMAT(now(), "%Y-%m-%d %h:%i:%s")
+            WHERE invoice_no = ? `,
+            [frequecy, invoice_no]);
+        return result;
+    },
 
+
+    updateChecked: async ({ frequecy, invoice_no }: Invoices) => {
+        const result = await client.query(
+            `UPDATE ${TABLE.RECURRING_INVOICE} SET 
+            frequecy = ?,
+            checked = 1, 
+            start_time = DATE_FORMAT(now(), "%Y-%m-%d %h:%i:%s")
             WHERE invoice_no = ? `,
             [frequecy, invoice_no]);
         return result;
