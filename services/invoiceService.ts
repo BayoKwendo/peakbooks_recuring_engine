@@ -18,7 +18,7 @@ export default {
             `SELECT *,timestampdiff(day,
                 concat(year(now()),'-',month(now()),'-01'),
                 date_add( concat(year(now()),'-',month(now()),'-01'), interval 1 month)) days FROM  ${TABLE.RECURRING_INVOICE} WHERE 
-             checked = 0 AND status = 1 AND frequency_type IN ('Monthly') order by id;`);
+                status = 1 AND frequency_type IN ('Monthly') order by id;`);
         return result;
     },
 
