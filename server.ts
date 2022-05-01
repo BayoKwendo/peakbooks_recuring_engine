@@ -526,7 +526,7 @@ let task_two = monthly(async () => {
             if (postRequest) {
               const updateData = await invoiceService.updateChecked({
                 invoice_no: invoice_no[i].invoice_no,
-                frequecy: ((Date.now() / 1000) + ((parseInt(invoice_no[i].days) + 1) * 24 * 60 * 60)).toString()
+                frequecy: ((Date.now() / 1000) + ((parseInt(invoice_no[i].days)) * 24 * 60 * 60)).toString()
               });
               if (updateData) {
                 start();
