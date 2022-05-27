@@ -261,10 +261,10 @@ let task = everyMinute(async () => {
         console.log(error)
       }
     } else {
-      console.log("No Data")
+      console.log("No Data", invoice_no)
 
       await invoiceService.updateInvoiceStatus({
-        id: invoice_no[0].id
+        id: invoice_no.id
       })
     }
 
@@ -426,7 +426,7 @@ let task_two = monthly(async () => {
 
 
     for (let i = 0; i < invoice_no.length; i++) { // for loop for invoices
-      
+            
       const data = await invoiceService.getInvoiceFilter({
         filter_value: invoice_no[i].invoice_no,
         startDate: "2019-03-03 00:00:00",
@@ -541,7 +541,7 @@ let task_two = monthly(async () => {
       } else {
         console.log("No Data")
         await invoiceService.updateInvoiceStatus({
-          id: invoice_no[0].id
+          id: invoice_no.id
         })
       }
     }
