@@ -426,7 +426,7 @@ let task_two = monthly(async () => {
 
 
     for (let i = 0; i < invoice_no.length; i++) { // for loop for invoices
-
+      
       const data = await invoiceService.getInvoiceFilter({
         filter_value: invoice_no[i].invoice_no,
         startDate: "2019-03-03 00:00:00",

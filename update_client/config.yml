@@ -1,5 +1,5 @@
 mysql:
-  host: 157.230.229.119
+  host: 52.91.175.226
   port: 3306
   user: root
   passwd: part@^yr9053
