@@ -84,9 +84,7 @@ class MainApp(object):
             self._mysql = Database()
             await self.process_client()
 
-            thread1 = threading.Thread(target=await self.daily_schedular())
-            thread1.start()
-
+           
         except mysql.connector.Error as err:
             LOGGER.info('MySQL Error %s', err)
             self.stop()
@@ -102,7 +100,11 @@ class MainApp(object):
 
     async def process_client(self):
         """Process loan"""
+        thread1 = threading.Thread(target=await self.daily_schedular())
+        thread1.start()
+
         while not self._closing:
+            
             try:
                 # LOGGER.info('Processing loan')
                 self._closing = True
