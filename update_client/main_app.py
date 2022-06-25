@@ -12,6 +12,9 @@ import time
 import mysql.connector
 import yaml
 import datetime
+import schedule
+import threading
+
 
 from mysql.connector import errorcode
 from Database import Database
@@ -81,6 +84,9 @@ class MainApp(object):
             self._mysql = Database()
             await self.process_client()
 
+            thread1 = threading.Thread(target=await self.daily_schedular())
+            thread1.start()
+
         except mysql.connector.Error as err:
             LOGGER.info('MySQL Error %s', err)
             self.stop()
@@ -103,17 +109,44 @@ class MainApp(object):
 
                 checkLoan = self._mysql.check_queue(self._conn)
                 if checkLoan is not None:
-                    LOGGER.info(checkLoan) #from loan customer queue
+                    LOGGER.info(checkLoan)  # from loan customer queue
                     id = checkLoan['id']
                     self._mysql.update_users(
                         self._conn, id)
                     await self.stop()
+                elif checkLoan is None:
+                    self._mysql.update_users_verification(self._conn)
+                    self._mysql.update_users_passwordreset(self._conn)
+                    self._mysql.update_users_login_status(self._conn)
+                    await self.stop()
+
                 else:
                     await self.stop()
                     # LOGGER.info("here")
             except KeyboardInterrupt:
                 # self.stop()
                 break
+
+    async def daily_schedular(self):
+        """Process loan"""
+        schedule.every().day.at("00:00").do(self.job_revert)
+
+        # schedule.every(1).day.at("10:30").do(self.job_revert)
+        while not self._closing:
+            try:
+                schedule.run_pending()
+                await asyncio.sleep(5)
+                await self.job()
+                # LOGGER.info("here")
+            except KeyboardInterrupt:
+                # self.stop()
+                break
+        """Process loan"""
+
+    def job_revert(self):
+        # LOGGER.info("here")
+        self._mysql.update_users_ourclient(self._conn)
+        self._mysql.update_checked(self._conn)
 
 
 class ReconnectingLoan(object):

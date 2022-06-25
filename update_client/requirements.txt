@@ -17,3 +17,5 @@ pycrypto
 pika
 pyyaml
 datetime
+schedule
+thread6
