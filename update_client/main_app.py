@@ -114,13 +114,11 @@ class MainApp(object):
                     self._mysql.update_users(
                         self._conn, id)
                     await self.stop()
-                elif checkLoan is None:
+
+                else:
                     self._mysql.update_users_verification(self._conn)
                     self._mysql.update_users_passwordreset(self._conn)
                     self._mysql.update_users_login_status(self._conn)
-                    await self.stop()
-
-                else:
                     await self.stop()
                     # LOGGER.info("here")
             except KeyboardInterrupt:
