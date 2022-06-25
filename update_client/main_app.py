@@ -82,9 +82,11 @@ class MainApp(object):
             self._conn = self.db_connect()
             self._conn.autocommit = True
             self._mysql = Database()
-            await self.process_client()
+            # await self.process_client()
 
-           
+            thread1 = threading.Thread(target=await self.daily_schedular())
+            thread1.start()
+
         except mysql.connector.Error as err:
             LOGGER.info('MySQL Error %s', err)
             self.stop()
@@ -100,11 +102,7 @@ class MainApp(object):
 
     async def process_client(self):
         """Process loan"""
-        thread1 = threading.Thread(target=await self.daily_schedular())
-        thread1.start()
-
         while not self._closing:
-            
             try:
                 # LOGGER.info('Processing loan')
                 self._closing = True
@@ -129,22 +127,12 @@ class MainApp(object):
 
     async def daily_schedular(self):
         """Process loan"""
-        schedule.every().day.at("00:00").do(self.job_revert)
-
-        # schedule.every(1).day.at("10:30").do(self.job_revert)
-        while not self._closing:
-            try:
-                schedule.run_pending()
-                await asyncio.sleep(5)
-                await self.job()
-                # LOGGER.info("here")
-            except KeyboardInterrupt:
-                # self.stop()
-                break
-        """Process loan"""
+        schedule.every(3).minutes.do(self.job_revert)
+        # LOGGER.info("success")
+        
 
     def job_revert(self):
-        # LOGGER.info("here")
+        LOGGER.info("here")
         self._mysql.update_users_ourclient(self._conn)
         self._mysql.update_checked(self._conn)
 
