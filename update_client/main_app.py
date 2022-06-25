@@ -101,40 +101,48 @@ class MainApp(object):
         self._mysql = Database()
 
     async def process_client(self):
-        """Process loan"""
-        while not self._closing:
-            try:
-                # LOGGER.info('Processing loan')
-                self._closing = True
+        """Process every second"""
 
-                checkLoan = self._mysql.check_queue(self._conn)
-                if checkLoan is not None:
-                    LOGGER.info(checkLoan)  # from loan customer queue
-                    id = checkLoan['id']
-                    self._mysql.update_users(
-                        self._conn, id)
-                    await self.stop()
+        self._closing = True
 
-                else:
-                    self._mysql.update_users_verification(self._conn)
-                    self._mysql.update_users_passwordreset(self._conn)
+        checkLoan = self._mysql.check_queue(self._conn)
+        if checkLoan is not None:
+            LOGGER.info(checkLoan)  # from loan customer queue
+            id = checkLoan['id']
+            self._mysql.update_users(
+                self._conn, id)
+            await self.stop()
+
+        else:
+            verified = self._mysql.update_users_verification(self._conn)
+            if verified:
+                passwordReset = self._mysql.update_users_passwordreset(self._conn)
+                if passwordReset: 
                     self._mysql.update_users_login_status(self._conn)
-                    await self.stop()
-                    # LOGGER.info("here")
-            except KeyboardInterrupt:
-                # self.stop()
-                break
+                    # LOGGER.info("here is the thing")
+
+            await self.stop()
+
+    def job_revert(self):
+        # LOGGER.info("here")
+        update_client = self._mysql.update_users_ourclient(self._conn)
+        if update_client:
+          self._mysql.update_checked(self._conn)
 
     async def daily_schedular(self):
         """Process loan"""
-        schedule.every(3).minutes.do(self.job_revert)
+        schedule.every().day.at("00:00").do(self.job_revert)
         # LOGGER.info("success")
-        
 
-    def job_revert(self):
-        LOGGER.info("here")
-        self._mysql.update_users_ourclient(self._conn)
-        self._mysql.update_checked(self._conn)
+        while not self._closing:
+            try:
+                schedule.run_pending()
+                await asyncio.sleep(1)
+                await self.process_client()
+                # LOGGER.info("here")
+            except KeyboardInterrupt:
+                # self.stop()
+                break
 
 
 class ReconnectingLoan(object):

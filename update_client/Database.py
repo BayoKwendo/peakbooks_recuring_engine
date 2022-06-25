@@ -51,7 +51,7 @@ class Database():
             sql = """UPDATE peakbooks.users SET paid = 0, first_time = 0 WHERE subscription < NOW() AND our_client = 1"""
             cursor = db_connection.cursor(dictionary=True)
             cursor.execute(sql)
-            # result = cursor.rowcount
+            result = cursor.rowcount
             # # LOGGER.info(result)
         except mysql.connector.Error as err:
             print(err)
@@ -72,7 +72,7 @@ class Database():
 
     def update_users_login_status(self, db_connection):
         try:
-            sql = """UPDATE peakbooks.users SET login_status = 0 WHERE login_expiry < UNIX_TIMESTAMP(NOW())"""
+            sql = """UPDATE peakbooks.users SET login_status = 0 WHERE login_expiry < UNIX_TIMESTAMP(NOW()) AND login_status = 1"""
             cursor = db_connection.cursor(dictionary=True)
             cursor.execute(sql)
             # result = cursor.rowcount
