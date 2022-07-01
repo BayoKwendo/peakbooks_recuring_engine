@@ -14,8 +14,7 @@ import yaml
 import datetime
 import schedule
 import threading
-
-
+from datetime import date
 from mysql.connector import errorcode
 from Database import Database
 
@@ -116,8 +115,9 @@ class MainApp(object):
         else:
             verified = self._mysql.update_users_verification(self._conn)
             if verified:
-                passwordReset = self._mysql.update_users_passwordreset(self._conn)
-                if passwordReset: 
+                passwordReset = self._mysql.update_users_passwordreset(
+                    self._conn)
+                if passwordReset:
                     self._mysql.update_users_login_status(self._conn)
                     # LOGGER.info("here is the thing")
 
@@ -129,10 +129,21 @@ class MainApp(object):
         if update_client:
           self._mysql.update_checked(self._conn)
 
+    def job_update_client(self):
+        LOGGER.info("here")
+
+        if date.today().day == 1:
+            self._mysql.update_checked_recurring(self._conn)
+            return
+        else:
+            LOGGER.info(date.today().day)
+
+          
     async def daily_schedular(self):
         """Process loan"""
         schedule.every().day.at("00:00").do(self.job_revert)
         # LOGGER.info("success")
+        schedule.every().day.at("01:00").do(self.job_update_client)
 
         while not self._closing:
             try:

@@ -93,3 +93,15 @@ class Database():
             print(err)
             raise
         return True
+    
+    def update_checked_recurring(self, db_connection):
+        try:
+            sql = """UPDATE peakbooks.recurring_invoices SET checked_month = 1"""
+            cursor = db_connection.cursor(dictionary=True)
+            cursor.execute(sql)
+            # result = cursor.rowcount
+            # # LOGGER.info(result)
+        except mysql.connector.Error as err:
+            print(err)
+            raise
+        return True

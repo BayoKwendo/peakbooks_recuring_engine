@@ -418,135 +418,131 @@ let task = everyMinute(async () => {
 
 
 
-let task_two = monthly(async () => {
+let task_two = everyMinute(async () => {
 
   const invoice_no = await invoiceService.getfreqmonthly();
 
   if (invoice_no.length > 0) {
 
+    const data = await invoiceService.getInvoiceFilter({
+      filter_value: invoice_no[0].invoice_no,
+      startDate: "2019-03-03 00:00:00",
+      endDate: "2011-04-25 23:59:59",
+      created_by: invoice_no[0].created_by
+    });
+    if (data.length > 0) {
 
-    for (let i = 0; i < invoice_no.length; i++) { // for loop for invoices
-            
-      const data = await invoiceService.getInvoiceFilter({
-        filter_value: invoice_no[i].invoice_no,
-        startDate: "2019-03-03 00:00:00",
-        endDate: "2011-04-25 23:59:59",
-        created_by: invoice_no[i].created_by
+      const itemData = await invoiceService.getInvoiceItems({
+        filter_value: invoice_no[0].invoice_no,
+        created_by: invoice_no[0].created_by
+
       });
-      if (data.length > 0) {
+      // deno-lint-ignore no-unused-vars
 
-        const itemData = await invoiceService.getInvoiceItems({
-          filter_value: invoice_no[i].invoice_no,
-          created_by: invoice_no[i].created_by
+      const weekly = moment(new Date(new Date(Date.now()).setDate(new Date(Date.now()).getDate() + 15))).format('YYYY-MM-DD HH:mm:ss');
+      const monthly = moment(new Date(new Date(Date.now()).setDate(new Date(Date.now()).getDate() + 30))).format('YYYY-MM-DD HH:mm:ss');
+      const yearly = moment(new Date(new Date(Date.now()).setDate(new Date(Date.now()).getDate() + 133))).format('YYYY-MM-DD HH:mm:ss');
 
-        });
-        // deno-lint-ignore no-unused-vars
+      let mdue_date;
 
-        const weekly = moment(new Date(new Date(Date.now()).setDate(new Date(Date.now()).getDate() + 15))).format('YYYY-MM-DD HH:mm:ss');
-        const monthly = moment(new Date(new Date(Date.now()).setDate(new Date(Date.now()).getDate() + 30))).format('YYYY-MM-DD HH:mm:ss');
-        const yearly = moment(new Date(new Date(Date.now()).setDate(new Date(Date.now()).getDate() + 133))).format('YYYY-MM-DD HH:mm:ss');
+      console.log("here", data[0])
 
-        let mdue_date;
-
-        console.log("here", data[0])
-
-        if (data[0].terms === "Due in 15 days") {
-          mdue_date = weekly.toString()
-          console.log(weekly)
-        }
-        else if (data[0].terms === "Due in 30 days") {
-          mdue_date = monthly.toString()
-        }
-        else if (data[0].terms === "Due in 6 months") {
-          mdue_date = yearly.toString()
-        }
-        else {
-
-          mdue_date = (moment(new Date(Date.now())).format('YYYY-MM-DD HH:mm:ss')).toString()
-        }
-
-        try {
-
-          const body222 = await invoiceService.createInvoice(
-            {
-
-              customer_id: data[0].customer_id,
-              invoice_no: data[0].invoice_no,
-              terms: data[0].terms,
-              due_date: mdue_date,
-              invoice_date: (moment.unix(Date.now() / 1000).format('YYYY-MM-DD HH:mm:ss')).toString(),
-              message_invoice: data[0].message_invoice,
-              statement_invoice: data[0].statement_invoice,
-              amount: data[0].amount,
-              reference: data[0].reference,
-              sales_person_id: data[0].sales_person_id,
-              agnaist_ksh: data[0].agnist_ksh,
-              currency_type: data[0].currency_type,
-              estimate: data[0].estimate,
-              due_amount: data[0].amount,
-              discount_amount: data[0].discount_amount,
-              sales_order_no: data[0].sales_order_no,
-              sub_total: data[0].sub_total,
-              tax_amount: data[0].tax_amount,
-              tax_exclusive: data[0].tax_exclusive,
-              approved: data[0].approved,
-              created_by: data[0].created_by,
-              recurring: data[0].recurring
-            }
-          );
-          if (body222) {
-            let page_number = "1"
-            const offset = (Number(page_number) - 1) * 2;
-            const dataInvoice = await invoiceService.getInvoices({
-              offset: offset,
-              estimate: "0",
-              page_size: Number("100"),
-              created_by: data[0].created_by,
-              startDate: `"${"2020-01-10 00:00:00"}"`,
-              sales_order_no: "0",
-              endDate: `"${"2023-01-10 00:00:00"}"`
-            });
-
-            // let innvoiceNo = { invoice_no: dataInvoice[0].invoice_no };
-            let data3 = [];
-            for (let i = 0; i < itemData.length; i++) {
-              let innvoiceNo = { invoice_no2: dataInvoice[0].invoice_no };
-              // let innvoiceNo = { invoice_no2: dataInvoice[0].invoice_no };
-              data3.push(Object.assign(innvoiceNo, itemData[i]));
-            }
-            // console.log(data3)
-            const postRequest = await fetch('https://www.peakbooks.biz:9000/insightphp/recurring_invoice.php', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(data3),
-            })
-
-            if (postRequest) {
-              const updateData = await invoiceService.updateChecked({
-                invoice_no: invoice_no[i].invoice_no,
-                frequecy: ((Date.now() / 1000) + ((parseInt(invoice_no[i].days)) * 24 * 60 * 60)).toString()
-              });
-              if (updateData) {
-                start();
-                // console.log(invoice_no)
-              }
-              // start()
-            }
-          }
-        } catch (error) {
-          console.log(error)
-        }
-      } else {
-        console.log("No Data")
-        await invoiceService.updateInvoiceStatus({
-          id: invoice_no.id
-        })
+      if (data[0].terms === "Due in 15 days") {
+        mdue_date = weekly.toString()
+        console.log(weekly)
       }
+      else if (data[0].terms === "Due in 30 days") {
+        mdue_date = monthly.toString()
+      }
+      else if (data[0].terms === "Due in 6 months") {
+        mdue_date = yearly.toString()
+      }
+      else {
+
+        mdue_date = (moment(new Date(Date.now())).format('YYYY-MM-DD HH:mm:ss')).toString()
+      }
+
+      try {
+
+        const body222 = await invoiceService.createInvoice(
+          {
+
+            customer_id: data[0].customer_id,
+            invoice_no: data[0].invoice_no,
+            terms: data[0].terms,
+            due_date: mdue_date,
+            invoice_date: (moment.unix(Date.now() / 1000).format('YYYY-MM-DD HH:mm:ss')).toString(),
+            message_invoice: data[0].message_invoice,
+            statement_invoice: data[0].statement_invoice,
+            amount: data[0].amount,
+            reference: data[0].reference,
+            sales_person_id: data[0].sales_person_id,
+            agnaist_ksh: data[0].agnist_ksh,
+            currency_type: data[0].currency_type,
+            estimate: data[0].estimate,
+            due_amount: data[0].amount,
+            discount_amount: data[0].discount_amount,
+            sales_order_no: data[0].sales_order_no,
+            sub_total: data[0].sub_total,
+            tax_amount: data[0].tax_amount,
+            tax_exclusive: data[0].tax_exclusive,
+            approved: data[0].approved,
+            created_by: data[0].created_by,
+            recurring: data[0].recurring
+          }
+        );
+        if (body222) {
+          let page_number = "1"
+          const offset = (Number(page_number) - 1) * 2;
+          const dataInvoice = await invoiceService.getInvoices({
+            offset: offset,
+            estimate: "0",
+            page_size: Number("100"),
+            created_by: data[0].created_by,
+            startDate: `"${"2020-01-10 00:00:00"}"`,
+            sales_order_no: "0",
+            endDate: `"${"2023-01-10 00:00:00"}"`
+          });
+
+          // let innvoiceNo = { invoice_no: dataInvoice[0].invoice_no };
+          let data3 = [];
+          for (let i = 0; i < itemData.length; i++) {
+            let innvoiceNo = { invoice_no2: dataInvoice[0].invoice_no };
+            // let innvoiceNo = { invoice_no2: dataInvoice[0].invoice_no };
+            data3.push(Object.assign(innvoiceNo, itemData[i]));
+          }
+          // console.log(data3)
+          const postRequest = await fetch('https://www.peakbooks.biz:9000/insightphp/recurring_invoice.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data3),
+          })
+
+          if (postRequest) {
+            const updateData = await invoiceService.updateChecked({
+              invoice_no: invoice_no[i].invoice_no,
+              frequecy: ((Date.now() / 1000) + ((parseInt(invoice_no[i].days)) * 24 * 60 * 60)).toString()
+            });
+            if (updateData) {
+              start();
+              // console.log(invoice_no)
+            }
+            // start()
+          }
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    } else {
+      console.log("No Data")
+      await invoiceService.updateInvoiceStatus({
+        id: invoice_no.id
+      })
     }
   }
-}, 1);
+});
 
 
 app.addEventListener("error", (evt) => {
