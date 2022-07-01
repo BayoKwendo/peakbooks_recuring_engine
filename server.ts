@@ -540,10 +540,11 @@ let task_two = everyMinute(async () => {
         console.log(error)
       }
     } else {
-      console.log("No Data")
+      console.log("No Datavvjfj mfjfj")
       await invoiceService.updateInvoiceStatus({
-        id: invoice_no.id
+        id: invoice_no[0].id
       })
+
     }
   }
 });
