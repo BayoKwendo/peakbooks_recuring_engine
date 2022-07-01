@@ -522,8 +522,8 @@ let task_two = everyMinute(async () => {
 
           if (postRequest) {
             const updateData = await invoiceService.updateChecked({
-              invoice_no: invoice_no[i].invoice_no,
-              frequecy: ((Date.now() / 1000) + ((parseInt(invoice_no[i].days)) * 24 * 60 * 60)).toString()
+              invoice_no: invoice_no[0].invoice_no,
+              frequecy: ((Date.now() / 1000) + ((parseInt(invoice_no[0].days)) * 24 * 60 * 60)).toString()
             });
             if (updateData) {
               start();
