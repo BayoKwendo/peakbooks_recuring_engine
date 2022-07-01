@@ -25,7 +25,7 @@ let task = everyMinute(async () => {
 
   if (invoice_no) {
 
-    console.log(invoice_no)
+    // console.log(invoice_no)
 
     const data = await invoiceService.getInvoiceFilter({
       filter_value: invoice_no.invoice_no,
@@ -160,7 +160,7 @@ let task = everyMinute(async () => {
             data3.push(Object.assign(innvoiceNo, itemData[i]));
           }
           // console.log(data3)
-          const postRequest = await fetch('https://www.peakbooks.biz:9000/insightphp/recurring_invoice.php', {
+          const postRequest = await fetch('https://api.peakbooks.biz:9000/insightphp/recurring_invoice.php', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -420,6 +420,8 @@ let task = everyMinute(async () => {
 
 let task_two = everyMinute(async () => {
 
+   stop()
+   
   const invoice_no = await invoiceService.getfreqmonthly();
 
   if (invoice_no.length > 0) {
@@ -445,7 +447,7 @@ let task_two = everyMinute(async () => {
 
       let mdue_date;
 
-      console.log("here", data[0])
+      // console.log("here", data[0])
 
       if (data[0].terms === "Due in 15 days") {
         mdue_date = weekly.toString()
@@ -463,6 +465,8 @@ let task_two = everyMinute(async () => {
       }
 
       try {
+
+              console.log("here", data[0])
 
         const body222 = await invoiceService.createInvoice(
           {
@@ -512,7 +516,7 @@ let task_two = everyMinute(async () => {
             data3.push(Object.assign(innvoiceNo, itemData[i]));
           }
           // console.log(data3)
-          const postRequest = await fetch('https://www.peakbooks.biz:9000/insightphp/recurring_invoice.php', {
+          const postRequest = await fetch('https://api.peakbooks.biz:9000/insightphp/recurring_invoice.php', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
