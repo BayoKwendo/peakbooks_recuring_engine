@@ -25,7 +25,7 @@ let task = everyMinute(async () => {
 
   if (invoice_no) {
 
-    // console.log(invoice_no)
+    console.log("invoice", invoice_no)
 
     const data = await invoiceService.getInvoiceFilter({
       filter_value: invoice_no.invoice_no,
@@ -89,7 +89,7 @@ let task = everyMinute(async () => {
 
       let mdue_date;
 
-      console.log("here", data[0])
+      // console.log("here", data[0])
 
       if (data[0].terms === "Due in 15 days") {
         mdue_date = weekly.toString()

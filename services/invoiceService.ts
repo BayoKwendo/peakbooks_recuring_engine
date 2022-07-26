@@ -7,8 +7,8 @@ export default {
 
     getfrequency: async () => {
         const [result] = await client.query(
-            `SELECT * FROM  ${TABLE.RECURRING_INVOICE} WHERE 
-            frequecy < UNIX_TIMESTAMP(NOW()) AND status = 1 AND frequency_type NOT IN ('Monthly') order by id ASC limit 1;`);
+            `SELECT * FROM  recurring_invoices WHERE 
+            frequecy < UNIX_TIMESTAMP(NOW()) AND status = 1 AND frequency_type NOT IN ('Monthly') AND frequency_type <> 'Monthly' order by id ASC limit 1;`);
         return result;
     },
 
@@ -17,7 +17,7 @@ export default {
         const result = await client.query(
             `SELECT *,timestampdiff(day,
                 concat(year(now()),'-',month(now()),'-01'),
-                date_add( concat(year(now()),'-',month(now()),'-01'), interval 1 month)) days FROM  ${TABLE.RECURRING_INVOICE} WHERE 
+                date_add( concat(year(now()),'-',month(now()),'-01'), interval 1 month)) days FROM  recurring_invoices WHERE 
                 status = 1 AND checked_month = 1 AND frequency_type IN ('Monthly') order by id limit 1;`);
         return result;
     },
