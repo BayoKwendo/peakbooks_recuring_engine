@@ -37,7 +37,7 @@ let task = everyMinute(async () => {
 
 
     if (data.length > 0) {
-      console.log("here", data)
+      // console.log("here", data)
 
       const itemData = await invoiceService.getInvoiceItems({
         filter_value: invoice_no.invoice_no,
