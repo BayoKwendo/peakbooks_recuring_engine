@@ -183,6 +183,7 @@ let task = everyMinute(async () => {
             else if (invoice_no.frequency_type === "Weekly") {
               const updateData = await invoiceService.updatefrequency({
                 invoice_no: invoice_no.invoice_no,
+                id: invoice_no.id,
                 frequecy: ((Date.now() / 1000) + (7 * 24 * 60 * 60)).toString()
               });
               if (updateData) {
@@ -192,6 +193,7 @@ let task = everyMinute(async () => {
             else if (invoice_no.frequency_type === "After 2 Weeks") {
               const updateData = await invoiceService.updatefrequency({
                 invoice_no: invoice_no.invoice_no,
+                id: invoice_no.id,
                 frequecy: ((Date.now() / 1000) + (14 * 24 * 60 * 60)).toString()
               });
               if (updateData) {
@@ -201,6 +203,7 @@ let task = everyMinute(async () => {
             else if (invoice_no.frequency_type === "Monthly") {
               const updateData = await invoiceService.updatefrequency({
                 invoice_no: invoice_no.invoice_no,
+                id: invoice_no.id,
                 frequecy: ((Date.now() / 1000) + (32 * 24 * 60 * 60)).toString()
               });
               if (updateData) {
@@ -211,6 +214,7 @@ let task = everyMinute(async () => {
             else if (invoice_no.frequency_type === "After 2 Months") {
               const updateData = await invoiceService.updatefrequency({
                 invoice_no: invoice_no.invoice_no,
+                id: invoice_no.id,
                 frequecy: ((Date.now() / 1000) + (60 * 24 * 60 * 60)).toString()
               });
               if (updateData) {
@@ -221,6 +225,7 @@ let task = everyMinute(async () => {
             else if (invoice_no.frequency_type === "After 3 Months") {
               const updateData = await invoiceService.updatefrequency({
                 invoice_no: invoice_no.invoice_no,
+                id: invoice_no.id,
                 frequecy: ((Date.now() / 1000) + (90 * 24 * 60 * 60)).toString(),
               });
               if (updateData) {
@@ -230,6 +235,7 @@ let task = everyMinute(async () => {
             else if (invoice_no.frequency_type === "After 6 Months") {
               const updateData = await invoiceService.updatefrequency({
                 invoice_no: invoice_no.invoice_no,
+                id: invoice_no.id,
                 frequecy: ((Date.now() / 1000) + (180 * 24 * 60 * 60)).toString(),
               });
               if (updateData) {
@@ -239,6 +245,7 @@ let task = everyMinute(async () => {
             else if (invoice_no.frequency_type === "Yearly") {
               const updateData = await invoiceService.updatefrequency({
                 invoice_no: invoice_no.invoice_no,
+                id: invoice_no.id,
                 frequecy: ((Date.now() / 1000) + (365 * 24 * 60 * 60)).toString(),
               });
               if (updateData) {
@@ -248,6 +255,7 @@ let task = everyMinute(async () => {
             else if (invoice_no.frequency_type === "After 2 Years") {
               const updateData = await invoiceService.updatefrequency({
                 invoice_no: invoice_no.invoice_no,
+                id: invoice_no.id,
                 frequecy: ((Date.now() / 1000) + (730 * 24 * 60 * 60)).toString(),
               });
               if (updateData) {

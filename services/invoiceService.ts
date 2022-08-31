@@ -109,13 +109,13 @@ export default {
     },
 
 
-    updatefrequency: async ({ frequecy, invoice_no }: Invoices) => {
+    updatefrequency: async ({ frequecy, invoice_no, id }: Invoices) => {
         const result = await client.query(
             `UPDATE ${TABLE.RECURRING_INVOICE} SET 
             frequecy = ?, 
             start_time = DATE_FORMAT(now(), "%Y-%m-%d %h:%i:%s")
-            WHERE invoice_no = ? `,
-            [frequecy, invoice_no]);
+            WHERE id = ? `,
+            [frequecy, id]);
         return result;
     },
 
