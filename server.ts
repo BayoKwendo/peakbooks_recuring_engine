@@ -420,8 +420,8 @@ let task = everyMinute(async () => {
 
 let task_two = everyMinute(async () => {
 
-   stop()
-   
+  stop()
+
   const invoice_no = await invoiceService.getfreqmonthly();
 
   if (invoice_no.length > 0) {
@@ -466,7 +466,7 @@ let task_two = everyMinute(async () => {
 
       try {
 
-              console.log("here", data[0])
+        console.log("here", data[0])
 
         const body222 = await invoiceService.createInvoice(
           {
@@ -524,17 +524,18 @@ let task_two = everyMinute(async () => {
             body: JSON.stringify(data3),
           })
 
-          if (postRequest) {
-            const updateData = await invoiceService.updateChecked({
-              invoice_no: invoice_no[0].invoice_no,
-              frequecy: ((Date.now() / 1000) + ((parseInt(invoice_no[0].days)) * 24 * 60 * 60)).toString()
-            });
-            if (updateData) {
-              start();
-              // console.log(invoice_no)
-            }
-            // start()
+          const updateData = await invoiceService.updateChecked({
+            invoice_no: invoice_no[0].invoice_no,
+            frequecy: ((Date.now() / 1000) + ((parseInt(invoice_no[0].days)) * 24 * 60 * 60)).toString()
+          });
+          if (updateData) {
+            start();
+            // console.log(invoice_no)
           }
+
+          // if (postRequest) {
+          //   // start()
+          // }
         }
       } catch (error) {
         console.log(error)

@@ -32,7 +32,7 @@ export default {
         const result = await client.query(
             `SELECT * FROM 
            invoices i inner join customers c on c.id = i.customer_id 
-           WHERE i.estimate=0 and i.sales_order_no=0 and i.created_by = ? AND i.invoice_no = ?;`, [created_by, filter_value]);
+           WHERE i.estimate=0 and i.sales_order_no=0 and i.created_by = ? AND i.invoice_no = ? LIMIT 1;`, [created_by, filter_value]);
         return result;
     },
 
