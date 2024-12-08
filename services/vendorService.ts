@@ -1,6 +1,6 @@
 import client from "../db/client.ts";
 import { TABLE } from "../db/config.ts";
-import { getQuery } from 'https://deno.land/x/oak/helpers.ts';
+import { getQuery } from 'https://deno.land/x/oak@v12.6.1/helpers.ts';
 import Vendor from "../interfaces/Vendor.ts";
 
 export default {
@@ -18,7 +18,7 @@ export default {
     },
 
 
-   deleteExpenseRecurring: async ({ filter_value }: Vendor) => {
+    deleteExpenseRecurring: async ({ filter_value }: Vendor) => {
         const result = await client.query(
             `DELETE FROM  ${TABLE.RECURRING_EXPENSE} WHERE id = '${filter_value}' `);
         return result;

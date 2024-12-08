@@ -1,4 +1,4 @@
-import { Application, Context, Router } from "https://deno.land/x/oak/mod.ts";
+import { Application, Context, Router } from "https://deno.land/x/oak@v12.6.1/mod.ts";
 import { green, yellow } from "https://deno.land/std@0.53.0/fmt/colors.ts";
 import { oakCors } from "https://deno.land/x/cors/mod.ts";
 
