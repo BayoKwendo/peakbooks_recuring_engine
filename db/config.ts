@@ -9,12 +9,12 @@ export const DATABASE: string = "";
 
 // }
 
-export const MYSQL ={
-   host: "52.91.175.226",
+export const MYSQL = {
+  host: "54.166.187.103",
   user: "root",
   password: "part@^yr9053",
   database: "peakbooks",
-  port:3306
+  port: 3306
 }
 
 export const SMS_BaseUrl: string = "http://localhost:1200/send_sms"; // base url for sms services
@@ -22,18 +22,18 @@ export const SMS_BaseUrl: string = "http://localhost:1200/send_sms"; // base url
 export const SMS_BaseUrl_2: string = "http://localhost:1200/send_sms_mobitech"; // base url for sms services mobitech
 
 export const SMS = {
-	URL: 'https://api.vaspro.co.ke/v3/BulkSMS/api/create',
-	APIKEY: '8f15430edfeb253fb0961c36e0fee0cc',
-	SENDERID: 'PEAKBOOKS',
-	CALL_BACK: 'https://api.vaspro.co.ke'
+  URL: 'https://api.vaspro.co.ke/v3/BulkSMS/api/create',
+  APIKEY: '8f15430edfeb253fb0961c36e0fee0cc',
+  SENDERID: 'PEAKBOOKS',
+  CALL_BACK: 'https://api.vaspro.co.ke'
 };
 
 export const CONFIG = {
-	method: 'POST',
-	headers: {
-		'Content-Type': 'application/json',
-		'Accept': 'application/json',
-	}
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  }
 }
 
 
