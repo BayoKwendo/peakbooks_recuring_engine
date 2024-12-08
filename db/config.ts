@@ -10,7 +10,7 @@ export const DATABASE: string = "";
 // }
 
 export const MYSQL = {
-  host: "64.227.5.114",
+  host: "localhost",
   user: "root",
   password: "part@^yr9053",
   database: "peakbooks",
