@@ -1,4 +1,3 @@
-from cgitb import reset
 import mysql.connector
 import logging
 from mysql.connector.cursor import MySQLCursorPrepared

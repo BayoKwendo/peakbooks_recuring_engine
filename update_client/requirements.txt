@@ -13,7 +13,7 @@ requests
 pexpect
 pyasn1
 asyncio
-pycrypto
+pycryptodome
 pika
 pyyaml
 datetime
